@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 #This code generates the necessary script to run trimmomatic automatically on several fastq files for several dataSets.
 #The dataSets must follow the following directory structure:
-#Data/dataSet1/File1.fastq is the forward file for dataSet 1
-#Data/dataSet1/File2.fastq is the reverse file for dataSet 1
-#Data/dataSet2/File1.fastq is the forward file for dataSet 2
-#Data/dataSet2/File2.fastq is the reverse file for dataSet 2
+#Data/dataSet1/File1.fastq is the R1 file for dataSet 1
+#Data/dataSet1/File2.fastq is the R2 file for dataSet 1
+#Data/dataSet2/File1.fastq is the R1 file for dataSet 2
+#Data/dataSet2/File2.fastq is the R2 file for dataSet 2
 #...
 #and so on. The path the script uses as dataPath would be the path to 'Data' in the above example.
 #Future modifications: get variables (outputDir and dataPath) and options for trimmomatic from config file. Decide where to save script. 
@@ -47,24 +47,24 @@ def main(argv):
 		os.makedirs(outputDir)
     #	Lugar donde se genera el script
 	script = open(outputDir + 'trimmomatic.sh','w')
-	input_forward = ''
-	input_reverse = ''
+	input_R1 = ''
+	input_R2 = ''
 	#	cambiamos al directorio de las muestras
 	os.chdir(inputDir)
-	#	Sacar archivo forward y archivo reverse
+	#	Sacar archivo R1 y archivo R2
 	for files in os.listdir('.'):
 		if files.endswith('_1.fastq'):
-			#input_forward = dataSet + '/' + files
-			input_forward =  os.path.abspath(files)
+			#input_R1 = dataSet + '/' + files
+			input_R1 =  os.path.abspath(files)
 		if files.endswith('_2.fastq'):
-			#input_reverse = dataSet + '/' + files
-			input_reverse =  os.path.abspath(files)
+			#input_R2 = dataSet + '/' + files
+			input_R2 =  os.path.abspath(files)
     #	generar el script con las rutas correctas
-	script.write('java -jar /opt/Trimmomatic/trimmomatic-0.33.jar PE ' + input_forward + ' ' + input_reverse + ' ' +
-	outputDir + dataSet + '_output_forward_paired.fastq ' + 
-	outputDir + dataSet + '_output_forward_unpaired.fastq ' + 
-	outputDir + dataSet + '_output_reverse_paired.fastq ' + 
-	outputDir + dataSet + '_output_reverse_unpaired.fastq ' +
+	script.write('java -jar /opt/Trimmomatic/trimmomatic-0.33.jar PE ' + input_R1 + ' ' + input_R2 + ' ' +
+	outputDir + dataSet + '_output_R1_paired.fastq ' + 
+	outputDir + dataSet + '_output_R1_unpaired.fastq ' + 
+	outputDir + dataSet + '_output_R2_paired.fastq ' + 
+	outputDir + dataSet + '_output_R2_unpaired.fastq ' +
 	'ILLUMINACLIP:/opt/Trimmomatic/adapters/TruSeq3-PE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:70 \n')
 	script.close()
 

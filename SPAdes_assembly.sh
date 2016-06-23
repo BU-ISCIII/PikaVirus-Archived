@@ -11,9 +11,9 @@ set -e
 # 3. Runs quast to see quality
 # Output files: (In ANALYSIS/sampleName/05.ASSEMBLY)
 # sampleName_bacteria_mapped.sam: SAM file from mapping the processed files against the reference genome.
-# sampleName_*_forward.fastq: .fastq file with forward reads that mapped the bacteria DB.
-# sampleName_*_reverse.fastq: .fastq file with reverse reads that mapped the bacetria DB.
-# sampleName_organism_assembly.log: .log file with a log of the mapping.
+# sampleName_*_R1.fastq: .fastq file with R1 reads that mapped the bacteria DB.
+# sampleName_*_R2.fastq: .fastq file with R2 reads that mapped the bacetria DB.
+# sampleName_assembly.log: .log file with a log of the mapping.
 
 function assemble {
 #	GET ARGUMENTS
@@ -26,8 +26,8 @@ sampleAnalysisDir=$(echo $mappedDir | rev | cut -d'/' -f3- | rev) #gets the anal
 #		Directories
 outputDir="${sampleAnalysisDir}/05.ASSEMBLY/${organism}/spades/"
 #		Input Files
-mappedForwardFastq="${mappedDir}${sampleName}_*_forward.fastq"
-mappedReverseFastq="${mappedDir}${sampleName}_*_reverse.fastq"
+mappedR1Fastq="${mappedDir}${sampleName}_*_R1.fastq"
+mappedR2Fastq="${mappedDir}${sampleName}_*_R2.fastq"
 #		Output Files
 lablog="${outputDir}${sampleName}_assembly.log"
 
@@ -44,8 +44,8 @@ fi
 	
 #	RUN SPADES	
 echo -e "$(date)\t start running spades for ${sampleName} for ${organism}\n" >> $lablog
-echo -e "The command is: ### spades.py --phred-offset 33 -1 $mappedForwardFastq -2 $mappedReverseFastq --meta -o $outputDir" >> $lablog
-spades.py --phred-offset 33 -1 $mappedForwardFastq -2 $mappedReverseFastq --meta -o $outputDir 2>&1 | tee -a $lablog
+echo -e "The command is: ### spades.py --phred-offset 33 -1 $mappedR1Fastq -2 $mappedR2Fastq --meta -o $outputDir" >> $lablog
+spades.py --phred-offset 33 -1 $mappedR1Fastq -2 $mappedR2Fastq --meta -o $outputDir 2>&1 | tee -a $lablog
 echo -e "$(date)\t finished running spades for ${sampleName} for ${organism}\n" >> $lablog
 
 }
