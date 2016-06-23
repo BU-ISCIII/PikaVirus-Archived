@@ -1,3 +1,5 @@
+#!/bin/bash
+set -e
 #########################################################
 #	SCRIPT TO FILTER VIR READS USING BOWTIE2 MAPPING	#
 #########################################################
@@ -11,9 +13,9 @@
 # sampleName_virus_mapped.sam: SAM file from mapping the processed files against the reference genome.
 # sampleName_Virus_forward.fastq: .fastq file with forward reads that mapped the virus DB.
 # sampleName_Virus_reverse.fastq: .fastq file with reverse reads that mapped the virus DB.
-# sampleName_lablog.log: .log file with a log of the mapping.
+# sampleName_virus_mapping.log: .log file with a log of the mapping.
 
-function map_bacteria {
+function map_virus {
 #	GET ARGUMENTS
 virDB=$1  
 sampleAnalysisDir=$2
@@ -26,7 +28,7 @@ noHostDir="${sampleAnalysisDir}/02.HOST/"
 noHostForwardFastq="${noHostDir}${sampleName}_noHost_forward.fastq"
 noHostReverseFastq="${noHostDir}${sampleName}_noHost_reverse.fastq"
 #		OutputFiles
-bowtie2logFile="${virFilesDir}${sampleName}_lablog.log"
+bowtie2logFile="${virFilesDir}${sampleName}_virus_mapping.log"
 VirMappedForwardFastq="${virFilesDir}${sampleName}_Virus_forward.fastq"
 VirMappedReverseFastq="${virFilesDir}${sampleName}_Virus_reverse.fastq"
 mappedSamFile="${virFilesDir}${sampleName}_virus_mapped.sam"
@@ -49,13 +51,15 @@ bowtie2 -fr -x "$virDB" -q -1 $noHostForwardFastq -2 $noHostReverseFastq -S $map
 echo -e "$(date)\t Finished mapping ${sampleName}\n" >> $bowtie2logFile
 
 #	SEPARATE FORWARD AND REVERSE MAPPED READS AND FILTER HOST
-echo -e "----------------- Filtering bacteria reads ...---------------------"
-echo -e "$(date)\t Start filtering ${sampleName}\n" > $bowtie2logFile
-echo -e "The command is: ###samtools view -F 0x40 $mappedSamFile | awk '{if($3 =! "*") print "@"$1"\n"$10"\n""+"$1"\n"$11}' > $VirMappedForwardFastq"
-samtools view -F 0x40 $mappedSamFile | awk '{if($3 =! "*") print "@"$1"\n"$10"\n""+"$1"\n"$11}' > $VirMappedForwardFastq
-samtools view -f 0x40 $mappedSamFile | awk '{if($3 =! "*") print "@"$1"\n"$10"\n""+"$1"\n"$11}' > $VirMappedReverseFastq
+echo -e "----------------- Filtering virus reads ...---------------------"
+echo -e "$(date)\t Start filtering ${sampleName}\n" >> $bowtie2logFile
+#echo -e "The command is: ###samtools view -F 0x40 $mappedSamFile | awk '{if($3 =! "*") print "@"$1"\n"$10"\n""+"$1"\n"$11}' > $VirMappedForwardFastq" >> $bowtie2logFile
+echo -e "The command is: ###samtools view -F 0x40 $mappedSamFile | awk '{if($3 =! "*") print "@"$1"\n"$10"\n""+""\n"$11}' > $VirMappedForwardFastq" >> $bowtie2logFile
+samtools view -F 0x40 $mappedSamFile | awk '{if($3 =! "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $VirMappedForwardFastq
+echo -e "The command is: ###samtools view -f 0x40 $mappedSamFile | awk '{if($3 =! "*") print "@"$1"\n"$10"\n""-""\n"$11}' > $VirMappedReverseFastq" >> $bowtie2logFile
+samtools view -f 0x40 $mappedSamFile | awk '{if($3 =! "*") print "@" $1" \n "$10 "\n" "+" $1 "\n" $11}' > $VirMappedReverseFastq
 #	samtools separates forward (-F) or reverse (-f) reads using the mapped SAM file and awk filters those mapped (=!"*") in fastq format
-echo -e "$(date)\t Finished filtering ${sampleName}\n" > $bowtie2logFile
+echo -e "$(date)\t Finished filtering ${sampleName}\n" >> $bowtie2logFile
 
 echo -e "$(date)" 
 echo -e "*********** FINISHED MAPPING VIRUS IN $sampleName ************"

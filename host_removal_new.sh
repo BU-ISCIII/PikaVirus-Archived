@@ -1,3 +1,5 @@
+#!/bin/bash
+set -e
 #########################################################
 #	SCRIPT TO REMOVE HOST READS USING BOWTIE2 MAPPING	#
 #########################################################
@@ -10,7 +12,7 @@
 # Output files: (In ANALYSIS/sampleName/02.HOST/)
 # sampleName_Mapped.sam: SAM file from mapping the processed files against the reference genome.
 # sampleName_NoHost.fastq: .fastq file created from the unmapped reads of the SAM file.
-# sampleName_lablog.log: .log file with a log of the mapping.
+# sampleName_host_removal.log: .log file with a log of the mapping.
 
 function removeHost {
 #	GET ARGUMENTS
@@ -24,7 +26,7 @@ sampleForward="${preprocessedFilesDir}${sampleName}_output_forward_paired.fastq"
 sampleReverse="${preprocessedFilesDir}${sampleName}_output_reverse_paired.fastq"
 mappedSamFile="${noHostFilesDir}${sampleName}_Mapped.sam"
 #noHostFileFastq="${noHostFilesDir}${sampleName}_NoHost.fastq"
-bowtie2logFile="${noHostFilesDir}${sampleName}_lablog.log"
+bowtie2logFile="${noHostFilesDir}${sampleName}_host_removal.log"
 mappedForwardFastq="${noHostFilesDir}${sampleName}_noHost_forward.fastq"
 mappedReverseFastq="${noHostFilesDir}${sampleName}_noHost_reverse.fastq"
 echo -e "$(date)" 
@@ -46,14 +48,19 @@ echo -e "$(date)\t Finished mapping ${sampleName}\n" >> $bowtie2logFile
 
 #	SEPARATE FORWARD AND REVERSE MAPPED READS AND FILTER HOST
 echo -e "-----------------Filtering non-host reads...---------------------"
-echo -e "$(date)\t Start filtering ${sampleName}\n" > $bowtie2logFile
-echo -e "The command is: ###samtools view -F 0x40 $mappedSamFile | awk '{if($3 == '*') print '@'$1'\\n'$10'\\n''+'$1'\\n'$11}' > $mappedForwardFastq"
-samtools view -F 0x40 $mappedSamFile | awk '{if($3 == "*") print "@"$1"\n"$10"\n""+"$1"\n"$11}' > $mappedForwardFastq
-samtools view -f 0x40 $mappedSamFile | awk '{if($3 == "*") print "@"$1"\n"$10"\n""+"$1"\n"$11}' > $mappedReverseFastq
+echo -e "$(date)\t Start filtering ${sampleName}\n" >> $bowtie2logFile
+#echo -e "The command is: ###samtools view -F 0x40 $mappedSamFile | awk '{if($3 == '*') print '@'$1'\\n'$10'\\n''+'$1'\\n'$11}' > $mappedForwardFastq" >> $bowtie2logFile
+echo -e "The command is: ###samtools view -F 0x40 $mappedSamFile | awk '{if($3 == '*') print "@"$1'\\n'$10'\\n''+''\\n'$11}' > $mappedForwardFastq" >> $bowtie2logFile
+samtools view -F 0x40 $mappedSamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $mappedForwardFastq
+echo -e "The command is: ###samtools view -f 0x40 $mappedSamFile | awk '{if($3 == '*') print '@'$1'\\n'$10'\\n''-''\\n'$11}' > $mappedReverseFastq" >> $bowtie2logFile
+#echo -e "The command is: ###samtools view -f 0x40 $mappedSamFile | awk '{if($3 == '*') print '@'$1'\\n'$10'\\n''+'$1'\\n'$11}' > $mappedReverseFastq" >> $bowtie2logFile
+samtools view -f 0x40 $mappedSamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $mappedReverseFastq
 #	samtools separates forward (-F) or reverse (-f) reads using the mapped SAM file and awk filters those not mapped (="*") in fastq format
-echo -e "$(date)\t Finished filtering ${sampleName}\n" > $bowtie2logFile
+echo -e "$(date)\t Finished filtering ${sampleName}\n" >> $bowtie2logFile
 
 #	FILTERING NON-HUMAN READS
 #egrep -v "^@" $mappedSamFile | awk '{if($3 == "*") print "@"$1"\n"$10"\n""+"$1"\n"$11}' > $noHostFileFastq
 #HostRelatedReads=`egrep -v "^@" $mappedSamFile | awk '{if($3 != "*") print$1}' | uniq | wc -l | awk '{print$1}'` 
 }
+
+#removeHost /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/HUMAN_GENOME_REFERENCE/hg38.AnalysisSet /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/ANALYSIS/MuestraPrueba/

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 echo -e "#############################################################"
 echo -e "###################	VAGANCIA SEQ	######################"
 echo -e "#############################################################"
@@ -44,9 +45,9 @@ echo -e "#############################################################"
 #######################################################################
 #	GLOBAL VARIABLES
 workingDir='/processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/'
-hostDB='${workingDir}REFERENCES/HUMAN_GENOME_REFERENCE/'
-bacDB='${workingDir}REFERENCES/BACTERIA_16S_REFERENCE/'
-virDB='${workingDir}REFERENCES/VIRUS_GENOME_REFERENCE/'
+hostDB="${workingDir}REFERENCES/HUMAN_GENOME_REFERENCE/hg38.AnalysisSet"
+bacDB="${workingDir}REFERENCES/BACTERIA_16S_REFERENCE/16S"
+virDB="${workingDir}REFERENCES/VIRUS_GENOME_REFERENCE/all.fna.tar.gz"
 
 #	AWESOME SCRIPT
 echo -e "Captain's log. Stelar date $(date)"
@@ -74,51 +75,101 @@ function showHelp {
 sampleName=$(basename "$sampleDir")
 sampleAnalysisDir="${workingDir}ANALYSIS/${sampleName}"
 rawDir="${workingDir}RAW/${sampleName}"
-echo $sampleDir
+bacteriaDir="${sampleAnalysisDir}/03.BACTERIA/"
+virusDir="${sampleAnalysisDir}/04.VIRUS/"
+sampleAnalysisLog="${sampleAnalysisDir}/${sampleName}_lablog.log"
+
+if [ ! -d "${sampleAnalysisDir}" ]
+then
+	mkdir -p "$sampleAnalysisDir"
+fi
+
 #	TRIMMOMMATIC QUALITY CONTROL
 #	Create sh file
-echo -e "Command: python ${workingDir}ANALYSIS/SRC/Trimmomatic_new.py -i ${rawDir} -o ${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/ -n $sampleName"
+echo -e "$(date): ********* Start quaility control **********" > "${sampleAnalysisLog}"
+echo -e "************** First, let's do a bit of quality control *************"  
+if [ ! -d "${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/" ]
+then
+	mkdir -p "$sampleAnalysisDir/01.PREPROCESSING/TRIMMOMATIC"
+	echo -e "${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC created"
+fi
+echo -e "Command: python ${workingDir}ANALYSIS/SRC/Trimmomatic_new.py -i ${rawDir} -o ${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/ -n $sampleName" >> "${sampleAnalysisLog}"
 python ${workingDir}ANALYSIS/SRC/Trimmomatic_new.py -i ${rawDir} -o ${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/ -n $sampleName
 #	Execute sh file
-if [ ! -x ${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/* ]
+if [ ! -x "${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/trimmomatic.sh" ]
 then
-	chmod +x ${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/*
+	chmod +x "${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/trimmomatic.sh"
 fi
-$(${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/trimmomatic.sh)
+echo -e "$(date): Execute ${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/trimmomatic.sh" >> "${sampleAnalysisLog}"
+$(${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/trimmomatic.sh) 
+echo -e "$(date): Finished executing trimmommatic" >> "${sampleAnalysisLog}"
+echo -e "$(date): ********* Finished quaility control **********" >> "${sampleAnalysisLog}"
 
 #	HOST REMOVAL
+echo -e "$(date): ************* Start host removal ***************" >> "${sampleAnalysisLog}"
+echo -e "************** Now, we need to remove the host genome *************" 
 if [ ! -x ${workingDir}ANALYSIS/SRC/host_removal_new.sh ]
 then
-	chmod +x ${workingDir}ANALYSIS/SRC/host_removal_new.sh 
+	chmod +x ${workingDir}ANALYSIS/SRC/host_removal_new.sh   
 fi
 #	execute host removal script
 source ${workingDir}ANALYSIS/SRC/host_removal_new.sh
-removeHost $hostDB $sampleAnalysisDir
-echo -e "$(date)\t Finished filtering of host reads"
+echo -e " Execute removeHost $hostDB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
+removeHost $hostDB $sampleAnalysisDir 
+echo -e "$(date): ************ Finished host removal ************" >> "${sampleAnalysisLog}"
 
 
 #	BACTERIA MAPPING
-if [ ! -x ${workingDir}ANALYSIS/SRC/bac_mapper_new.sh ]
-then
-	chmod +x ${workingDir}ANALYSIS/SRC/bac_mapper_new.sh 
-fi
-#	execute bacteria mapping script
-source ${workingDir}ANALYSIS/SRC/bac_mapper_new.sh
-removeHost $bacDB $sampleAnalysisDir
-echo -e "$(date)\t Finished mapping bacteria reads"
+#echo -e "$(date): ******** start mapping bacteria ***********" >> "${sampleAnalysisLog}"
+#echo -e "******************* Great! Let's map some bacteria ****************"
+#if [ ! -x ${workingDir}ANALYSIS/SRC/bac_mapper_new.sh ]
+#then
+#	chmod +x ${workingDir}ANALYSIS/SRC/bac_mapper_new.sh 
+#fi
+##	execute bacteria mapping script
+#source ${workingDir}ANALYSIS/SRC/bac_mapper_new.sh
+#echo -e " Execute map_bacteria $bacDB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
+#map_bacteria $bacDB $sampleAnalysisDir
+#echo -e "$(date): ******** Finished mapping bacteria **********" >> "${sampleAnalysisLog}"
 
 #	VIRUS MAPPING
+echo -e "$(date): ******** start mapping virus ***********" >> "${sampleAnalysisLog}"
+echo -e "******************* Great! Let's map some virus ****************"
 if [ ! -x ${workingDir}ANALYSIS/SRC/vir_mapper_new.sh ]
 then
 	chmod +x ${workingDir}ANALYSIS/SRC/vir_mapper_new.sh 
 fi
 #	execute virus mapping script
 source ${workingDir}ANALYSIS/SRC/vir_mapper_new.sh
-removeHost $virDB $sampleAnalysisDir
-echo -e "$(date)\t Finished mapping virus reads"
+echo -e " Execute map_virus $virDB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
+map_virus $virDB $sampleAnalysisDir
+echo -e "$(date): ******** Finished mapping virus **********" >> "${sampleAnalysisLog}"
 
+#	ASSEMBLY FOR BACTERIA
+#echo -e "$(date): ******** start assemblying bacteria ***********" >> "${sampleAnalysisLog}"
+#echo -e "******************* wohooo! Bacteria assembly party! ****************"
+#if [ ! -x ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh ]
+#then
+#	chmod +x ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh 
+#fi
+##	execute assembly script
+#source ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh
+#echo -e " Execute assemble $bacteriaDir" >> "${sampleAnalysisLog}"
+#assemble $bacteriaDir
+#echo -e "$(date): ******** Finished assemblying bacteria ***********" >> "${sampleAnalysisLog}"
 
-
+#	ASSEMBLY FOR VIRUS
+echo -e "$(date): ******** Start assemblying virus ***********" >> "${sampleAnalysisLog}"
+echo -e "******************* weeeeeeee! Virus assembly party! ****************"
+if [ ! -x ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh ]
+then
+	chmod +x ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh 
+fi
+#	execute assembly script
+source ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh
+echo -e " Execute assemble $virusDir" >> "${sampleAnalysisLog}"
+assemble $virusDir
+echo -e "$(date): ******** Finished assemblying virus ***********" >> "${sampleAnalysisLog}"
 
 
 

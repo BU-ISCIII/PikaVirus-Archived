@@ -1,9 +1,11 @@
+#!/bin/bash
+set -e
 #########################################################
 #		  SCRIPT TO ASSEMBLE READS USING SPADES		 	#
 #########################################################
 # Arguments:
 # $1 = Group Directory. Directory where the fastq to be assembled are located.
-# $2 = sampleName. Name of the sample to be processed. Must match the name of the sample in the RAW directory.
+# $2 = sampleAnalysisDir.  Must match the name of the sample in the RAW directory.
 # 1. Creates necessary directories. 
 # 2. Assembles fastq files.
 # 3. Runs quast to see quality
@@ -11,23 +13,23 @@
 # sampleName_bacteria_mapped.sam: SAM file from mapping the processed files against the reference genome.
 # sampleName_*_forward.fastq: .fastq file with forward reads that mapped the bacteria DB.
 # sampleName_*_reverse.fastq: .fastq file with reverse reads that mapped the bacetria DB.
-# sampleName_lablog.log: .log file with a log of the mapping.
+# sampleName_organism_assembly.log: .log file with a log of the mapping.
 
 function assemble {
 #	GET ARGUMENTS
-mappedDir=$1 # Directory where the mapped fastq are 
-sampleAnalysisDir=$2
+mappedDir=$1 # Directory where the mapped fastq are. Has to end with / so cut can work. 
 #	INITIALIZE VARIABLES
 #		Organism
-organism="${mappedDir##*.}" # gets whats is after the '.' and assumes is the organism
+organism="${mappedDir##*.}" # gets what is after the '.' and assumes is the organism
+sampleName=$(echo $mappedDir | rev | cut -d'/' -f3 | rev) # gets the sample name (3d column from the end of the mapped dir)
+sampleAnalysisDir=$(echo $mappedDir | rev | cut -d'/' -f3- | rev) #gets the analysis directory of the sample (everything before the 3 column)
 #		Directories
-sampleName=$(basename "${sampleAnalysisDir}")
-outputDir="${sampleAnalysisDir}05.ASSEMBLY/${organism}/"
+outputDir="${sampleAnalysisDir}/05.ASSEMBLY/${organism}/spades/"
 #		Input Files
 mappedForwardFastq="${mappedDir}${sampleName}_*_forward.fastq"
 mappedReverseFastq="${mappedDir}${sampleName}_*_reverse.fastq"
 #		Output Files
-lablog="${outputDir}${sampleName}_lablog.log"
+lablog="${outputDir}${sampleName}_assembly.log"
 
 
 echo -e "$(date)" 
@@ -41,7 +43,11 @@ then
 fi
 	
 #	RUN SPADES	
-echo -e "$(date)\t start running spades for ${sampleName} for ${organism}\n" > $lablog
-echo -e "The command is: ### spades.py -1 $mappedForwardFastq -2 $mappedReverseFastq --meta -o $outputDir > $lablog"
-spades.py -1 $mappedForwardFastq -2 $mappedReverseFastq --meta -o $outputDir > $lablog
-echo -e "$(date)\t finished running spades for ${sampleName} for ${organism}\n" > $lablog
+echo -e "$(date)\t start running spades for ${sampleName} for ${organism}\n" >> $lablog
+echo -e "The command is: ### spades.py --phred-offset 33 -1 $mappedForwardFastq -2 $mappedReverseFastq --meta -o $outputDir" >> $lablog
+spades.py --phred-offset 33 -1 $mappedForwardFastq -2 $mappedReverseFastq --meta -o $outputDir 2>&1 | tee -a $lablog
+echo -e "$(date)\t finished running spades for ${sampleName} for ${organism}\n" >> $lablog
+
+}
+
+assemble /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/ANALYSIS/MuestraPrueba/04.VIRUS/
