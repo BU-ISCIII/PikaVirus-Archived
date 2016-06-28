@@ -55,9 +55,9 @@ echo -e "----------------- Filtering virus reads ...---------------------"
 echo -e "$(date)\t Start filtering ${sampleName}\n" >> $bowtie2logFile
 #echo -e "The command is: ###samtools view -F 0x40 $mappedSamFile | awk '{if($3 =! "*") print "@"$1"\n"$10"\n""+"$1"\n"$11}' > $VirMappedR1Fastq" >> $bowtie2logFile
 echo -e "The command is: ###samtools view -F 0x40 $mappedSamFile | awk '{if($3 != "*") print "@"$1"\n"$10"\n""+""\n"$11}' > $VirMappedR1Fastq" >> $bowtie2logFile
-samtools view -F 0x40 $mappedSamFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $VirMappedR1Fastq
+samtools view -F 0x40 $mappedSamFile | awk '{if($3 != "*") print "@" $1" \n" $10 "\n" "+" $1 "\n" $11}' > $VirMappedR1Fastq
 echo -e "The command is: ###samtools view -f 0x40 $mappedSamFile | awk '{if($3 != "*") print "@"$1"\n"$10"\n""-""\n"$11}' > $VirMappedR2Fastq" >> $bowtie2logFile
-samtools view -f 0x40 $mappedSamFile | awk '{if($3 != "*") print "@" $1" \n "$10 "\n" "+" $1 "\n" $11}' > $VirMappedR2Fastq
+samtools view -f 0x40 $mappedSamFile | awk '{if($3 != "*") print "@" $1" \n" $10 "\n" "+" $1 "\n" $11}' > $VirMappedR2Fastq
 #	samtools separates R1 (-F) or R2 (-f) reads using the mapped SAM file and awk filters those mapped (=!"*") in fastq format
 echo -e "$(date)\t Finished filtering ${sampleName}\n" >> $bowtie2logFile
 

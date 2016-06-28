@@ -1,8 +1,16 @@
 #!/bin/bash
 set -e
-echo -e "#############################################################"
-echo -e "###################	VAGANCIA SEQ	######################"
-echo -e "#############################################################"
+echo -e "**********************************************************************************************"
+echo -e "  __   __ _______ _______ _______ __   __ _______ _______ __   __ _______ _______ ___ _______  "
+echo -e " |  |_|  |       |       |   _   |  | |  |       |       |  |_|  |   _   |       |   |       |"
+echo -e " |       |    ___|_     _|  |_|  |  | |  |_     _|   _   |       |  |_|  |_     _|   |       |"
+echo -e " |       |   |___  |   | |       |  |_|  | |   | |  | |  |       |       | |   | |   |       |"
+echo -e " |       |    ___| |   | |       |       | |   | |  |_|  |       |       | |   | |   |      _|"
+echo -e " | ||_|| |   |___  |   | |   _   |       | |   | |       | ||_|| |   _   | |   | |   |     |_ "
+echo -e " |_|   |_|_______| |___| |__| |__|_______| |___| |_______|_|   |_|__| |__| |___| |___|_______|"
+echo -e ""
+echo -e "**********************************************************************************************"
+
 # Backbone file for the metagenomics project. Multiple other scripts
 # will be called from this one. All scripts assume the following
 # file structure:
@@ -46,11 +54,15 @@ echo -e "#############################################################"
 #	GLOBAL VARIABLES
 workingDir='/processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/'
 hostDB="${workingDir}REFERENCES/HUMAN_GENOME_REFERENCE/hg38.AnalysisSet"
-bacDB="${workingDir}REFERENCES/BACTERIA_16S_REFERENCE/16S"
-virDB="${workingDir}REFERENCES/VIRUS_GENOME_REFERENCE/all.fna.tar.gz"
+bacDB="${workingDir}REFERENCES/BACTERIA_16S_REFERENCE/"
+bac_bwt2_DB="${bacDB}bowtie2/16S"
+virDB="${workingDir}REFERENCES/VIRUS_GENOME_REFERENCE/"
+vir_bwt2_DB="${virDB}bowtie2/all.fna.tar.gz"
+vir_BLASTn_DB="${virDB}blastn/viral_blastn"
+vir_BLASTx_DB="${virDB}blastx/viral_blastx"
 
 #	AWESOME SCRIPT
-echo -e "Captain's log. Stelar date $(date)"
+echo -e "PIPELINE START: $(date)"
 #	Get parameters:
 sampleDir=''
 while getopts "hs:" opt
@@ -128,8 +140,8 @@ echo -e "$(date): ************ Finished host removal ************" >> "${sampleA
 #fi
 ##	execute bacteria mapping script
 #source ${workingDir}ANALYSIS/SRC/bac_mapper_new.sh
-#echo -e " Execute map_bacteria $bacDB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
-#map_bacteria $bacDB $sampleAnalysisDir
+#echo -e " Execute map_bacteria $bac_bwt2_DB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
+#map_bacteria $bac_bwt2_DB $sampleAnalysisDir
 #echo -e "$(date): ******** Finished mapping bacteria **********" >> "${sampleAnalysisLog}"
 
 #	VIRUS MAPPING
@@ -141,8 +153,8 @@ then
 fi
 #	execute virus mapping script
 source ${workingDir}ANALYSIS/SRC/vir_mapper_new.sh
-echo -e " Execute map_virus $virDB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
-map_virus $virDB $sampleAnalysisDir
+echo -e " Execute map_virus $vir_bwt2_DB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
+map_virus $vir_bwt2_DB $sampleAnalysisDir
 echo -e "$(date): ******** Finished mapping virus **********" >> "${sampleAnalysisLog}"
 
 #	ASSEMBLY FOR BACTERIA
@@ -171,6 +183,17 @@ echo -e " Execute assemble $virusDir" >> "${sampleAnalysisLog}"
 assemble $virusDir
 echo -e "$(date): ******** Finished assemblying virus ***********" >> "${sampleAnalysisLog}"
 
-
+#	BLAST 
+echo -e "$(date): ******** Start running BLAST for virus ***********" >> "${sampleAnalysisLog}"
+echo -e "******************* This is it! Let's see what hides in the deepness of the sample ****************"
+if [ ! -x ${workingDir}ANALYSIS/SRC/blast.sh ]
+then
+	chmod +x ${workingDir}ANALYSIS/SRC/blast.sh 
+fi
+#	execute blast script
+source ${workingDir}ANALYSIS/SRC/blast.sh 
+echo -e " Execute assemble $virusDir" >> "${sampleAnalysisLog}"
+blast $sampleAnalysisDir $virDB
+echo -e "$(date): ******** Finished assemblying virus ***********" >> "${sampleAnalysisLog}"
 
 
