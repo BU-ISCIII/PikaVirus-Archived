@@ -13,7 +13,7 @@ echo -e "***********************************************************************
 
 # Backbone file for the metagenomics project. Multiple other scripts
 # will be called from this one. All scripts assume the following
-# file structure:
+# file structure (and will create it if it doesn't exist):
 #	ANALYSIS
 #		SAMPLENAME
 #			01.PREPROCESSING
@@ -23,8 +23,14 @@ echo -e "***********************************************************************
 #			03.BACTERIA
 #			04.VIRUS
 #			05.ASSEMBLY
-#				quast
-#				spades
+#				virus
+#					spades
+#					quast
+#				bacteria
+#					spades
+#					quast
+#			06. BLAST
+#				virus
 #	DOC
 #	RAW
 #		SAMPLENAME
