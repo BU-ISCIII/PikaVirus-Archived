@@ -19,9 +19,9 @@ sampleName=$(basename $sampleAnalysisDir) # gets the sample name
 vir_BLASTn_DB="${virDB}blastn/viral_blastn"
 vir_BLASTx_DB="${virDB}blastx/viral_blastx"
 #		Directories
-outputDir="${sampleAnalysisDir}06.BLAST/VIRUS/"
+outputDir="${sampleAnalysisDir}08.BLAST/VIRUS/"
 #		Input Files
-sampleContig="${sampleAnalysisDir}05.ASSEMBLY/VIRUS/spades/contigs.fasta"
+sampleContig="${sampleAnalysisDir}07.ASSEMBLY/VIRUS/spades/contigs.fasta"
 #		Output Files
 blastnResult="${outputDir}${sampleName}_BLASTn.blast"
 blastxResult="${outputDir}${sampleName}_BLASTx.blast"
@@ -45,15 +45,18 @@ echo -e "$(date)\t start running BLASTn for ${sampleName}"
 echo -e "The command is: ### blastn -db $vir_BLASTn_DB -query $sampleContig -outfmt '6 stitle std qseq' > $blastResult ###" >> $lablog
 blastn -db $vir_BLASTn_DB -query $sampleContig -outfmt '6 stitle std qseq' > $blastnResult 
 echo -e "$(date)\t finished running BLASTn for ${sampleName}\n" >> $lablog
+#	CREATE FASTA WITH SEQUENCES THAT ALIGN 
+
+
 #	RUN BLASTx and RAPSearch2
-#echo -e "$(date)\t start running BLASTx for ${sampleName}\n" >> $lablog
-#echo -e "$(date)\t start running BLASTx for ${sampleName}" 
-#echo -e "The command is: ### blastx -db $vir_BLASTx_DB -query $sampleContig -html > $blastResult ###" >> $lablog
-#blastx -db $vir_BLASTx_DB -query $sampleContig -outfmt '6 stitle std' > $blastxResult 
-#echo -e "$(date)\t finished running BLASTx for ${sampleName}\n" >> $lablog
+echo -e "$(date)\t start running BLASTx for ${sampleName}\n" >> $lablog
+echo -e "$(date)\t start running BLASTx for ${sampleName}" 
+echo -e "The command is: ### blastx -db $vir_BLASTx_DB -query $sampleContig -html > $blastResult ###" >> $lablog
+blastx -db $vir_BLASTx_DB -query $sampleContig -outfmt '6 stitle std' > $blastxResult 
+echo -e "$(date)\t finished running BLASTx for ${sampleName}\n" >> $lablog
 
 #grep -A 5 -B 3 ">" $blastnResult > $blastnHits
 
 }
 
-blast /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/ANALYSIS/MuestraPrueba/ /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/VIRUS_GENOME_REFERENCE/
+#blast /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/ANALYSIS/MuestraPrueba/ /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/VIRUS_GENOME_REFERENCE/

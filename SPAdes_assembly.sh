@@ -22,10 +22,10 @@ organism="${mappedDir##*.}" # gets what is after the '.' and assumes is the orga
 sampleName=$(echo $mappedDir | rev | cut -d'/' -f3 | rev) # gets the sample name (3d column from the end of the mapped dir)
 sampleAnalysisDir=$(echo $mappedDir | rev | cut -d'/' -f3- | rev) #gets the analysis directory of the sample (everything before the 3 column)
 #		Directories
-outputDir="${sampleAnalysisDir}/05.ASSEMBLY/${organism}/"
+outputDir="${sampleAnalysisDir}/07.ASSEMBLY/${organism}/"
 #		Input Files
-mappedR1Fastq="${mappedDir}${sampleName}_*_R1.fastq"
-mappedR2Fastq="${mappedDir}${sampleName}_*_R2.fastq"
+mappedR1Fastq="${mappedDir}${sampleName}_WG*_R1.fastq"
+mappedR2Fastq="${mappedDir}${sampleName}_WG*_R2.fastq"
 #		Output Files
 lablog="${outputDir}${sampleName}_assembly.log"
 
