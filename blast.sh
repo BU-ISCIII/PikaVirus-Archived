@@ -13,15 +13,17 @@ set -e
 function blast {
 #	GET ARGUMENTS
 sampleAnalysisDir=$1
-virDB=$2
+refDB=$2
 #	INITIALIZE VARIABLES
 sampleName=$(basename $sampleAnalysisDir) # gets the sample name
-vir_BLASTn_DB="${virDB}blastn/viral_blastn"
-vir_BLASTx_DB="${virDB}blastx/viral_blastx"
+organism=$(basename $refDB | cut -d'_' -f1) #gets the organism
+blastDB="${refDB}BLAST/"
+BLASTn_DB="${blastDB}blastn/${organism}_blastn"
+BLASTx_DB="${blastDB}blastx/${organism}_blastx"
 #		Directories
-outputDir="${sampleAnalysisDir}08.BLAST/VIRUS/"
+outputDir="${sampleAnalysisDir}08.BLAST/${organism}/"
 #		Input Files
-sampleContig="${sampleAnalysisDir}07.ASSEMBLY/VIRUS/spades/contigs.fasta"
+sampleContig="${sampleAnalysisDir}07.ASSEMBLY/${organism}/spades/contigs.fasta"
 #		Output Files
 blastnResult="${outputDir}${sampleName}_BLASTn.blast"
 blastxResult="${outputDir}${sampleName}_BLASTx.blast"
@@ -42,8 +44,8 @@ fi
 #	RUN BLASTn	
 echo -e "$(date)\t start running BLASTn for ${sampleName}\n" > $lablog
 echo -e "$(date)\t start running BLASTn for ${sampleName}"
-echo -e "The command is: ### blastn -db $vir_BLASTn_DB -query $sampleContig -outfmt '6 stitle std qseq' > $blastResult ###" >> $lablog
-blastn -db $vir_BLASTn_DB -query $sampleContig -outfmt '6 stitle std qseq' > $blastnResult 
+echo -e "The command is: ### blastn -db $BLASTn_DB -query $sampleContig -outfmt '6 stitle std qseq' > $blastResult ###" >> $lablog
+blastn -db $BLASTn_DB -query $sampleContig -outfmt '6 stitle std qseq' > $blastnResult 
 echo -e "$(date)\t finished running BLASTn for ${sampleName}\n" >> $lablog
 #	CREATE FASTA WITH SEQUENCES THAT ALIGN 
 
@@ -51,12 +53,12 @@ echo -e "$(date)\t finished running BLASTn for ${sampleName}\n" >> $lablog
 #	RUN BLASTx and RAPSearch2
 echo -e "$(date)\t start running BLASTx for ${sampleName}\n" >> $lablog
 echo -e "$(date)\t start running BLASTx for ${sampleName}" 
-echo -e "The command is: ### blastx -db $vir_BLASTx_DB -query $sampleContig -html > $blastResult ###" >> $lablog
-blastx -db $vir_BLASTx_DB -query $sampleContig -outfmt '6 stitle std' > $blastxResult 
+echo -e "The command is: ### blastx -db $BLASTx_DB -query $sampleContig -html > $blastResult ###" >> $lablog
+blastx -db $BLASTx_DB -query $sampleContig -outfmt '6 stitle std' > $blastxResult 
 echo -e "$(date)\t finished running BLASTx for ${sampleName}\n" >> $lablog
 
 #grep -A 5 -B 3 ">" $blastnResult > $blastnHits
 
 }
 
-#blast /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/ANALYSIS/MuestraPrueba/ /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/VIRUS_GENOME_REFERENCE/
+blast /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/ANALYSIS/MuestraPrueba/ /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/VIRUS_GENOME_REFERENCE/
