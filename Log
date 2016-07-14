@@ -255,3 +255,4 @@ fqsub makeblastdb -in /processing_Data/bioinformatics/research/20160530_METAGENO
 
 - Hay que bajar las BD de proteina de cada organismo y crear la base de datos de basttx:
 fqsub makeblastdb -in /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/Viral_2.1_Genomic/viral.nonredundant_protein.1.protein.faa -parse_seqids -dbtype prot -out BACTERIA_blastx
+- Hay que revisar el script de mapper parasite para dividirlo en protozoa y invert.
