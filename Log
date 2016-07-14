@@ -242,4 +242,16 @@ encabezado con cdhit.En la we de srst2 indican cómo hacerlo:
 https://github.com/katholt/srst2#clustering-sequences
 Lo primero es generar el archivo clusterizado. Clusteriza las secuencias que se parecen en más de un 90% (param -c 0.9)
 /opt/cdhit/cd-hit-est -i 16S_GreenGenes.fasta -o 16S_GreenGenes_Cluster0.90 -d 0 -c 0.9 -M 2047 > lablog
-Lo probaré con varios % a ver qué queda.
+Lo probaré con varios % a ver qué queda:
+nohup /opt/cdhit/cd-hit-est -i 16S_GreenGenes.fasta -o 16S_GreenGenes_Cluster0.96 -d 0 -c 0.97 -M 10240 &> lablog096 &
+
+14-7-2016
+- Normalizo el código
+- Creo la DB de blastn de todas las ref
+fqsub makeblastdb -in /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/BACTERIA_GENOME_REFERENCE/WG/bact_wg_all.fna -parse_seqids -dbtype nucl -out /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/BACTERIA_GENOME_REFERENCE/BLAST/blastn/BACTERIA_blastn
+fqsub makeblastdb -in /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/FUNGI_GENOME_REFERENCE/WG/fungi_all.fna -parse_seqids -dbtype nucl -out /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/FUNGI_GENOME_REFERENCE/BLAST/blastn/FUNGI_blastn
+fqsub makeblastdb -in /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/INVERTEBRATE_GENOME_REFERENCE/WG/invertebrate_wg_all.fna -parse_seqids -dbtype nucl -out /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/INVERTEBRATE_GENOME_REFERENCE/BLAST/blastn/INVERTEBRATE_blastn
+fqsub makeblastdb -in /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/PROTOZOA_GENOME_REFERENCE/WG/protozoa_wg_all.fna -parse_seqids -dbtype nucl -out /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/PROTOZOA_GENOME_REFERENCE/BLAST/blastn/PROTOZOA_blastn
+
+- Hay que bajar las BD de proteina de cada organismo y crear la base de datos de basttx:
+fqsub makeblastdb -in /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/REFERENCES/Viral_2.1_Genomic/viral.nonredundant_protein.1.protein.faa -parse_seqids -dbtype prot -out BACTERIA_blastx
