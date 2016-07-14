@@ -11,7 +11,7 @@ echo -e " |_|   |_|_______| |___| |__| |__|_______| |___| |_______|_|   |_|__| |
 echo -e ""
 echo -e "**********************************************************************************************"
 
-# Backbone file for the metagenomics project. Multiple other scripts
+# Wrapper file for the metagenomics project. Multiple other scripts
 # will be called from this one. All scripts assume the following
 # file structure (and will create it if it doesn't exist):
 #	ANALYSIS
@@ -39,15 +39,39 @@ echo -e "***********************************************************************
 #			xxxxxx_2.fasta
 #	REFERENCES
 #		HUMAN_GENOME_REFERENCE
-#		BACTERIA_16S_REFERENCE
+#			WG
+#				bwt2
+#		BACTERIA_GENOME_REFERENCE
+#			16S
+#				bwt2
+#			WG
+#				bwt2
 #		VIRUS_GENOME_REFERENCE
+#			WG
+#				bwt2
+#		FUNGI_GENOME_REFERENCE
+#			WG
+#				bwt2
+#			ITS
+#				bwt2
+#		PARASITE_GENOME_REFERENCE
+#			INVERTEBRATE_GENOME_REFERENCE
+#				WG
+#					bwt2
+#			PARASITE_GENOME_REFERENCE
+#				WG
+#					bwt2
 #	RESULTS
 #	TMP
+# Notes: inside each bwt2 folder are the bowtie index files for that DB.
+#	================================================
 # DEPENDENCIES:
 # This program requires the following dependencies:
 # - trimmommatic
 # - bowtie2
 # - spades
+# - BLAST
+# - samtools
 # The pipeline will do the following:
 # 1. Quality control using trimmommatic.
 # 2. Host removal mapping with bowtie2. 
@@ -61,10 +85,10 @@ echo -e "***********************************************************************
 #	GLOBAL VARIABLES
 workingDir='/processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/'
 hostDB="${workingDir}REFERENCES/HUMAN_GENOME_REFERENCE/hg38.AnalysisSet"
-bacDB="${workingDir}REFERENCES/BACTERIA_16S_REFERENCE/"
-bac_bwt2_DB="${bacDB}bowtie2/16S"
+bacDB="${workingDir}REFERENCES/BACTERIA_GENOME_REFERENCE/"
 virDB="${workingDir}REFERENCES/VIRUS_GENOME_REFERENCE/"
-vir_bwt2_DB="${virDB}bowtie2/all.fna.tar.gz"
+fungiDB="${workingDir}REFERENCES/FUNGI_GENOME_REFERENCE/"
+parasiteDB="${workingDir}REFERENCES/PARASITE_GENOME_REFERENCE/"
 vir_BLASTn_DB="${virDB}blastn/viral_blastn"
 vir_BLASTx_DB="${virDB}blastx/viral_blastx"
 
@@ -106,6 +130,14 @@ then
 	mkdir -p "$sampleAnalysisDir"
 fi
 
+#                     _ _ _                           _             _ 
+#    __ _ _   _  __ _| (_) |_ _   _    ___ ___  _ __ | |_ _ __ ___ | |
+#   / _` | | | |/ _` | | | __| | | |  / __/ _ \| '_ \| __| '__/ _ \| |
+#  | (_| | |_| | (_| | | | |_| |_| | | (_| (_) | | | | |_| | | (_) | |
+#   \__, |\__,_|\__,_|_|_|\__|\__, |  \___\___/|_| |_|\__|_|  \___/|_|
+#      |_|                    |___/                                   
+
+
 #	TRIMMOMMATIC QUALITY CONTROL
 #	Create sh file
 echo -e "$(date): ********* Start quaility control **********" > "${sampleAnalysisLog}"
@@ -127,6 +159,13 @@ $(${sampleAnalysisDir}/01.PREPROCESSING/TRIMMOMATIC/trimmomatic.sh)
 echo -e "$(date): Finished executing trimmommatic" >> "${sampleAnalysisLog}"
 echo -e "$(date): ********* Finished quaility control **********" >> "${sampleAnalysisLog}"
 
+#   _               _                                        _ 
+#  | |__   ___  ___| |_   _ __ ___ _ __ ___   _____   ____ _| |
+#  | '_ \ / _ \/ __| __| | '__/ _ \ '_ ` _ \ / _ \ \ / / _` | |
+#  | | | | (_) \__ \ |_  | | |  __/ | | | | | (_) \ V / (_| | |
+#  |_| |_|\___/|___/\__| |_|  \___|_| |_| |_|\___/ \_/ \__,_|_|
+# 
+
 #	HOST REMOVAL
 echo -e "$(date): ************* Start host removal ***************" >> "${sampleAnalysisLog}"
 echo -e "************** Now, we need to remove the host genome *************" 
@@ -140,7 +179,12 @@ echo -e " Execute removeHost $hostDB $sampleAnalysisDir" >> "${sampleAnalysisLog
 removeHost $hostDB $sampleAnalysisDir 
 echo -e "$(date): ************ Finished host removal ************" >> "${sampleAnalysisLog}"
 
-
+#   _                _            _       
+#  | |__   __ _  ___| |_ ___ _ __(_) __ _ 
+#  | '_ \ / _` |/ __| __/ _ \ '__| |/ _` |
+#  | |_) | (_| | (__| ||  __/ |  | | (_| |
+#  |_.__/ \__,_|\___|\__\___|_|  |_|\__,_|
+#   
 #	BACTERIA MAPPING
 echo -e "$(date): ******** start mapping bacteria ***********" >> "${sampleAnalysisLog}"
 echo -e "******************* Great! Let's map some bacteria ****************"
@@ -150,22 +194,9 @@ then
 fi
 #	execute bacteria mapping script
 source ${workingDir}ANALYSIS/SRC/bac_mapper_new.sh
-echo -e " Execute map_bacteria $bac_bwt2_DB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
+echo -e " Execute map_bacteria $bacDB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
 map_bacteria $bacDB $sampleAnalysisDir
 echo -e "$(date): ******** Finished mapping bacteria **********" >> "${sampleAnalysisLog}"
-
-#	VIRUS MAPPING
-echo -e "$(date): ******** start mapping virus ***********" >> "${sampleAnalysisLog}"
-echo -e "******************* Great! Let's map some virus ****************"
-if [ ! -x ${workingDir}ANALYSIS/SRC/vir_mapper_new.sh ]
-then
-	chmod +x ${workingDir}ANALYSIS/SRC/vir_mapper_new.sh 
-fi
-#	execute virus mapping script
-source ${workingDir}ANALYSIS/SRC/vir_mapper_new.sh
-echo -e " Execute map_virus $vir_bwt2_DB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
-map_virus $vir_bwt2_DB $sampleAnalysisDir
-echo -e "$(date): ******** Finished mapping virus **********" >> "${sampleAnalysisLog}"
 
 #	ASSEMBLY FOR BACTERIA
 echo -e "$(date): ******** start assemblying bacteria ***********" >> "${sampleAnalysisLog}"
@@ -179,6 +210,39 @@ source ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh
 echo -e " Execute assemble $bacteriaDir" >> "${sampleAnalysisLog}"
 assemble $bacteriaDir
 echo -e "$(date): ******** Finished assemblying bacteria ***********" >> "${sampleAnalysisLog}"
+
+#	BLAST 
+echo -e "$(date): ******** Start running BLAST for bacteria ***********" >> "${sampleAnalysisLog}"
+echo -e "******************* Drums, drums in the deep (of the sample, of course)... ****************"
+if [ ! -x ${workingDir}ANALYSIS/SRC/blast.sh ]
+then
+	chmod +x ${workingDir}ANALYSIS/SRC/blast.sh 
+fi
+#	execute blast script
+source ${workingDir}ANALYSIS/SRC/blast.sh 
+echo -e " Execute blast $sampleAnalysisDir $bacDB" >> "${sampleAnalysisLog}"
+blast $sampleAnalysisDir $bacDB
+echo -e "$(date): ******** Finished bacteria blast ***********" >> "${sampleAnalysisLog}"
+
+#         _                
+#  __   _(_)_ __ _   _ ___ 
+#  \ \ / / | '__| | | / __|
+#   \ V /| | |  | |_| \__ \
+#    \_/ |_|_|   \__,_|___/
+#                          
+
+#	VIRUS MAPPING
+echo -e "$(date): ******** start mapping virus ***********" >> "${sampleAnalysisLog}"
+echo -e "******************* Great! Let's map some virus ****************"
+if [ ! -x ${workingDir}ANALYSIS/SRC/vir_mapper_new.sh ]
+then
+	chmod +x ${workingDir}ANALYSIS/SRC/vir_mapper_new.sh 
+fi
+#	execute virus mapping script
+source ${workingDir}ANALYSIS/SRC/vir_mapper_new.sh
+echo -e " Execute map_virus $virDB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
+map_virus $virDB $sampleAnalysisDir
+echo -e "$(date): ******** Finished mapping virus **********" >> "${sampleAnalysisLog}"
 
 #	ASSEMBLY FOR VIRUS
 echo -e "$(date): ******** Start assemblying virus ***********" >> "${sampleAnalysisLog}"
@@ -202,8 +266,98 @@ then
 fi
 #	execute blast script
 source ${workingDir}ANALYSIS/SRC/blast.sh 
-echo -e " Execute assemble $virusDir" >> "${sampleAnalysisLog}"
+echo -e " Execute blast $sampleAnalysisDir $virDB" >> "${sampleAnalysisLog}"
 blast $sampleAnalysisDir $virDB
-echo -e "$(date): ******** Finished assemblying virus ***********" >> "${sampleAnalysisLog}"
+echo -e "$(date): ******** Finished virus blast ***********" >> "${sampleAnalysisLog}"
 
+#    __                   _ 
+#   / _|_   _ _ __   __ _(_)
+#  | |_| | | | '_ \ / _` | |
+#  |  _| |_| | | | | (_| | |
+#  |_|  \__,_|_| |_|\__, |_|
+# 
 
+#	FUNGI MAPPING
+echo -e "$(date): ******** start mapping fungi ***********" >> "${sampleAnalysisLog}"
+echo -e "******************* Mushroom hunting, yay! ****************"
+if [ ! -x ${workingDir}ANALYSIS/SRC/fungi_mapper.sh ]
+then
+	chmod +x ${workingDir}ANALYSIS/SRC/fungi_mapper.sh 
+fi
+#	execute fungi mapping script
+source ${workingDir}ANALYSIS/SRC/fungi_mapper.sh
+echo -e " Execute map_fungi $fungiDB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
+map_fungi $fungiDB $sampleAnalysisDir
+echo -e "$(date): ******** Finished mapping fungi **********" >> "${sampleAnalysisLog}"
+
+#	ASSEMBLY FOR FUNGI
+echo -e "$(date): ******** Start assemblying fungi ***********" >> "${sampleAnalysisLog}"
+echo -e "******************* Assemblying is fun(gi)!! ****************"
+if [ ! -x ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh ]
+then
+	chmod +x ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh 
+fi
+#	execute assembly script
+source ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh
+echo -e " Execute assemble $fungiDir" >> "${sampleAnalysisLog}"
+assemble $fungiDir
+echo -e "$(date): ******** Finished assemblying fungi ***********" >> "${sampleAnalysisLog}"
+
+#	BLAST 
+echo -e "$(date): ******** Start running BLAST for fungi ***********" >> "${sampleAnalysisLog}"
+echo -e "******************* Can we eat the fungi we found? BLAST will say ****************"
+if [ ! -x ${workingDir}ANALYSIS/SRC/blast.sh ]
+then
+	chmod +x ${workingDir}ANALYSIS/SRC/blast.sh 
+fi
+#	execute blast script
+source ${workingDir}ANALYSIS/SRC/blast.sh 
+echo -e " Execute blast $sampleAnalysisDir $fungiDB" >> "${sampleAnalysisLog}"
+blast $sampleAnalysisDir $fungiDB
+echo -e "$(date): ******** Finished fungi blast ***********" >> "${sampleAnalysisLog}"
+
+#                             _ _       
+#   _ __   __ _ _ __ __ _ ___(_) |_ ___ 
+#  | '_ \ / _` | '__/ _` / __| | __/ _ \
+#  | |_) | (_| | | | (_| \__ \ | ||  __/
+#  | .__/ \__,_|_|  \__,_|___/_|\__\___|
+#  |_| 
+
+#	VIRUS MAPPING
+echo -e "$(date): ******** start mapping parasite ***********" >> "${sampleAnalysisLog}"
+echo -e "******************* parasites.... are you there? ****************"
+if [ ! -x ${workingDir}ANALYSIS/SRC/parasite_mapper.sh ]
+then
+	chmod +x ${workingDir}ANALYSIS/SRC/parasite_mapper.sh 
+fi
+#	execute parasite mapping script
+source ${workingDir}ANALYSIS/SRC/parasite_mapper.sh
+echo -e " Execute map_parasite $parasiteDB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
+map_parasite $parasiteDB $sampleAnalysisDir
+echo -e "$(date): ******** Finished mapping parasite **********" >> "${sampleAnalysisLog}"
+
+#	ASSEMBLY FOR PARASITES	
+echo -e "$(date): ******** Start assemblying parasites ***********" >> "${sampleAnalysisLog}"
+echo -e "******************* If we assemble paras... do we get parasite? ****************"
+if [ ! -x ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh ]
+then
+	chmod +x ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh 
+fi
+#	execute assembly script
+source ${workingDir}ANALYSIS/SRC/SPAdes_assembly.sh
+echo -e " Execute assemble $parasiteDir" >> "${sampleAnalysisLog}"
+assemble $parasiteDir
+echo -e "$(date): ******** Finished assemblying parasites ***********" >> "${sampleAnalysisLog}"
+
+#	BLAST 
+echo -e "$(date): ******** Start running BLAST for parasites ***********" >> "${sampleAnalysisLog}"
+echo -e "******************* BLASTed parasites! ****************"
+if [ ! -x ${workingDir}ANALYSIS/SRC/blast.sh ]
+then
+	chmod +x ${workingDir}ANALYSIS/SRC/blast.sh 
+fi
+#	execute blast script
+source ${workingDir}ANALYSIS/SRC/blast.sh 
+echo -e " Execute blast $sampleAnalysisDir $parasiteDB" >> "${sampleAnalysisLog}"
+blast $sampleAnalysisDir $parasiteDB
+echo -e "$(date): ******** Finished parasite blast ***********" >> "${sampleAnalysisLog}"

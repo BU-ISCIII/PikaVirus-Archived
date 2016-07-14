@@ -65,7 +65,7 @@ echo -e "The command is: ###samtools view -F 0x40 $mappedSamITSFile | awk '{if($
 samtools view -F 0x40 $mappedSamITSFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $fungiMappedR1ITSFastq
 echo -e "The command is: ###samtools view -f 0x40 $mappedSamITSFile | awk '{if($3 != '*') print '@' $1 '\\n' $10 '\\n' '-' '\\n' $11}' > $fungiMappedR2ITSFastq" >> $bowtie2logFileITS
 samtools view -f 0x40 $mappedSamITSFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $fungiMappedR2ITSFastq
-	samtools separates R1 (-F) or R2 (-f) reads using the mapped SAM file and awk filters those mapped (=!"*") in fastq format
+#	samtools separates R1 (-F) or R2 (-f) reads using the mapped SAM file and awk filters those mapped (=!"*") in fastq format
 echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to ITS \n" >> $bowtie2logFileITS
 
 ################################################################################################	
