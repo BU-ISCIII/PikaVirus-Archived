@@ -1,34 +1,45 @@
+#!/bin/bash
 set -e
 #########################################################
 #		  SCRIPT TO ASSEMBLE READS USING SPADES		 	#
 #########################################################
-# Arguments:
-# $1 = (mappedDir) Group Directory. Directory where the fastq to be assembled are located.
 # 1. Creates necessary directories. 
-# 2. Assembles fastq files.
-# 3. Runs quast to see quality
-# Output files: (In ANALYSIS/sampleName/05.ASSEMBLY)
-# sampleName_bacteria_mapped.sam: SAM file from mapping the processed files against the reference genome.
-# sampleName_*_R1.fastq: .fastq file with R1 reads that mapped the DB.
-# sampleName_*_R2.fastq: .fastq file with R2 reads that mapped the DB.
+# 2. Assembles fastq files with spades.
+# 3. Runs quast to check alignment quality
+# Note: this script must be run only after mapping against a reference with the appropiate mapper_organism.sh script.
+
+# Arguments:
+# $1 (mappedDir) = Group Directory. Directory where the fastq to be assembled are located. (ANALYSIS/xx-organism/sampleName/reads)
+
+# Input files: (In mappedDir)
+# mappedR1Fastq = R1 alignment file.
+# mappedR2Fastq = R2 alignment file. 
+
+# Output files: (In ANALYSIS/xx-organism/sampleName/contigs)
+# spades output files (contigs.fasta, scaffolds.fasta...)
 # sampleName_assembly.log: .log file with a log of the mapping.
+# quast/: quast output files
+
 
 function assemble {
 #	GET ARGUMENTS
-mappedDir=$1  
+mappedDir=$1  # analysisDir/xx-organism/sampleName/reads/
 #	INITIALIZE VARIABLES
-#		Organism
-organism="${mappedDir##*.}" # gets what is after the '.' and assumes is the organism
-sampleName=$(echo $mappedDir | rev | cut -d'/' -f3 | rev) # gets the sample name (3d column from the end of the mapped dir)
-sampleAnalysisDir=$(echo $mappedDir | rev | cut -d'/' -f3- | rev) #gets the analysis directory of the sample (everything before the 3 column)
+#		Constants
+sampleName=$(echo $mappedDir | rev | cut -d'/' -f3 | rev) # (sampleName)
+organismDir=$(echo $mappedDir | rev | cut -d'/' -f4 | rev) # (xx-organism)
+organism="${organismDir##*-}" # (organism)
 #		Directories
-outputDir="${sampleAnalysisDir}/07.ASSEMBLY/${organism}/"
+outputDir="$(echo $mappedDir | rev | cut -d'/' -f3- | rev)/contigs/" # where the contigs will be saved (workingDir/ANALYSIS/xx-organism/sampleName/contigs)
 #		Input Files
-mappedR1Fastq="${mappedDir}${sampleName}_WG*_R1.fastq"
-mappedR2Fastq="${mappedDir}${sampleName}_WG*_R2.fastq"
+mappedR1Fastq="${mappedDir}${sampleName}*_R1.fastq"
+mappedR2Fastq="${mappedDir}${sampleName}*_R2.fastq"
 #		Output Files
 lablog="${outputDir}${sampleName}_assembly.log"
 
+# load programs in module (comment for local runs) 
+#module load SPAdes-3.8.0
+#module load quast-4.1
 
 echo -e "$(date)" 
 echo -e "*********** ASSEMBLY $sampleName ************"
@@ -39,20 +50,28 @@ then
 	mkdir -p $outputDir
 	echo -e "${outputDir} created"
 fi
-	
+
+
+if [ ! -d "${outputDir}quast" ]
+then
+	mkdir -p "${outputDir}quast"
+	echo -e "${outputDir}quast created"
+fi
+
+
+
 #	RUN SPADES	
 echo -e "$(date)\t start running spades for ${sampleName} for ${organism}\n" > $lablog
 echo -e "The command is: ### spades.py --phred-offset 33 -1 $mappedR1Fastq -2 $mappedR2Fastq --meta -o $outputDir" >> $lablog
-spades.py --phred-offset 33 -1 $mappedR1Fastq -2 $mappedR2Fastq --meta -o ${outputDir}spades 2>&1 | tee -a $lablog
+spades.py --phred-offset 33 -1 $mappedR1Fastq -2 $mappedR2Fastq --meta -o ${outputDir} 2>&1 | tee -a $lablog
 echo -e "$(date)\t finished running spades for ${sampleName} for ${organism}\n" >> $lablog
 
 #	RUN QUAST
 echo -e "$(date)\t start running quast for ${sampleName} for ${organism}\n" >> $lablog
-echo -e "The command is ###  metaquast.py -f ${outputDir}spades/contigs.fasta -o ${outputDir}quast/" >> $lablog
-metaquast.py -f ${outputDir}spades/contigs.fasta -o ${outputDir}quast/ 2>&1 | tee -a $lablog
+echo -e "The command is ###  metaquast.py -f ${outputDir}/contigs.fasta -o ${outputDir}quast/" >> $lablog
+metaquast.py -f ${outputDir}/contigs.fasta -o ${outputDir}quast/ 2>&1 | tee -a $lablog
 echo -e "$(date)\t finished running quast for ${sampleName} for ${organism}\n" >> $lablog
 
 
 }
 
-#assemble /processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/ANALYSIS/MuestraPrueba/04.VIRUS/
