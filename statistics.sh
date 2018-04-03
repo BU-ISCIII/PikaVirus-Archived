@@ -10,7 +10,7 @@ set -e
 # INPUT FILES: (In ANALYSIS/xx-organism/sampleName/blast/)
 # sampleName_filetered.blast: blast file generated after running blast.sh script.
 # OUTPUT FILES: (In ANALYSIS/xx-organism/sampleName/taxonomy/)
-# sampleName_organismList.txt: List of unique blast hits: unformated taxonomy, accession and number of hits. 
+# sampleName_organismList.txt: List of unique blast hits: unformated taxonomy, accession and number of hits.
 # sampleName_formated_organismList.txt: List of hits formated.
 # Note: This script can be run after executing the blast.sh, please keep in mind that it is highly dependent
 # of the format of the taxonomy of the reference database, and how the organism is described there.
@@ -20,11 +20,10 @@ set -e
 
 source ./pikaVirus.config
 
-# ARGUMENTS    
+# ARGUMENTS
 blastDir=$1 #analysisDir/xx-organism/sampleName/blast/
 
 # CONSTANTS
-#workingDir="/processing_Data/bioinformatics/research/20160530_METAGENOMICS_AR_IC_T/"
 sampleName=$(echo $blastDir | rev | cut -d'/' -f3 | rev) #gets the second to last column (sampleName)
 organismDir=$(echo $blastDir | rev | cut -d'/' -f4 | rev) # gets the 3 to last column (xx-organism)
 organism="${organismDir##*-}" # gets what is after the '-' and assumes is the organism
@@ -80,15 +79,15 @@ do
 			# Puccinia triticina 90.05   7e-63     244
 			;;
 		protozoa)
-			#Perkinsus marinus ATCC 50983 genomic scaffold scf_1104296975874, whole genome shotgun sequence	NODE_2_length_593_cov_5.33643	NW_003200631.1	91.32	380	31	2	215	593	970	592	2e-144	  518  
+			#Perkinsus marinus ATCC 50983 genomic scaffold scf_1104296975874, whole genome shotgun sequence	NODE_2_length_593_cov_5.33643	NW_003200631.1	91.32	380	31	2	215	593	970	592	2e-144	  518
 			echo "${entry}" | awk -F"	" 'BEGIN{OFS="\t";} {sub(/,/,"");sub(/genomic/,"");sub(/assembly/,"");sub(/whole/,"");sub(/shotgun/,"");sub(/genome/,"");sub(/strain/,"");sub(/str./,"");sub(/complete/,"");sub(/sequence/,"");sub(/assembly/,"");print $1, $4, $5, $6}' >> "${organism_formated_list}"
 			;;
 		invertebrate)
-			# Nematostella vectensis NEMVEscaffold_1252 genomic scaffold, whole genome shotgun sequence	NW_001833215.1  
+			# Nematostella vectensis NEMVEscaffold_1252 genomic scaffold, whole genome shotgun sequence	NW_001833215.1
 			echo "${entry}" | awk -F"	" 'BEGIN{OFS="\t";} {sub(/,/,"");sub(/genomic/,"");sub(/assembly/,"");sub(/whole/,"");sub(/shotgun/,"");sub(/genome/,"");sub(/strain/,"");sub(/str./,"");sub(/complete/,"");sub(/sequence/,"");sub(/assembly/,"");print $1, $4, $5, $6}' >> "${organism_formated_list}"
 			;;
 		*) echo "Unknown organism"
 	esac
 done
 # count gnm in sample
-awk -F'\t' '{print $1}' "${organism_formated_list}" | sort | uniq -c | sort -nr >> "${statisticsFile}" 
+awk -F'\t' '{print $1}' "${organism_formated_list}" | sort | uniq -c | sort -nr >> "${statisticsFile}"

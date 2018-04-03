@@ -21,7 +21,7 @@ source ./pikaVirus.config
 # - resultsDir
 
 #	GET PARAMETERS
-sampleDir=$1  #/workingDir/ANALYSIS/xx-organism/sampleName/
+sampleDir=$1  #/analysisDir/xx-organism/sampleName/
 
 #	INITIALIZE VARIABLES
 genomeId=""

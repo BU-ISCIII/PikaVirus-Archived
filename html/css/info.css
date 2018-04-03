@@ -1,0 +1,242 @@
+/* -------------------------------- 
+
+Primary style
+
+-------------------------------- */
+html * {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *:after, *:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  /*
+  font-size: 100%;
+  font-family: "Roboto", sans-serif;
+  color: #3d3536;
+  background-color: white;
+  */
+}
+
+body, html {
+  /* important */
+  height: 100%;
+}
+a {
+  /*
+  color: #a6989a;
+  */
+}
+
+/*Wrapper nav*/
+.scroller {
+  position: relative;
+  height: 85%;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin-right: 0;
+  overflow-y: scroll;
+
+}
+/* End Wrapper nav*/
+
+/* Vertical Navigation*/
+.scroller > nav {
+  position: fixed;
+  z-index: 9999;
+  right: 20px;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+
+}
+
+.scroller > nav a {
+  display: block;
+  position: relative;
+  color: transparent;
+  height: 50px;
+}
+
+.scroller > nav a:before {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 4px solid #1C8598;
+}
+
+.scroller > nav a:hover:before {
+  background-color: #1C8598;
+}
+
+
+.scroller > nav a.current:before {
+  background: #1C8598;
+}
+/* End Vertical Navigation*/
+
+/*DICTIONARY*/
+dl {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  margin: 0
+}
+dt {
+  float: left;
+  width: 50%;
+  /* adjust the width; make sure the total of both is 100% */
+  padding: 0;
+  margin: 0
+  font-weight:bold;
+}
+dd {
+  float: left;
+  width: 50%;
+  /* adjust the width; make sure the total of both is 100% */
+  padding: 0;
+  margin: 0
+}
+
+
+/* -------------------------------- 
+
+Modules - reusable parts of our design
+
+-------------------------------- */
+section{
+  margin: 0;
+  padding: 0;
+}
+
+.cd-container {
+  /* this class is used to give a max-width to the element it is applied to, and center it horizontally when it reaches that max-width */
+  width: 90%;
+  max-width: 768px;
+  margin: 0 auto;
+}
+.cd-container::after {
+  /* clearfix */
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.cd-main-content {
+  /* you need to assign a min-height to the main content so that the children can inherit it*/
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.cd-fixed-bg {
+  position: relative;
+  min-height: 75%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  z-index: 1;
+}
+.cd-fixed-bg h1, .cd-fixed-bg h2 {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  bottom: auto;
+  right: auto;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  -o-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+  width: 90%;
+  max-width: 1170px;
+  text-align: center;
+  font-size: 30px;
+  font-size: 1.875rem;
+  /*text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);*/
+  color: #74777b;
+  opacity: 1;
+  filter: alpha(opacity=100); /* For IE8 and earlier */
+}
+
+.cd-fixed-bg{
+  opacity: 0.2;
+  filter: alpha(opacity=20); /* For IE8 and earlier */
+  max-width: 100%;
+
+}
+.cd-fixed-bg.cd-bg-1 {
+  background-image: url("../img/overview.png");
+}
+.cd-fixed-bg.cd-bg-2 {
+  background-image: url("../img/quality.png");
+}
+.cd-fixed-bg.cd-bg-3 {
+  background-image: url("../img/summary.png");
+}
+.cd-fixed-bg.cd-bg-4 {
+  background-image: url("../img/sample.png");
+}
+@media only screen and (min-width: 320px) {
+  .cd-fixed-bg h1, .cd-fixed-bg h2 {
+    font-size: 36px;
+  }
+}
+@media only screen and (min-width: 480px) {
+  .cd-fixed-bg {
+    background-attachment: fixed;
+  }
+  .cd-fixed-bg h1, .cd-fixed-bg h2 {
+    font-size: 48px;
+    font-weight: 300;
+  }
+}
+
+.cd-scrolling-bg {
+  position: relative;
+  min-height: 50%;
+  padding: 4em 0;
+  line-height: 1.6;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+.cd-scrolling-bg.cd-color-1 {
+  background: rgba(40,44,42,0.05);
+  /*
+  background-color: #3d3536;
+  color: #a6989a;
+  */
+}
+.cd-scrolling-bg.cd-color-2 {
+  background: rgba(40,44,42,0.05);
+  /*
+  background-color: #3d3536;
+  color: #a6989a;
+  */
+}
+.cd-scrolling-bg.cd-color-3 {
+  background: rgba(40,44,42,0.05);
+  /*
+  background-color: #3d3536;
+  color: #a6989a;
+  */
+}
+@media only screen and (min-width: 480px) {
+  .cd-scrolling-bg {
+    padding: 8em 0;
+    font-size: 20px;
+    font-size: 1.25rem;
+    line-height: 2;
+    font-weight: 300;
+  }
+}

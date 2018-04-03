@@ -4,7 +4,7 @@ set -e
 #########################################################
 #		  			PREPROCESSING SCRIPT			 	#
 #########################################################
-# 1. Creates necessary directories. 
+# 1. Creates necessary directories.
 # 2. Runs quality control of the raw reads with fastQC.
 # 3. Performs quality trimming with Trimmommatic.
 # 4. Runs quality control of the trimmed reads with fastQC
@@ -46,7 +46,7 @@ set -e
 #	sampleName_postQC.log: log file for the quality analysis.
 # sampleStatsDir = Quality report html directory. (ANALYSIS/99-stats/sampleName)
 
-source ./pikaVirus.config 
+source ./pikaVirus.config
 
 #	AWESOME SCRIPT
 echo -e "PIPELINE START: $(date)"
@@ -79,13 +79,7 @@ samplePostProQCDir="${analysisDir}/03-preproQC/${sampleName}"
 sampleStatsDir="${analysisDir}/99-stats/data/${sampleName}/"
 rawDir="${analysisDir}/00-reads/"
 
-
-# load programs in module (comment for local runs) 
-#module load FastQC-0.11.3
-#module load Trimmomatic-0.33
-
 function makedir {
-
 if [ ! -d "$1" ]
 then
 	mkdir -p "$1"
@@ -122,13 +116,13 @@ echo -e "$(date): ********* Finished quaility control **********" >> "${samplePo
 makedir $sampleStatsDir
 
 # copy fastqc files to 99-stats (y le cambio el nombre)
-find $samplePreProQCDir -name "*.zip" -exec unzip {} -d ${sampleStatsDir} \; 
+find $samplePreProQCDir -name "*.zip" -exec unzip {} -d ${sampleStatsDir} \;
 # change name of folder
 mv ${sampleStatsDir}${sampleName}*R1*/ "${sampleStatsDir}${sampleName}_prePro_R1_fastqc/"
 mv ${sampleStatsDir}${sampleName}*R2*/ "${sampleStatsDir}${sampleName}_prePro_R2_fastqc/"
 
 # copy fastqc files to 99-stats (y le cambio el nombre)
-find $samplePostProQCDir -name "*_paired_fastqc.zip" -exec unzip {} -d ${sampleStatsDir} \; 
+find $samplePostProQCDir -name "*_paired_fastqc.zip" -exec unzip {} -d ${sampleStatsDir} \;
 # change name of folder
 mv ${sampleStatsDir}${sampleName}*R1_paired*/ "${sampleStatsDir}${sampleName}_trimmed_R1_fastqc/"
 mv ${sampleStatsDir}${sampleName}*R2_paired*/ "${sampleStatsDir}${sampleName}_trimmed_R2_fastqc/"

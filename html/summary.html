@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang='en' class='no-js'>
+	<head>
+		<meta charset='UTF-8' />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta name='viewport' content='width=device-width, initial-scale=1'>
+		<title>Metagenomic Analysis</title>
+		<meta name='description' content='Metagenomic Analysis: Results report' />
+		<meta name='keywords' content='metagenetics, metagenomics, ISCIII, bioinformatics' />
+		<meta name='author' content='ISCIII Bioinformatics unit' />
+
+		<link rel='stylesheet' type='text/css' href='css/shared.css' />
+		<link rel='stylesheet' type='text/css' href='css/normalize.css' />
+		<link rel='stylesheet' type='text/css' href='css/summary.css' />
+		<!-- JQuery -->
+		<script src='js/jquery-3.1.0.js'></script>
+		<!--Thrid party-->
+		<script type="text/javascript" src="js/google-loader.js"></script>
+		<!--custom-->
+		<script src='js/main-nav.js'></script>
+		<script src='js/summary.js'></script>
+	</head>
+	<body>
+		<div class='container'>
+			<!-- Top Navigation -->
+			<header class='report-header'>
+				<div>
+					<h1>Metagenomic Analysis
+					<span>Results report</span>
+					<p class='support'>This browser doen't support<strong>flexbox</strong>! <br />To correctly view this report, please use an <strong>updated browser</strong>.</p>
+				</div>
+				<div class='socialMedia'>
+					<!--<span>Find us at: </span>-->
+					<a href='https://www.facebook.com/pages/Escuela-Nacional-de-Sanidad-Isciii/203300096355772?fref=ts' target='_blank'><img class = 'social' src='img/facebook.png' alt='Facebook'></a>
+					<a href='https://es.linkedin.com/in/andrea-rubio-ponce-55a34562' target='_blank'><img class = 'social' src='img/linkedin.png' alt='Linkedin'></a>
+					<a href='https://twitter.com/isciii_es' target='_blank'><img class = 'social' src='img/twitter.png' alt='Twitter'></a>
+					<a href='https://github.com/AndreaRP/METAGENOMICS' target='_blank'><img class = 'social' src='img/github.png' alt='GitHub'></a>
+					<a href='https://bitbucket.org/bioinfo_isciii/' target='_blank'><img class = 'social' src='img/bitbucket.png' alt='BitBucket'></a>
+				</div>
+				</h1>
+			</header>
+			<div id='contenido'>
+				<div class='tabs tabs-style-bar'>
+					<nav>
+						<ul id = 'horizontal-nav'>
+							<li class='tab-current'><a href='summary.html' class='icon icon-home'><span>Summary</span></a></li>
+							<li><a href='samples.html' class='icon icon-display'><span>Per Sample</span></a></li>
+							<li><a href='quality.html' class='icon icon-upload'><span>Quality analysis</span></a></li>
+							<li><a href='info.html' class='icon icon-book'><span>What is this?</span></a></li>
+						</ul>
+					</nav>
+					</div><!-- /tabs -->
+					
+					<div id = 'pagina' class='content-wrap'>
+						<div class='items vertical-nav'>
+							<nav>
+								<ul>
+									<li><a class='icon menu'  href='#
+										Unai-10
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-10
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-11
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-11
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-12
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-12
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-13
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-13
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-14
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-14
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-15
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-15
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-16
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-16
+										</span></a>
+									</li>
+									<li onclick='load_summary(this.innerText)'><a class='icon menu' href='#
+										Unai-17
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-17
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-18
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-18
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-1
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-1
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-2
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-2
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-3
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-3
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-4
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-4
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-5
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-5
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-6
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-6
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-7
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-7
+										</span></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-8
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-8
+										</span onclick='load_summary(this.innerText)'></a>
+									</li>
+									<li><a class='icon menu' href='#
+										Unai-9
+										'><span onclick='load_summary(this.innerText)'>
+											Sample-9
+										</span></a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+						<div style='display:none' class='results'>
+							<div class='Sample-1'>
+								<div class='bacteria'>
+									<span>
+										1 Streptomyces albulus ZPM
+										1 Staphylococcus aureus   NCTC8532 chromosome  1
+										1 Ralstonia pickettii 12J chromosome 2
+										1 Propionibacterium avidum 44067
+										1 Niastella koreensis GR20-10
+										1 Mycoplasma pneumoniae  S355
+										1 Mycobacterium vanbaalenii PYR-1
+										1 Luteipulveratus mongoliensis  MN07-A0370
+										1 Listeria monocytogenes J0161
+										1 Corynebacteriales bacterium X1698
+										1 Burkholderia vietnamiensis LMG 10929 chromosome III
+									</span>
+								</div>
+								<div class='virus'>
+									<span style='display:none'>
+										12 Human adenovirus C
+										1 Human adenovirus type 1
+									</span>
+								</div>
+								<div class='fungi'><span>
+									1 Puccinia triticina
+								</span></div>
+								<div class='protozoa'><span>
+									1 Toxoplasma gondii ME49 scf_1112359875260
+									1 Toxoplasma gondii ME49 scf_1112359874752
+									1 Entamoeba dispar SAW760 scf_1108853444641
+									1 Eimeria tenella Houghton  scaffold Eth_scaff3460,
+								</span></div>
+								<div class='invertebrate'><span>
+									2 Saccoglossus kowalevskii unplaced  scaffold Skow_1.1 scaffold7350
+									1 Priapulus caudatus unplaced  scaffold Priapulus_caudatus-5.0.1 Scaffold35933
+									1 Priapulus caudatus unplaced  scaffold Priapulus_caudatus-5.0.1 Scaffold15683
+									1 Limulus polyphemus unplaced  scaffold Limulus_polyphemus-2.1.2 Scaffold70667
+									1 Drosophila willistoni  TSC#14030-0811.24 scf2_1100000013978  scaffold
+									1 Apis dorsata unplaced  scaffold Apis dorsata 1.3 scaffold_50311
+									1 Apis dorsata unplaced  scaffold Apis dorsata 1.3 scaffold_49164
+								</span></div>
+							</div>
+							<div class='Sample-2'>
+								<div class='bacteria'>
+									<span>
+										4 Mycoplasma pneumoniae  S355
+										3 Mycoplasma pneumoniae  M2192
+										2 Variovorax paradoxus S110 chromosome 1
+										2 Burkholderia glumae LMG 2196 = ATCC 33617 chromosome I
+										1 Tsukamurella paurometabola DSM 20162
+										1 Shigella sp. PAMC 28760
+										1 Rothia mucilaginosa DY-18 DNA
+										1 Ralstonia pickettii DTP0602 chromosome 3
+										1 Pseudomonas stutzeri  19SMN4
+										1 Pseudomonadaceae bacterium E1148
+										1 Propionibacterium acnes TypeIA2 P.acn33
+										1 Propionibacterium acnes  PA_15_2_L1
+										1 Propionibacterium acnes  PA_12_1_L1
+										1 Propionibacterium acidipropionici  CGMCC 1.2230
+										1 Propionibacterium acidipropionici ATCC 4875
+										1 Polaromonas naphthalenivorans CJ2
+										1 Phenylobacterium zucineum HLK1
+										1 Niastella koreensis GR20-10
+										1 Mycoplasma genitalium M6320
+										1 Micrococcus luteus NCTC 2665
+										1 Listeria monocytogenes  SLCC2755 serotype 1/2b
+										1 Kytococcus sedentarius DSM 20547
+										1 Jonesia denitrificans DSM 20603
+										1 Frankia sp. CcI3
+										1 Enterococcus faecium Aus0085
+										1 Clodium scatologenes  ATCC 25775
+										1 Carnobacterium maltaromaticum LMA28
+										1 Brevundimonas subvibrioides ATCC 15264
+										1 Bacillus subtilis BEST7003 DNA
+										1 Bacillus simplex  SH-B26 plasmid pSHB26
+										1 Bacillus pumilus  GR-8
+										1 Actinosynnema mirum DSM 43827
+									</span>
+								</div>
+								<div class='virus'>
+									<span>
+										
+									</span>
+								</div>
+								<div class='fungi'>
+									<span>
+										
+									</span>
+								</div>
+								<div class='protozoa'>
+									<span>
+										4 Dictyostelium purpureum unplaced  scaffold DICPUscaffold_712
+										2 Phaeodactylum tricornutum CCAP 1055/1 chromosome 7
+										2 Hammondia hammondi  H.H.34 unplaced  scaffold scaffold04077
+										1 Toxoplasma gondii ME49 scf_1112359875290
+										1 Plasmodium berghei  ANKA contig PB_PH0033
+										1 Phytophthora infestans T30-4 supercont1.64  scaffold
+										1 Phaeodactylum tricornutum CCAP 1055/1 chromosome 13
+										1 Perkinsus marinus ATCC 50983  scaffold scf_1104296954906
+										1 Nannochloropsis gaditana CCMP526 unplaced  scaffold scaffold1666
+										1 Nannochloropsis gaditana CCMP526 unplaced  scaffold scaffold1527
+										1 Nannochloropsis gaditana CCMP526 unplaced  scaffold scaffold1345
+										1 Entamoeba nuttalli P19 unplaced  scaffold asmbl_6444
+										1 Entamoeba nuttalli P19 unplaced  scaffold asmbl_6233
+										1 Entamoeba histolytica HM-1:IMSS scf_1104750518525
+										1 Aphanomyces astaci  APO3 unplaced  scaffold supercont1.238
+									</span>
+								</div>
+								<div class='invertebrate'>
+									<span>
+										3 Priapulus caudatus unplaced  scaffold Priapulus_caudatus-5.0.1 Scaffold24598,
+										2 Crassoa gigas  05x7-T-G4-1.051#20 unplaced  scaffold oyster_v9 C24128,
+										2 Caenorhabditis remanei Scfld02_997  scaffold
+										1 Trichoplax adhaerens  Grell-BS-1999 TRIADscaffold_50
+										1 Priapulus caudatus unplaced  scaffold Priapulus_caudatus-5.0.1 Scaffold54146,
+										1 Parasteatoda tepidariorum isolate Goettingen unplaced  scaffold Ptep_1.0 Scaffold2605,
+										1 Nematostella vectensis NEMVEscaffold_6575  scaffold
+										1 Limulus polyphemus unplaced  scaffold Limulus_polyphemus-2.1.2 Scaffold19877,
+										1 Ixodes scapularis  Wikel colony 1108462908030
+										1 Drosophila sechellia  Rob3c scaffold_7254
+										1 Drosophila rhopaloa unplaced  scaffold Drho_2.0 scf7180000764828,
+										1 Drosophila kikkawai unplaced  scaffold Dkik_2.0 scf7180000302661,
+										1 Drosophila biarmipes unplaced  scaffold Dbia_2.0 scf7180000298782,
+										1 Diaphorina citri unplaced  scaffold Diaci psyllid   version 1.1 scaffold4083,  genome
+										1 Diaphorina citri unplaced  scaffold Diaci psyllid   version 1.1 scaffold2008,  genome
+										1 Culex pipiens quinquefasciatus supercont3.374  scaffold
+										1 Acyrthosiphon pisum  LSR1 unplaced  scaffold Acyr_2.0 Scaffold3748,
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class='charts'>
+							<div id='bacteria'></div>
+							<div id='virus'></div>
+							<div id='fungi'></div>
+							<div id='protozoa'></div>
+							<div id='invertebrate'></div>
+						</div>
+					</div>
+					</div><!-- /tabs -->
+					<footer class='web-footer'>
+						<div>
+							<span>
+								Icons made by
+								<a href='http://www.flaticon.com/authors/freepik' title='Freepik'>Freepik</a>, <a href='http://www.flaticon.com/authors/pixel-buddha' title='Pixel Buddha'>Pixel Buddha</a> and <a href='http://www.flaticon.com/authors/dave-gandy' title='Dave Gandy'>Dave Gandy</a>
+								from <a href='http://www.flaticon.com' title='Flaticon'>www.flaticon.com</a>. Licensed by <a href='http://creativecommons.org/licenses/by/3.0/' title='Creative Commons BY 3.0' target='_blank'>CC 3.0 BY</a>
+							</span>
+						</div>
+					</footer>
+				</div>
+			</body>
+		</html>

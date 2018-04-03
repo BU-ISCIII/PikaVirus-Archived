@@ -4,12 +4,12 @@ set -e
 #########################################################
 #	SCRIPT TO CREATE HTML PAGE WITH THE SAMPLE LIST		#
 #########################################################
-# 1. Gets the list of samples 
+# 1. Gets the list of samples
 # 2. Creates the sample list
-# Note: This script should only be run after the analysis is finished. 
+# Note: This script should only be run after the analysis is finished.
 
 # Arguments:
-# $1 (workingDir) = Directory of the analysis. 
+# $1 (workingDir) = Directory of the analysis.
 
 # Input Files: (In workingDir)
 # samples_id.txt: File generated with samplesID_gen.sh
@@ -22,7 +22,6 @@ source ./pikaVirus.config
 # - resultsDir
 
 #	GET PARAMETERS
-#workingDir=$1  #
 #		INPUT FILES
 samplesId="${analysisDir}/samples_id.txt"
 #		OUTPUT FILES
@@ -61,8 +60,8 @@ echo "
 					<p class='support'>This browser doen't support<strong>flexbox</strong>! <br />To correctly view this report, please use an <strong>updated browser</strong>.</p>
 				</div>
 				<div class='socialMedia'>
-					<!--<span>Find us at: </span>-->				
-					<a href='https://www.facebook.com/pages/Escuela-Nacional-de-Sanidad-Isciii/203300096355772?fref=ts' target='_blank'><img class = 'social' src='img/facebook.png' alt='Facebook'></a>				
+					<!--<span>Find us at: </span>-->
+					<a href='https://www.facebook.com/pages/Escuela-Nacional-de-Sanidad-Isciii/203300096355772?fref=ts' target='_blank'><img class = 'social' src='img/facebook.png' alt='Facebook'></a>
 					<a href='https://es.linkedin.com/in/andrea-rubio-ponce-55a34562' target='_blank'><img class = 'social' src='img/linkedin.png' alt='Linkedin'></a>
 					<a href='https://twitter.com/isciii_es' target='_blank'><img class = 'social' src='img/twitter.png' alt='Twitter'></a>
 					<a href='https://github.com/AndreaRP/METAGENOMICS' target='_blank'><img class = 'social' src='img/github.png' alt='GitHub'></a>
@@ -81,7 +80,7 @@ echo "
 						</ul>
 					</nav>
 					</div><!-- /tabs -->
-				
+
 				<div id = 'pagina' class='content-wrap'>
 					<div class='items vertical-nav'>
 					<nav>
@@ -99,7 +98,7 @@ echo "
 				  #  		"<li><a href='\''#sample'\''><span>Invertebrate</span></a></li>",
 				  #  	"</ul>",
 				  #  "</li>"}' >> $result_page
-					
+
 					 echo "
 					 <li><a class='icon menu' href='#""" >> $result_page
 					 echo $in >> $result_page
@@ -124,9 +123,9 @@ echo "
 			<footer class='web-footer'>
 				<div>
 				<span>
-					Icons made by
-					<a href='http://www.flaticon.com/authors/freepik' title='Freepik'>Freepik</a>, <a href='http://www.flaticon.com/authors/pixel-buddha' title='Pixel Buddha'>Pixel Buddha</a> and <a href='http://www.flaticon.com/authors/dave-gandy' title='Dave Gandy'>Dave Gandy</a> 
-					from <a href='http://www.flaticon.com' title='Flaticon'>www.flaticon.com</a>. Licensed by <a href='http://creativecommons.org/licenses/by/3.0/' title='Creative Commons BY 3.0' target='_blank'>CC 3.0 BY</a>
+					This report is for reference Use Only. It has not been approved, cleared, or licensed by any regulatory authority.
+					The user acknowledges no intended medical purpose or objective such as clinical
+					diagnosis, patient management, or human clinical trials.
 				</span>
 			</div>
 		</footer>

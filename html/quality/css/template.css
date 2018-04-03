@@ -1,0 +1,49 @@
+@charset "UTF-8";
+
+body{
+	background: #e7ecea;
+	color: #74777b;
+	font-weight: 400;
+	font-size: 1em;
+	font-family: 'Raleway', Arial, sans-serif;
+	line-height: 24px;
+
+}
+
+
+#wrapper{
+	width: auto;
+	background-color: none;
+	margin:0 auto;
+	height: 100%;
+	border-radius: 5px;
+	padding: 20px;
+}
+
+.tables{
+	border-collapse: collapse;
+	width: 100%;
+	margin:0 auto;
+}
+
+.tables td{
+	padding:2px 2px 2px 2px;
+	border:2px solid #74777b;;
+	width: auto;
+
+}
+
+.sample{
+	background-color:#1C8598;
+	color: white;
+	font-weight: bold;
+}
+
+.filter{
+	background-color:#1C8598;
+	color: white;
+}
+
+#imageWorkflow{
+	text-align: center;
+}

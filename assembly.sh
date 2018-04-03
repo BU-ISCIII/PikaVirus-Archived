@@ -3,7 +3,7 @@ set -e
 #########################################################
 #		  SCRIPT TO ASSEMBLE READS USING SPADES		 	#
 #########################################################
-# 1. Creates necessary directories. 
+# 1. Creates necessary directories.
 # 2. Assembles fastq files with spades.
 # 3. Runs quast to check alignment quality
 # Note: this script must be run only after mapping against a reference with the appropiate mapper_organism.sh script.
@@ -13,15 +13,15 @@ set -e
 
 # Input files: (In mappedDir)
 # mappedR1Fastq = R1 alignment file.
-# mappedR2Fastq = R2 alignment file. 
+# mappedR2Fastq = R2 alignment file.
 
 # Output files: (In ANALYSIS/xx-organism/sampleName/contigs)
 # spades output files (contigs.fasta, scaffolds.fasta...)
 # sampleName_assembly.log: .log file with a log of the mapping.
 # quast/: quast output files
 
+source ./pikaVirus.config
 
-function assemble {
 #	GET ARGUMENTS
 mappedDir=$1  # analysisDir/xx-organism/sampleName/reads/
 #	INITIALIZE VARIABLES
@@ -37,11 +37,7 @@ mappedR2Fastq="${mappedDir}${sampleName}*_R2.fastq"
 #		Output Files
 lablog="${outputDir}${sampleName}_assembly.log"
 
-# load programs in module (comment for local runs) 
-#module load SPAdes-3.8.0
-#module load quast-4.1
-
-echo -e "$(date)" 
+echo -e "$(date)"
 echo -e "*********** ASSEMBLY $sampleName ************"
 
 #	CREATE DIRECTORY FOR THE SAMPLE IF NECESSARY
@@ -51,16 +47,13 @@ then
 	echo -e "${outputDir} created"
 fi
 
-
 if [ ! -d "${outputDir}quast" ]
 then
 	mkdir -p "${outputDir}quast"
 	echo -e "${outputDir}quast created"
 fi
 
-
-
-#	RUN SPADES	
+#	RUN SPADES
 echo -e "$(date)\t start running spades for ${sampleName} for ${organism}\n" > $lablog
 echo -e "The command is: ### spades.py --phred-offset 33 -1 $mappedR1Fastq -2 $mappedR2Fastq --meta -o $outputDir" >> $lablog
 spades.py --phred-offset 33 -1 $mappedR1Fastq -2 $mappedR2Fastq --meta -o ${outputDir} 2>&1 | tee -a $lablog
@@ -73,5 +66,4 @@ metaquast.py -f ${outputDir}/contigs.fasta -o ${outputDir}quast/ 2>&1 | tee -a $
 echo -e "$(date)\t finished running quast for ${sampleName} for ${organism}\n" >> $lablog
 
 
-}
 

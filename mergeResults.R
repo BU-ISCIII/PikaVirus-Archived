@@ -29,7 +29,8 @@ sampleBlastTable=paste(analysisDir, organism, "/", sampleName, "/blast/",sampleN
 coverage=""
 
 # READ BLAST FILE
-blast=read.table(sampleBlastTable, sep="\t", header=FALSE)
+#blast=read.table(sampleBlastTable, sep="\t", header=FALSE)
+blast=read.delim(sampleBlastTable, sep="\t", header=FALSE)
 
 # 	Name input files 
 colnames(blast) <- c("Organism","Query_seq_id","Reference Id","% of identical matches","Alignment length", "Number of mismatches", 

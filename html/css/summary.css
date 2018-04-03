@@ -1,0 +1,115 @@
+/*****************************/
+/* Vertical menu */
+/*****************************/
+.items.vertical-nav{
+	margin-right: 0;
+	float:left;
+}
+
+.vertical-nav{
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: auto;
+}
+
+.vertical-nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    /*width: 15%;*/
+    height: 100%;
+    background-color: #f1f1f1;
+}
+
+.vertical-nav li a {
+    display: block;
+    padding: 2% 4%;
+    text-decoration: none;
+}
+
+.vertical-nav nav ul li a span {
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: 500;
+	font-size: 1em;
+}
+
+.vertical-nav nav ul li a:hover,
+.vertical-nav nav ul li a:focus {
+	color: #1C8598;
+}
+
+.vertical-nav nav ul li a {
+	margin: 0 2px;
+	/*background-color: #f7f7f7;*/
+	color: #74777b;
+	transition: background-color 0.2s, color 0.2s;
+}
+
+.vertical-nav nav ul li a.menu.selected {
+	background: #1C8598;
+	color: #fff;
+}
+
+/* Content */
+div#contenido {
+	position: absolute;
+	-webkit-flex: 1; /* Safari 6.1+ */
+    -ms-flex: 1; /* IE 10 */ 
+    flex: 1;
+    
+}
+
+.content-wrap section {
+	display: none;
+	margin: 0 0;
+	padding: 0 0 1em;
+	max-width: 1200px;
+	max-width: 70%;
+	text-align: center;
+}
+
+.content-wrap section.content-current {
+	display: block;
+}
+
+.content-wrap section p {
+	margin: 0;
+	padding: 0.75em 0;
+	color: rgba(40,44,42,0.05);
+	font-weight: 900;
+	font-size: 4em;
+	line-height: 1;
+}
+
+.content-wrap section div {
+	width:100%;
+	height:100%;
+	margin: 0;
+	padding: 0;
+}
+
+/*Charts*/
+
+.charts {
+	height: 100%;
+	min-height: 100%;
+	margin: 0;
+	padding: 0;
+	float: right;
+	background-color: white;
+}
+
+#bacteria, #virus, #fungi, 
+#protozoa, #invertebrate{
+	float:left;
+	height: 50%;
+	width: 33%;	
+}
+
+.results{
+	float:right;
+	height: 100%;
+	margin-right: 0;
+}

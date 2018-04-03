@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang='en'>
+	<head>
+		<meta charset='UTF-8' />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta name='viewport' content='width=device-width, initial-scale=1'>
+		<title>Metagenomic Analysis</title>
+		<meta name='description' content='Metagenomic Analysis: Results report' />
+		<meta name='keywords' content='metagenetics, metagenomics, ISCIII, bioinformatics' />
+		<meta name='author' content='ISCIII Bioinformatics unit' />
+
+    <link rel='stylesheet' type='text/css' href='css/shared.css' />		
+    <link rel='stylesheet' type='text/css' href='css/normalize.css' /> 
+		<link rel='stylesheet' type='text/css' href='css/info.css' />
+    <!-- JQuery -->
+		<script src='js/jquery-3.1.0.js'></script>
+		<!--Thrid party-->
+        <script src="js/google-loader.js"></script>
+		<script src="js/modernizr.custom.js"></script>
+		<script src="js/jquery.viewport.js"></script>
+		<!--custom-->
+		<script src='js/main-nav.js'></script>
+		<script src='js/info.js'></script>
+	</head>
+	<body>
+		<div class='container'>
+			<!-- Top Navigation -->
+			<header class='report-header'>
+				<div>
+					<h1>Metagenomic Analysis
+					<span>Results report</span>
+					<p class='support'>This browser doen't support<strong>flexbox</strong>! <br />To correctly view this report, please use an <strong>updated browser</strong>.</p>
+				</div>
+				<div class='socialMedia'>
+					<!--<span>Find us at: </span>-->
+					<a href='https://www.facebook.com/pages/Escuela-Nacional-de-Sanidad-Isciii/203300096355772?fref=ts' target='_blank'><img class = 'social' src='img/facebook.png' alt='Facebook'></a>
+					<a href='https://es.linkedin.com/in/andrea-rubio-ponce-55a34562' target='_blank'><img class = 'social' src='img/linkedin.png' alt='Linkedin'></a>
+					<a href='https://twitter.com/isciii_es' target='_blank'><img class = 'social' src='img/twitter.png' alt='Twitter'></a>
+					<a href='https://github.com/AndreaRP/METAGENOMICS' target='_blank'><img class = 'social' src='img/github.png' alt='GitHub'></a>
+					<a href='https://bitbucket.org/bioinfo_isciii/' target='_blank'><img class = 'social' src='img/bitbucket.png' alt='BitBucket'></a>
+				</div>
+				</h1>
+			</header>
+			<div id='contenido'>
+				<div class='tabs tabs-style-bar'>
+					<nav>
+						<ul id = 'horizontal-nav'>
+							<li><a href='summary.html' class='icon icon-home'><span>Summary</span></a></li>
+							<li><a href='samples.html' class='icon icon-display'><span>Per Sample</span></a></li>
+							<li><a href='quality.html' class='icon icon-upload'><span>Quality analysis</span></a></li>
+							<li class='tab-current'><a href='info.html' class='icon icon-book'><span>What is this?</span></a></li>
+						</ul>
+					</nav>
+					</div><!-- /tabs -->
+					<div id = 'pagina' class='scroller'>
+						<!--Scroller nav-->
+						<nav>
+							<a href="#overview" class="current">Overview</a>
+							<a href="#quality">Quality</a>
+							<a href="#summary">Summary</a>
+							<a href="#sample">By Sample</a>
+						</nav>
+						<!--/Scroller nav-->
+						<main class="cd-main-content">
+							<div id="overview" class="cd-fixed-bg cd-bg-1 section overview">
+								<h1>Overview</h1>
+							</div> <!-- cd-fixed-bg -->
+							<div id="overview" class="cd-scrolling-bg cd-color-2 section overview">
+								<div class="cd-container">
+									<p>
+										This webpage is generated when using the <a href='https://github.com/AndreaRP/METAGENOMICS/' title='Metagenomics'>Metagenomics</a> Workflow. This section will sketchly explain how the data is generated.
+									</p>
+									<p>
+										You can find the complete project available for download on GitHub. There is also a <a href='https://github.com/AndreaRP/METAGENOMICS/wiki' title='Metagenomics wiki'>Metagenomics Wiki</a> section featuring an in-depth explanation about how to install and run <a href='https://github.com/AndreaRP/METAGENOMICS/' title='Metagenomics'>Metagenomics</a>, from dependency installation and the way to generate the reference databases to how to run each script.
+									</p>									
+								</div> <!-- cd-container -->
+							</div> <!-- cd-scrolling-bg -->
+							<div id="quality" class="cd-fixed-bg cd-bg-2 section quality">
+								<h2>Quality Control</h2>
+							</div> <!-- cd-fixed-bg -->
+							<div id="quality" class="cd-scrolling-bg cd-color-3 section quality">
+								<div class="cd-container">
+									<p>
+										The quality control is the first step in the analysis. This step comprehends the following:
+                                        <ul>
+                                            <li>Check for adapter sequences to be removed from an in-built ILLUMINA database.</li>
+                                            <li>Scan the read with a 4-base wide sliding window, cutting when the average quality per base drops below 20.</li>
+                                            <li>Drop reads below 50 bases long.</li>
+                                        </ul>
+									</p>
+									<p>
+										An html report of the read quality is generated for each sample both before and after the trimming.
+									</p>
+									<p>
+										The files of this part of the analysis can be found inside your RESULTS directory in quality.
+									</p>
+								</div> <!-- cd-container -->
+							</div> <!-- cd-scrolling-bg -->
+							<div id="summary" class="cd-fixed-bg cd-bg-3 section summary">
+								<h2>Summary</h2>
+							</div> <!-- cd-fixed-bg -->
+							<div id="summary" class="cd-scrolling-bg cd-color-1 section summary">
+								<div class="cd-container">
+										<p>
+											The data used for each pie chart comes from selecting the best blast hit of each contig in the sample. The best hit is determined by getting the maximum value after sorting by Bit score, e-value and nucleotide identity, in that order. Let's consider the following blast result:
+										</p>
+                                        <table>
+                                          <tr>
+                                            <th>Query</th>
+                                            <th>Organism name<br></th>
+                                            <th>% nucleotide identity<br></th>
+                                            <th>E-value</th>
+                                            <th>Bitscore</th>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig1</td>
+                                            <td>Organism1</td>
+                                            <td>97.21</td>
+                                            <td>4E-116</td>
+                                            <td>425</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig1</td>
+                                            <td>Organism2</td>
+                                            <td>97.21</td>
+                                            <td>4E-116</td>
+                                            <td>400</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig1</td>
+                                            <td>Organism3</td>
+                                            <td>98.89</td>
+                                            <td>0</td>
+                                            <td>804</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig2</td>
+                                            <td>Organism3</td>
+                                            <td>95.97</td>
+                                            <td>5E-134</td>
+                                            <td>652</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig2</td>
+                                            <td>Organism2</td>
+                                            <td>93.41</td>
+                                            <td>0</td>
+                                            <td>652</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig3</td>
+                                            <td>Organism1</td>
+                                            <td>98.89</td>
+                                            <td>0</td>
+                                            <td>804</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig4</td>
+                                            <td>Organism4</td>
+                                            <td>97.75</td>
+                                            <td>0</td>
+                                            <td>994</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig4</td>
+                                            <td>Organism4</td>
+                                            <td>99.45</td>
+                                            <td>0</td>
+                                            <td>648</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig4</td>
+                                            <td>Organism4</td>
+                                            <td>93.33</td>
+                                            <td>0</td>
+                                            <td>994</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig4</td>
+                                            <td>Organism2</td>
+                                            <td>90.25</td>
+                                            <td>0</td>
+                                            <td>994</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig5</td>
+                                            <td>Organism1</td>
+                                            <td>94.55</td>
+                                            <td>0</td>
+                                            <td>926</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig5</td>
+                                            <td>Organism3</td>
+                                            <td>93.3</td>
+                                            <td>0</td>
+                                            <td>662</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig6</td>
+                                            <td>Organism1</td>
+                                            <td>99.77</td>
+                                            <td>0</td>
+                                            <td>813</td>
+                                          </tr>
+                                          <tr>
+                                            <td>Contig7</td>
+                                            <td>Organism4</td>
+                                            <td>100</td>
+                                            <td>0</td>
+                                            <td>784</td>
+                                          </tr>
+                                        </table>
+                                        The Best Hit of each contig is determined as follows:
+                                        <ul>
+                                        <li>Contig1: Contig1 has aligned 3 times, the best hit by Bit score is Organism1 (425).</li>
+                                        <li>Contig2: Contig2 has aligned twice. Both hits have the same Bit score, so the tie is solved using the E-value closest to 0 (0), which corresponds to Organism2.</li>
+                                        <li>Contig3: Contig3 has aligned only once with Organism1, so that is it's best hit.</li>
+                                        <li>Contig4: Contig4 has aligned 4 times. 3 hits have the same Bit score so we use the E-value to select the best hit. As the E-value is 0 in all the 3, we have to use the % of nucleotide identity. We select the hit with the highest % (97.75%), which corresponds with Organism4.</li>
+                                        <li>Contig5:Contig5 has aligned 2 times, the best hit by Bit score is Organism1 (926).</li>
+                                        <li>Contig6:Contig6 has aligned once with Organism1, so that is it's best hit.</li>
+                                        <li>Contig7:Contig7 has aligned once with Organism4, so that is it's best hit.</li>
+                                        </ul>
+                                        If we now count the number of times each organism appears as Best Hit we get the following:
+                                        <ul>
+                                        <li>Organism1 = 4 (Contig1, Contig3, Contig5, Contig6).</li>
+                                        <li>Organism2 = 1 (Contig2).</li>
+                                        <li>Organism3 = 0.</li>
+                                        <li>Organism4 = 2 (Contig4, Contig7).</li>
+                                        </ul>
+                                    With that we can generate the pie chart...
+                                    <script type="text/javascript">
+                                      google.charts.load("current", {packages:["corechart"]});
+                                      google.charts.setOnLoadCallback(drawChart);
+                                      function drawChart() {
+                                        var data = google.visualization.arrayToDataTable([
+                                          ['Organism', 'Hits'],
+                                          ['Organism1',  4],
+                                          ['Organism2',  1],
+                                          ['Organism4',  2]
+                                        ]);
+                                        var options = {
+                                          title: 'Sample Pie-Chart',
+                                          pieHole: 0.4,
+                                        };
+                                        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+                                        chart.draw(data, options);
+                                      }
+                                    </script>                                
+                                    <div id="donutchart" style="width: 100%; height: 500px;"></div>
+                                    <p>Please, bear in mind that these results are only orientative, the Per Sample section contains much more detailed data.</p>
+								</div> <!-- cd-container -->
+							</div> <!-- cd-scrolling-bg -->
+							<div id="sample" class="cd-fixed-bg cd-bg-4 section sample">
+								<h2>By Sample</h2>
+							</div> <!-- cd-fixed-bg -->
+							<div id="sample" class="cd-scrolling-bg cd-color-1 section sample">
+								<div class="cd-container">
+                                    The data in the Per Sample section comes from the combined results of running blast and calculating the coverage of each genome of the reference that aligned to the sample. A table is presented for each organism group in each sample with the following information:
+                                    <dl>
+                                        <dt>Reference Id:</dt>
+                                        <dl>Accession used in the reference database for the genome which aligned to a contig of the sample.</dl>
+                                        <dt>Reference name:</dt>
+                                        <dl>Name of the organism.</dl>
+                                        <dt>% of identical matches:</dt>
+                                        <dl>% of the query sequence that aligned with the reference.</dl>
+                                        <dt>Alignment length:</dt>
+                                        <dl>Number of base pairs that where aligned to the reference.</dl>
+                                        <dt>Number of mismatches:</dt>
+                                        <dl>Number of base pairs in the aligned sequence that did not match the reference.</dl>
+                                        <dt>Number of gap openings:</dt>
+                                        <dl>Number of gaps in the alignment.</dl>
+                                        <dt>Start of alignment in query:</dt>
+                                        <dl>Position of the query sequence base pair in which the alignment started.</dl>
+                                        <dt>End of alignment in query:</dt>
+                                        <dl>Position of the query sequence base pair in which the alignment ended.</dl>
+                                        <dt>Start of alignment in subject:</dt>
+                                        <dl>Position of the reference sequence base pair in which the alignment started.</dl>
+                                        <dt>End of alignment in subject:</dt>
+                                        <dl>Position of the reference sequence base pair in which the alignment ended.</dl>
+                                        <dt>Expect value (E-value):</dt>
+                                        <dl>Hits that can be expected to occur by chance when searching a database of a particular size. For example, an E-value of 0.05 means that this similarity has a 5 in 100 chance of occurring by chance alone. It is a good measure of the background noise. The closer to zero the more 'significant', though the calculation of the E value takes into account the length of the query sequence and the size of the database, so shorter alignments always have higher values; even if the match is perfect, only because they have a higher probability of occurring in the database purely by chance.</dl>
+                                        <dt>Bit score:</dt>
+                                        <dl>The bit score gives an indication of how good the alignment is. A certain score is pre-assigned for match, mismatch and gap which the algorithm then uses to calculate the global score of the alignment. Matches have a positive value while mismatches and gaps have a negative one, so the higher the score, the better the alignment.</dl>
+                                        <dt>Coverage mean:</dt>
+                                        <dl>Mean value of the depth of coverage of a given genome.</dl>
+                                        <dt>Coverage min:</dt>
+                                        <dl>Minimum value of the depth of coverage of a given genome.</dl>
+                                        <dt>Maximum coverage:</dt>
+                                        <dl>Maximum value of the depth of coverage of a given genome.</dl>
+                                        <dt>Coverage SD:</dt>
+                                        <dl>Standard Deviation of the depth of coverage of a given genome.</dl>
+                                        <dt>Coverage median:</dt>
+                                        <dl>Median of the depth of coverage of a given genome.</dl>
+                                        <dt>x1-x4 depth:</dt>
+                                        <dl>x/1 of the genome with a depth between 1x and 4x.</dl>
+                                        <dt>x5-x9 depth:</dt>
+                                        <dl>x/1 of the genome with a depth between 5x and 9x.</dl>
+                                        <dt>x10-x19 depth:</dt>
+                                        <dl>x/1 of the genome with a depth between 10x and 19x.</dl>
+                                        <dt>=>x20 depth:</dt>
+                                        <dl>x/1 of the genome with a depth equal or above 20x.</dl>
+                                        <dt>Total coverage:</dt>
+                                        <dl>x/1 of the genome covered in at least 1x depth.</dl>
+                                        <dt>Coverage graph:</dt>
+                                        <dl>Pdf file with the graph of the genome coverage.</dl>
+                                    </dl>
+								</div> <!-- cd-container -->
+							</div> <!-- cd-scrolling-bg -->
+						</main> <!-- cd-main-content -->
+					</div><!-- /tabs -->
+			</div><!--/contenido-->
+			<footer class='web-footer'>
+				<div>
+					<span>
+						This report is for reference Use Only. It has not been approved, cleared, or licensed by any regulatory authority. 
+            The user acknowledges no intended medical purpose or objective such as clinical 
+            diagnosis, patient management, or human clinical trials. 
+					</span>
+				</div>
+			</footer>
+		</div>
+	</body>
+</html>

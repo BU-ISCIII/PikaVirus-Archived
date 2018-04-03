@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang='en' class='no-js'>
+	<head>
+		<meta charset='UTF-8' />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta name='viewport' content='width=device-width, initial-scale=1'>
+		<title>Metagenomic Analysis</title>
+		<meta name='description' content='Metagenomic Analysis: Results report' />
+		<meta name='keywords' content='metagenetics, metagenomics, ISCIII, bioinformatics' />
+		<meta name='author' content='ISCIII Bioinformatics unit' />
+
+		<link rel='stylesheet' type='text/css' href='css/shared.css' />
+		<link rel='stylesheet' type='text/css' href='css/normalize.css' />
+		<link rel='stylesheet' type='text/css' href='css/quality.css' />
+		<!-- JQuery -->
+		<script src='js/jquery-3.1.0.js'></script>
+		<!--Thrid party-->
+		<script src="js/modernizr.custom.js"></script>
+		<script type="text/javascript" src="js/google-loader.js"></script>
+		<!--custom-->
+		<script src='js/main-nav.js'></script>
+	</head>
+	<body>
+		<div class='container'>
+			<!-- Top Navigation -->
+			<header class='report-header'>
+				<div>
+					<h1>Metagenomic Analysis
+					<span>Results report</span>
+					<p class='support'>This browser doen't support<strong>flexbox</strong>! <br />To correctly view this report, please use an <strong>updated browser</strong>.</p>
+				</div>
+				<div class='socialMedia'>
+					<!--<span>Find us at: </span>-->				
+					<a href='https://www.facebook.com/pages/Escuela-Nacional-de-Sanidad-Isciii/203300096355772?fref=ts' target='_blank'><img class = 'social' src='img/facebook.png' alt='Facebook'></a>				
+					<a href='https://es.linkedin.com/in/andrea-rubio-ponce-55a34562' target='_blank'><img class = 'social' src='img/linkedin.png' alt='Linkedin'></a>
+					<a href='https://twitter.com/isciii_es' target='_blank'><img class = 'social' src='img/twitter.png' alt='Twitter'></a>
+					<a href='https://github.com/AndreaRP/METAGENOMICS' target='_blank'><img class = 'social' src='img/github.png' alt='GitHub'></a>
+					<a href='https://bitbucket.org/bioinfo_isciii/' target='_blank'><img class = 'social' src='img/bitbucket.png' alt='BitBucket'></a>
+				</div>
+				</h1>
+			</header>
+			<div id='contenido'>
+				<div class='tabs tabs-style-bar'>
+					<nav>
+						<ul id = 'horizontal-nav'>
+							<li><a href='summary.html' class='icon icon-home'><span>Summary</span></a></li>
+							<li><a href='samples.html' class='icon icon-display'><span>Per Sample</span></a></li>
+							<li class='tab-current'><a href='quality.html' class='icon icon-upload'><span>Quality analysis</span></a></li>
+							<li><a href='info.html' class='icon icon-book'><span>What is this?</span></a></li>
+						</ul>
+					</nav>
+					</div><!-- /tabs -->
+					
+					<div id = "pagina" class="content-wrap">
+						<object type="text/html" data="quality/report.html"></object>
+					</div>
+					<!-- /content -->
+					</div><!-- /tabs -->
+					<footer class='web-footer'>
+						<div>
+							<span>
+								This report is for reference Use Only. It has not been approved, cleared, or licensed by any regulatory authority. 
+								The user acknowledges no intended medical purpose or objective such as clinical 
+								diagnosis, patient management, or human clinical trials. 
+							</span>
+						</div>
+					</footer>
+				</div>
+			</body>
+		</html>

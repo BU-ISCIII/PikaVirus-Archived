@@ -1,0 +1,123 @@
+/*****************************/
+/* Vertical menu */
+/*****************************/
+.items.vertical-nav{
+  margin-right: 0;
+  float:left;
+}
+
+.vertical-nav{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+.vertical-nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    /*width: 15%;*/
+    height: 100%;
+    background-color: #f1f1f1;
+}
+
+.vertical-nav li a {
+    display: block;
+    padding: 2% 4%;
+    text-decoration: none;
+}
+
+.vertical-nav nav ul li a span {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+  font-size: 1em;
+}
+
+.vertical-nav nav ul li a:hover,
+.vertical-nav nav ul li a:focus {
+  color: #1C8598;
+}
+
+.vertical-nav nav ul li a {
+  margin: 0 2px;
+  /*background-color: #f7f7f7;*/
+  color: #74777b;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.vertical-nav nav ul li a.menu.selected {
+  background: #1C8598;
+  color: #fff;
+}
+
+/* SECOND LEVEL*/
+
+.vertical-nav nav ul li:hover .submenu {
+  display: inline-block;
+  max-height: 200px;
+  width: 100%;
+  vertical-align: middle;
+}
+
+ul.submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.7em;
+  vertical-align: middle;
+  width:100%;
+  height: auto;
+  background-color: rgba(40,44,42,0.05);
+} 
+
+ul.submenu li {
+    max-height: 40px;
+    padding: 0;
+    margin: 0;
+}
+
+.submenu li a span{
+	vertical-align: middle;
+	text-align: right;
+	height: 100%;
+	float:right;
+}
+
+.submenu li a span a{
+	vertical-align: middle;
+	text-align: right;
+	height: 100%;
+}
+
+.submenu li a span:before{
+	text-align: left;
+}
+
+
+/* add hover behaviour */
+
+.submenu a {
+  vertical-align: middle;
+}
+
+
+.vertical-nav.submenu a:hover {
+  background-color: #1C8598;
+  color:#fff;
+}
+
+.submenu {
+  overflow: hidden;
+  max-height: 0;
+  -webkit-transition: all 0.5s ease-out;
+}
+
+
+/* CONTENT*/
+.results{
+  float:right;
+  height: 100%;
+  margin-right: 0;
+}
