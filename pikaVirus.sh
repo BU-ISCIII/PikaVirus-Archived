@@ -133,88 +133,27 @@ perl ${PIKAVIRUSDIR}/html/quality/listFastQCReports.pl ${workingDir}ANALYSIS/99-
 perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl
 
 # MAPPING
-# host_removal
 if [ $cluster == "yes" ]
 then
 	# TO-DO
 	# in=$(awk "NR==$SGE_TASK_ID" $samplesIdFile)
-	# bash ${PIKAVIRUSDIR}/host_removal.sh -s $in
+	# bash ${PIKAVIRUSDIR}/host_removal.sh $in
+	# bash ${PIKAVIRUSDIR}/mapper_bac.sh $in
+	# bash ${PIKAVIRUSDIR}/mapper_virus.sh $in
+	# bash ${PIKAVIRUSDIR}/mapper_fungi.sh $in
+	# bash ${PIKAVIRUSDIR}/mapper_parasite.sh $in
+	# bash ${PIKAVIRUSDIR}/mapper_unknown.sh $in
 	echo "TO-DO: This option si not supported yet"
 	exit 1
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
-		bash ${PIKAVIRUSDIR}/host_removal.sh -s $in
-	done
-fi
-# bacteria
-if [ $cluster == "yes" ]
-then
-	# TO-DO
-	# in=$(awk "NR==$SGE_TASK_ID" $samplesIdFile)
-	# bash ${PIKAVIRUSDIR}/mapper_bac.sh -s $in
-	echo "TO-DO: This option si not supported yet"
-	exit 1
-else
-	cat ${analysisDir}/samples_id.txt | while read in
-	do
-		bash ${PIKAVIRUSDIR}/mapper_bac.sh -s $in
-	done
-fi
-# virus
-if [ $cluster == "yes" ]
-then
-	# TO-DO
-	# in=$(awk "NR==$SGE_TASK_ID" $samplesIdFile)
-	# bash ${PIKAVIRUSDIR}/mapper_virus.sh -s $in
-	echo "TO-DO: This option si not supported yet"
-	exit 1
-else
-	cat ${analysisDir}/samples_id.txt | while read in
-	do
-		bash ${PIKAVIRUSDIR}/mapper_virus.sh -s $in
-	done
-fi
-# fungi
-if [ $cluster == "yes" ]
-then
-	# TO-DO
-	# in=$(awk "NR==$SGE_TASK_ID" $samplesIdFile)
-	# bash ${PIKAVIRUSDIR}/mapper_fungi.sh -s $in
-	echo "TO-DO: This option si not supported yet"
-	exit 1
-else
-	cat ${analysisDir}/samples_id.txt | while read in
-	do
-		bash ${PIKAVIRUSDIR}/mapper_fungi.sh -s $in
-	done
-fi
-# parasite
-if [ $cluster == "yes" ]
-then
-	# TO-DO
-	# in=$(awk "NR==$SGE_TASK_ID" $samplesIdFile)
-	# bash ${PIKAVIRUSDIR}/mapper_parasite.sh -s $in
-	echo "TO-DO: This option si not supported yet"
-	exit 1
-else
-	cat ${analysisDir}/samples_id.txt | while read in
-	do
-		bash ${PIKAVIRUSDIR}/mapper_parasite.sh -s $in
-	done
-fi
-# unkown
-if [ $cluster == "yes" ]
-then
-	# TO-DO
-	# in=$(awk "NR==$SGE_TASK_ID" $samplesIdFile)
-	# bash ${PIKAVIRUSDIR}/mapper_unknown.sh -s $in
-	echo "TO-DO: This option si not supported yet"
-	exit 1
-else
-	cat ${analysisDir}/samples_id.txt | while read in
-	do
-		bash ${PIKAVIRUSDIR}/mapper_unknown.sh -s $in
+		bash ${PIKAVIRUSDIR}/host_removal.sh $in
+		bash ${PIKAVIRUSDIR}/mapper_bac.sh $in
+		bash ${PIKAVIRUSDIR}/mapper_virus.sh $in
+		bash ${PIKAVIRUSDIR}/mapper_fungi.sh $in
+		bash ${PIKAVIRUSDIR}/mapper_parasite.sh $in
+		bash ${PIKAVIRUSDIR}/mapper_unknown.sh $in
 	done
 fi
 
