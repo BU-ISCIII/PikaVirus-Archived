@@ -40,10 +40,6 @@ source ./pikaVirus.config
 #	GET ARGUMENTS
 sampleDir=$1
 
-#	MAPPING PARASITE
-echo -e "$(date): ************* Start parasite mapping ***************" >> "${sampleAnalysisLog}"
-echo -e " Execute map_parasite $sampleName" >> "${sampleAnalysisLog}"
-
 #	INITIALIZE VARIABLES
 #	VARIABLES
 sampleName=$(basename "${sampleDir}")
@@ -73,8 +69,12 @@ bowtie2logFileInvertebrate="${invertebrateFilesDir}${sampleName}_invertebrate_ma
 invertebrateMappedR1Fastq="${invertebrateFilesDir}${sampleName}_invertebrate_R1.fastq" #file with the R1 reads that mapped against the invertebrate reference
 invertebrateMappedR2Fastq="${invertebrateFilesDir}${sampleName}_invertebrate_R2.fastq" #file with the R2 reads that mapped against the invertebrate reference
 
+#	MAPPING PARASITE
+echo -e "$(date): ************* Start parasite mapping ***************" >> "${sampleAnalysisLog}"
+echo -e " Execute mapper_parasite.sh $sampleDir" >> "${sampleAnalysisLog}"
 echo -e "$(date)"
 echo -e "*********** MAPPING parasites IN $sampleName ************"
+
 #	CREATE DIRECTORY FOR THE PROTOZOA IF NECESSARY
 if [ ! -d ${protozoaFilesDir} ]
 then

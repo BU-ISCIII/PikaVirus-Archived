@@ -6,10 +6,6 @@ source ./pikaVirus.config
 #	GET ARGUMENTS
 sampleDir=$1
 
-#	MAPPING UNKNOWN
-echo -e "$(date): ************* Start unknown mapping ***************" >> "${sampleAnalysisLog}"
-echo -e " Execute map_unknown $sampleName" >> "${sampleAnalysisLog}"
-
 #	INITIALIZE VARIABLES
 #	VARIABLES
 sampleName=$(basename "${sampleDir}")
@@ -32,6 +28,12 @@ notMappedR2Fastq="${unknownFilesDir}${sampleName}_unknown_R2.fastq"
 notMappedSamFile="${unknownFilesDir}${sampleName}_unknown_mapped.sam"
 notMappedBamFile="${unknownFilesDir}${sampleName}_unknown_mapped.bam" #bowtie bam file with the reads that mapped against the WG reference
 sortedBamFile="${unknownFilesDir}${sampleName}_unknown_sorted.bam" #bowtie bam file with the reads that mapped against the WG reference
+
+#	MAPPING UNKNOWN
+echo -e "$(date): ************* Start unknown mapping ***************" >> "${sampleAnalysisLog}"
+echo -e " Execute mapper_unknown.sh $sampleDir" >> "${sampleAnalysisLog}"
+echo -e "$(date)"
+echo -e "*********** MAPPING UNKNOWN IN $sampleName ************"
 
 #	CREATE DIRECTORY FOR THE SAMPLE IF NECESSARY
 if [ ! -d ${unknownFilesDir} ]

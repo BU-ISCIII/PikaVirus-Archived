@@ -39,10 +39,6 @@ source ./pikaVirus.config
 #	GET ARGUMENTS
 sampleDir=$1
 
-#	MAPPING BACTERIA
-echo -e "$(date): ************* Start bacteria mapping ***************" >> "${sampleAnalysisLog}"
-echo -e " Execute map_bacteria $sampleName" >> "${sampleAnalysisLog}"
-
 #	INITIALIZE VARIABLES
 #	VARIABLES
 sampleName=$(basename "${sampleDir}")
@@ -71,6 +67,9 @@ bowtie2logFileWG="${bacFilesDir}${sampleName}_WG_bacteria_mapping.log" #log of t
 BacMappedR1WGFastq="${bacFilesDir}${sampleName}_WG_bacteria_R1.fastq" #file with the R1 reads that mapped against the WG reference
 BacMappedR2WGFastq="${bacFilesDir}${sampleName}_WG_bacteria_R2.fastq" #file with the R2 reads that mapped against the WG reference
 
+#	MAPPING BACTERIA
+echo -e "$(date): ************* Start bacteria mapping ***************" >> "${sampleAnalysisLog}"
+echo -e " Execute mapper_bac.sh $sampleDir" >> "${sampleAnalysisLog}"
 echo -e "$(date)"
 echo -e "*********** MAPPING BACTERIA IN $sampleName ************"
 

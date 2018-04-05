@@ -34,10 +34,6 @@ echo -e "PIPELINE START: $(date)"
 #	GET ARGUMENTS
 sampleDir=$1
 
-#	HOST REMOVAL
-echo -e "$(date): ************* Start host removal ***************" >> "${sampleAnalysisLog}"
-echo -e " Execute removeHost $hostDB $sampleAnalysisDir" >> "${sampleAnalysisLog}"
-
 #	INITIALIZE VARIABLES
 # Constants
 hostDB="${hostDB}WG/bwt2/hg38.AnalysisSet"
@@ -57,6 +53,9 @@ bowtie2logFile="${noHostFilesDir}${sampleName}_host_removal.log"
 mappedR1Fastq="${noHostFilesDir}${sampleName}_noHost_R1.fastq"
 mappedR2Fastq="${noHostFilesDir}${sampleName}_noHost_R2.fastq"
 
+#	HOST REMOVAL
+echo -e "$(date): ************* Start host removal ***************" >> "${sampleAnalysisLog}"
+echo -e " Execute host_removal.sh $sampleDir" >> "${sampleAnalysisLog}"
 echo -e "$(date)"
 echo -e "*********** REMOVING HOST FROM $sampleName ************"
 

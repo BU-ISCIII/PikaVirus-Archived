@@ -29,10 +29,6 @@ source ./pikaVirus.config
 #	GET ARGUMENTS
 sampleDir=$1
 
-#	MAPPING UNKNOWN
-echo -e "$(date): ************* Start virus mapping ***************" >> "${sampleAnalysisLog}"
-echo -e " Execute map_virus $sampleName" >> "${sampleAnalysisLog}"
-
 #	INITIALIZE VARIABLES
 #	VARIABLES
 sampleName=$(basename "${sampleDir}")
@@ -54,6 +50,9 @@ mappedSamFile="${virFilesDir}${sampleName}_virus_mapped.sam"
 mappedBamFile="${virFilesDir}${sampleName}_virus_mapped.bam" #bowtie bam file with the reads that mapped against the WG reference
 sortedBamFile="${virFilesDir}${sampleName}_virus_sorted.bam" #bowtie bam file with the reads that mapped against the WG reference
 
+#	MAPPING VIRUS
+echo -e "$(date): ************* Start virus mapping ***************" >> "${sampleAnalysisLog}"
+echo -e " Execute mapper_virus.sh $sampleDir" >> "${sampleAnalysisLog}"
 echo -e "$(date)"
 echo -e "*********** MAPPING VIRUS IN $sampleName ************"
 
