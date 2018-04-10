@@ -81,36 +81,36 @@ then
 	echo -e "${fungiFilesDir} created"
 fi
 ################################################################################################
-#	BOWTIE2 MAPPING AGAINST fungi ITS
-echo -e "--------Bowtie2 is mapping against the ITS reference ....------"
-echo -e "$(date)\t Start mapping ${sampleName} to ITS reference \n" > $bowtie2logFileITS
-echo -e "The command is: ### bowtie2 -fr -x "$fungiITSDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamITSFile ###\n" >> $bowtie2logFileITS
-bowtie2 -a -fr -x "$fungiITSDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamITSFile 2>&1 | tee -a $bowtie2logFileITS
-echo -e "$(date)\t Finished mapping ${sampleName} against ITS reference \n" >> $bowtie2logFileITS
-echo -e "$(date)\t Converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFileITS
-samtools view -Sb $mappedSamITSFile > $mappedBamITSFile
-rm $mappedSamITSFile
-samtools sort -O bam -T temp -o $sortedBamITSFile $mappedBamITSFile
-samtools index -b $sortedBamITSFile
-rm $mappedBamITSFile
-echo -e "$(date)\t Finished converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFileITS
-
-#	SEPARATE AND EXTRACT R1 AND R2 READS MAPPED TO ITS
-echo -e "----------------- Filtering fungi reads that mapped to ITS ...---------------------"
-echo -e "$(date)\t Start filtering ${sampleName} reads that mapped to ITS \n" >> $bowtie2logFileITS
-echo -e "The command is: ###samtools view -F 0x40 $sortedBamITSFile | awk '{if($3 != '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $fungiMappedR1ITSFastq" >> $bowtie2logFileITS
-samtools view -F 0x40 $sortedBamITSFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $fungiMappedR1ITSFastq
-echo -e "The command is: ###samtools view -f 0x40 $sortedBamITSFile | awk '{if($3 != '*') print '@' $1 '\\n' $10 '\\n' '-' '\\n' $11}' > $fungiMappedR2ITSFastq" >> $bowtie2logFileITS
-samtools view -f 0x40 $sortedBamITSFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $fungiMappedR2ITSFastq
-#	samtools separates R1 (-F) or R2 (-f) reads using the mapped BAM file and awk filters those mapped (=!"*") in fastq format
-echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to ITS \n" >> $bowtie2logFileITS
+##	BOWTIE2 MAPPING AGAINST fungi ITS
+#echo -e "--------Bowtie2 is mapping against the ITS reference ....------"
+#echo -e "$(date)\t Start mapping ${sampleName} to ITS reference \n" > $bowtie2logFileITS
+#echo -e "The command is: ### bowtie2 -fr -x "$fungiITSDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamITSFile ###\n" >> $bowtie2logFileITS
+#bowtie2 -fr -x "$fungiITSDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamITSFile 2>&1 | tee -a $bowtie2logFileITS
+#echo -e "$(date)\t Finished mapping ${sampleName} against ITS reference \n" >> $bowtie2logFileITS
+#echo -e "$(date)\t Converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFileITS
+#samtools view -Sb $mappedSamITSFile > $mappedBamITSFile
+#rm $mappedSamITSFile
+#samtools sort -O bam -T temp -o $sortedBamITSFile $mappedBamITSFile
+#samtools index -b $sortedBamITSFile
+#rm $mappedBamITSFile
+#echo -e "$(date)\t Finished converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFileITS
+#
+##	SEPARATE AND EXTRACT R1 AND R2 READS MAPPED TO ITS
+#echo -e "----------------- Filtering fungi reads that mapped to ITS ...---------------------"
+#echo -e "$(date)\t Start filtering ${sampleName} reads that mapped to ITS \n" >> $bowtie2logFileITS
+#echo -e "The command is: ###samtools view -F 0x40 $sortedBamITSFile | awk '{if($3 != '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $fungiMappedR1ITSFastq" >> $bowtie2logFileITS
+#samtools view -F 0x40 $sortedBamITSFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $fungiMappedR1ITSFastq
+#echo -e "The command is: ###samtools view -f 0x40 $sortedBamITSFile | awk '{if($3 != '*') print '@' $1 '\\n' $10 '\\n' '-' '\\n' $11}' > $fungiMappedR2ITSFastq" >> $bowtie2logFileITS
+#samtools view -f 0x40 $sortedBamITSFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $fungiMappedR2ITSFastq
+##	samtools separates R1 (-F) or R2 (-f) reads using the mapped BAM file and awk filters those mapped (=!"*") in fastq format
+#echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to ITS \n" >> $bowtie2logFileITS
 
 ################################################################################################
 #	BOWTIE2 MAPPING AGAINST FUNGI WG REFERENCE
 echo -e "--------Bowtie2 is mapping against fungi WG reference ....------"
 echo -e "$(date)\t Start mapping ${sampleName} reads to fungi WG reference \n" > $bowtie2logFileWG
 echo -e "The command is: ### bowtie2 -fr -x "$fungiWGDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamWGFile ###\n" >> $bowtie2logFileWG
-bowtie2 -a -fr -x "$fungiWGDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamWGFile 2>&1 | tee -a $bowtie2logFileWG
+bowtie2 -fr -x "$fungiWGDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamWGFile 2>&1 | tee -a $bowtie2logFileWG
 echo -e "$(date)\t Finished mapping ${sampleName} reads to fungi WG reference \n" >> $bowtie2logFileWG
 echo -e "$(date)\t Converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFileWG
 samtools view -Sb $mappedSamWGFile > $mappedBamWGFile

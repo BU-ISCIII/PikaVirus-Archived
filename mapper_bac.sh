@@ -80,36 +80,36 @@ then
 	echo -e "${bacFilesDir} created"
 fi
 ################################################################################################
-#	BOWTIE2 MAPPING AGAINST BACTERIA 16S
-echo -e "--------Bowtie2 is mapping against the 16S reference ....------"
-echo -e "$(date)\t Start mapping ${sampleName} to 16S reference \n" > $bowtie2logFile16S
-echo -e "The command is: ### bowtie2 -fr -x "$bac16SDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSam16SFile ###\n" >> $bowtie2logFile16S
-bowtie2 -a -fr -x "$bac16SDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSam16SFile 2>&1 | tee -a $bowtie2logFile16S
-echo -e "$(date)\t Finished mapping ${sampleName} against 16S reference \n" >> $bowtie2logFile16S
-echo -e "$(date)\t Converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFile16S
-samtools view -Sb $mappedSam16SFile > $mappedBam16SFile
-rm $mappedSam16SFile
-samtools sort -O bam -T temp -o $sortedBam16SFile $mappedBam16SFile
-samtools index -b $sortedBam16SFile
-rm $mappedBam16SFile
-echo -e "$(date)\t Finished converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFile16S
-
-#	SEPARATE AND EXTRACT R1 AND R2 READS MAPPED TO 16S
-echo -e "----------------- Filtering bacteria reads that mapped to 16S ...---------------------"
-echo -e "$(date)\t Start filtering ${sampleName} reads that mapped to 16S \n" >> $bowtie2logFile16S
-echo -e "The command is: ###samtools view -F 0x40 $sortedBam16SFile | awk '{if($3 != '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $BacMappedR116SFastq" >> $bowtie2logFile16S
-samtools view -F 0x40 $sortedBam16SFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $BacMappedR116SFastq
-echo -e "The command is: ###samtools view -f 0x40 $sortedBam16SFile | awk '{if($3 != '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $BacMappedR216SFastq" >> $bowtie2logFile16S
-samtools view -f 0x40 $sortedBam16SFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $BacMappedR216SFastq
-#	samtools separates R1 (-F) or R2 (-f) reads using the mapped SAM file and awk filters those mapped (=!"*") in fastq format
-echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to 16S \n" >> $bowtie2logFile16S
+##	BOWTIE2 MAPPING AGAINST BACTERIA 16S
+#echo -e "--------Bowtie2 is mapping against the 16S reference ....------"
+#echo -e "$(date)\t Start mapping ${sampleName} to 16S reference \n" > $bowtie2logFile16S
+#echo -e "The command is: ### bowtie2 -fr -x "$bac16SDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSam16SFile ###\n" >> $bowtie2logFile16S
+#bowtie2 -fr -x "$bac16SDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSam16SFile 2>&1 | tee -a $bowtie2logFile16S
+#echo -e "$(date)\t Finished mapping ${sampleName} against 16S reference \n" >> $bowtie2logFile16S
+#echo -e "$(date)\t Converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFile16S
+#samtools view -Sb $mappedSam16SFile > $mappedBam16SFile
+#rm $mappedSam16SFile
+#samtools sort -O bam -T temp -o $sortedBam16SFile $mappedBam16SFile
+#samtools index -b $sortedBam16SFile
+#rm $mappedBam16SFile
+#echo -e "$(date)\t Finished converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFile16S
+#
+##	SEPARATE AND EXTRACT R1 AND R2 READS MAPPED TO 16S
+#echo -e "----------------- Filtering bacteria reads that mapped to 16S ...---------------------"
+#echo -e "$(date)\t Start filtering ${sampleName} reads that mapped to 16S \n" >> $bowtie2logFile16S
+#echo -e "The command is: ###samtools view -F 0x40 $sortedBam16SFile | awk '{if($3 != '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $BacMappedR116SFastq" >> $bowtie2logFile16S
+#samtools view -F 0x40 $sortedBam16SFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $BacMappedR116SFastq
+#echo -e "The command is: ###samtools view -f 0x40 $sortedBam16SFile | awk '{if($3 != '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $BacMappedR216SFastq" >> $bowtie2logFile16S
+#samtools view -f 0x40 $sortedBam16SFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $BacMappedR216SFastq
+##	samtools separates R1 (-F) or R2 (-f) reads using the mapped SAM file and awk filters those mapped (=!"*") in fastq format
+#echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to 16S \n" >> $bowtie2logFile16S
 
 ################################################################################################
 #	BOWTIE2 MAPPING AGAINST BACTERIA WG
 echo -e "--------Bowtie2 is mapping against bacteria WG reference ....------"
 echo -e "$(date)\t Start mapping ${sampleName} reads to bacteria WG reference \n" > $bowtie2logFileWG
 echo -e "The command is: ### bowtie2 -fr -x "$bacWGDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamWGFile ###\n" >> $bowtie2logFileWG
-bowtie2 -a -fr -x "$bacWGDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamWGFile 2>&1 | tee -a $bowtie2logFileWG
+bowtie2 -fr -x "$bacWGDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamWGFile 2>&1 | tee -a $bowtie2logFileWG
 echo -e "$(date)\t Finished mapping ${sampleName} reads to bacteria WG reference \n" >> $bowtie2logFileWG
 echo -e "$(date)\t Converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFileWG
 samtools view -Sb $mappedSamWGFile > $mappedBamWGFile

@@ -138,7 +138,6 @@ samtools view -f 0x40 $sortedBamInvertebrateFile | awk '{if($3 != "*") print "@"
 #	samtools separates R1 (-F) or R2 (-f) reads using the mapped SAM file and awk filters those mapped (=!"*") in fastq format
 echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to Invertebrate \n" >> $bowtie2logFileInvertebrate
 
-
 ################################################################################################
 echo -e "$(date)"
 echo -e "*********** FINISHED MAPPING protozoa IN $sampleName ************"

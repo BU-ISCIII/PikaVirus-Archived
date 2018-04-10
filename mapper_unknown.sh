@@ -141,7 +141,7 @@ samtools index -b $sortedBamFile
 rm $notMappedBamFile
 echo -e "$(date)\t Finished converting reads not mapped to invertebrate from SAM to BAM of ${sampleName} \n" >> $unknownLogFile
 
-#	SEPARATE AND EXTRACT R1 AND R2 READS NOT MAPPED TO FUNGI
+#	SEPARATE AND EXTRACT R1 AND R2 READS NOT MAPPED
 echo -e "----------------- Filtering invertebrate reads that mapped to invertebrate WG reference ...---------------------" >> $unknownLogFile
 echo -e "$(date)\t Start filtering ${sampleName} reads that mapped to invertebrate WG \n" >> $unknownLogFile
 echo -e "The command is: ###samtools view -F 0x40 $sortedBamFile | awk '{if($3 == '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $notMappedR1Fastq" >> $unknownLogFile
