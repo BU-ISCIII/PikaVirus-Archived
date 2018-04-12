@@ -408,7 +408,7 @@ then
 	sampleDir="${analysisDir}/05-bacteria/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir $bacDB
 	EndOfFile
-	$cluster_prefix bash tmp.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh
 	rm tmp.sh
 	cat > tmp.sh <<- EndOfFile
 	#!/bin/sh
@@ -425,7 +425,7 @@ then
 	sampleDir="${analysisDir}/06-virus/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir $bacDB
 	EndOfFile
-	$cluster_prefix bash tmp.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh
 	rm tmp.sh
 	cat > tmp.sh <<- EndOfFile
 	#!/bin/sh
@@ -442,7 +442,7 @@ then
 	sampleDir="${analysisDir}/07-fungi/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir $fungiDB
 	EndOfFile
-	$cluster_prefix bash tmp.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh
 	rm tmp.sh
 	cat > tmp.sh <<- EndOfFile
 	#!/bin/sh
@@ -459,7 +459,7 @@ then
 	sampleDir="${analysisDir}/08-protozoa/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir $protozoaDB
 	EndOfFile
-	$cluster_prefix bash tmp.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh
 	rm tmp.sh
 	cat > tmp.sh <<- EndOfFile
 	#!/bin/sh
@@ -476,7 +476,7 @@ then
 	sampleDir="${analysisDir}/09-invertebrate/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir $invertebrateDB
 	EndOfFile
-	$cluster_prefix bash tmp.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh
 	rm tmp.sh
 	cat > tmp.sh <<- EndOfFile
 	#!/bin/sh
@@ -493,7 +493,7 @@ then
 	sampleDir="${analysisDir}/10-unknown/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir
 	EndOfFile
-	$cluster_prefix bash tmp.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh
 	rm tmp.sh
 else
 	cat ${analysisDir}/samples_id.txt | while read in
@@ -537,7 +537,7 @@ then
 	bash ${PIKAVIRUSDIR}/coverage.sh \$sampleDir $bacDB
 	Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "\${sampleDir}/coverage/" \${sampleName}
 	EndOfFile
-	$cluster_prefix bash tmp.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_blast.txt ) bash tmp.sh
 	rm tmp.sh
 	cat > tmp.sh <<- EndOfFile
 	#!/bin/sh
@@ -556,7 +556,7 @@ then
 	bash ${PIKAVIRUSDIR}/coverage.sh \$sampleDir $bacDB
 	Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "\${sampleDir}/coverage/" \${sampleName}
 	EndOfFile
-	$cluster_prefix bash tmp.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_blast.txt ) bash tmp.sh
 	rm tmp.sh
 	cat > tmp.sh <<- EndOfFile
 	#!/bin/sh
@@ -575,7 +575,7 @@ then
 	bash ${PIKAVIRUSDIR}/coverage.sh \$sampleDir $fungiDB
 	Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "\${sampleDir}/coverage/" \${sampleName}
 	EndOfFile
-	$cluster_prefix bash tmp.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_blast.txt ) bash tmp.sh
 	rm tmp.sh
 	cat > tmp.sh <<- EndOfFile
 	#!/bin/sh
@@ -594,7 +594,7 @@ then
 	bash ${PIKAVIRUSDIR}/coverage.sh \$sampleDir $protozoaDB
 	Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "\${sampleDir}/coverage/" \${sampleName}
 	EndOfFile
-	$cluster_prefix bash tmp.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_blast.txt ) bash tmp.sh
 	rm tmp.sh
 	cat > tmp.sh <<- EndOfFile
 	#!/bin/sh
@@ -613,7 +613,7 @@ then
 	bash ${PIKAVIRUSDIR}/coverage.sh \$sampleDir $invertebrateDB
 	Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "\${sampleDir}/coverage/" \${sampleName}
 	EndOfFile
-	$cluster_prefix bash tmp.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_blast.txt ) bash tmp.sh
 	rm tmp.sh
 else
 	cat ${analysisDir}/samples_id.txt | while read in
@@ -648,6 +648,7 @@ then
 	do
 		sleep 1
 	done
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_coverage.txt ) bash generate_results.sh
+else
+	bash generate_results.sh
 fi
-bash generate_results.sh
-
