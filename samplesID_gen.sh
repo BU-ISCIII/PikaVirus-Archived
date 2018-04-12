@@ -30,7 +30,7 @@ readFolder="${analysisDir}/00-reads/"
 
 for file in ${readFolder}*_R1_*.fastq*
 do
-	sampleName=$(echo $file | rev | cut -d'/' -f1 | rev)
-	echo ${sampleName%_R1_*} >> "${analysisDir}/samples_id.txt"
+	sampleName=$( basename $file )
+	echo $sampleName | sed 's/\(.*\)[\._\-]R1[\._\-].*/\1/' >> "${analysisDir}/samples_id.txt"
 done
 

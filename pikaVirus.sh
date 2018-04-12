@@ -147,7 +147,7 @@ perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl
 # MAPPING
 if [ $cluster == "yes" ]
 then
-	while [ (! -f ${analysisDir}/jid_preprocessing.txt) || $( cat ${analysisDir}/jid_preprocessing.txt | sed -e 's/,/\n/g' | wc -l ) != $sample_count ]
+	while [[ (! -f ${analysisDir}/jid_preprocessing.txt) || ($( cat ${analysisDir}/jid_preprocessing.txt | sed -e 's/,/\n/g' | wc -l ) != $sample_count) ]]
 	do
 		sleep 1
 	done
@@ -262,7 +262,7 @@ fi
 # ASSEMBLY
 if [ $cluster == "yes" ]
 then
-	while [ (! -f ${analysisDir}/jid_mapping.txt) || $( cat ${analysisDir}/jid_mapping.txt | sed -e 's/,/\n/g' | wc -l ) != $sample_count*6 ]
+	while [[ (! -f ${analysisDir}/jid_preprocessing.txt) || ($( cat ${analysisDir}/jid_preprocessing.txt | sed -e 's/,/\n/g' | wc -l ) != $sample_count*6) ]]
 	do
 		sleep 1
 	done
@@ -389,7 +389,7 @@ fi
 # BLAST
 if [ $cluster == "yes" ]
 then
-	while [ (! -f ${analysisDir}/jid_assembly.txt) || $( cat ${analysisDir}/jid_assembly.txt | sed -e 's/,/\n/g' | wc -l ) != $sample_count*6 ]
+	while [[ (! -f ${analysisDir}/jid_preprocessing.txt) || ($( cat ${analysisDir}/jid_preprocessing.txt | sed -e 's/,/\n/g' | wc -l ) != $sample_count*6) ]]
 	do
 		sleep 1
 	done
@@ -516,7 +516,7 @@ fi
 # COVERAGE
 if [ $cluster == "yes" ]
 then
-	while [ (! -f ${analysisDir}/jid_blast.txt) || $( cat ${analysisDir}/jid_blast.txt | sed -e 's/,/\n/g' | wc -l ) != $sample_count*6 ]
+	while [[ (! -f ${analysisDir}/jid_preprocessing.txt) || ($( cat ${analysisDir}/jid_preprocessing.txt | sed -e 's/,/\n/g' | wc -l ) != $sample_count*6) ]]
 	do
 		sleep 1
 	done
@@ -644,7 +644,7 @@ fi
 # RESULTS
 if [ $cluster == "yes" ]
 then
-	while [ (! -f ${analysisDir}/jid_coverage.txt) || $( cat ${analysisDir}/jid_coverage.txt | sed -e 's/,/\n/g' | wc -l ) != $sample_count*5 ]
+	while [[ (! -f ${analysisDir}/jid_preprocessing.txt) || ($( cat ${analysisDir}/jid_preprocessing.txt | sed -e 's/,/\n/g' | wc -l ) != $sample_count*5) ]]
 	do
 		sleep 1
 	done
