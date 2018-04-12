@@ -28,9 +28,12 @@ source ./pikaVirus.config
 readFolder="${analysisDir}/00-reads/"
 >"${analysisDir}/samples_id.txt"
 
-for file in ${readFolder}*_R1_*.fastq*
+for file in ${readFolder}*.fastq*
 do
-	sampleName=$( basename $file )
-	echo $sampleName | sed 's/\(.*\)[\._\-]R1[\._\-].*/\1/' >> "${analysisDir}/samples_id.txt"
+	if [[ $(echo $file) =~ [\._\-]R1[\._\-] ]]
+	then
+		sampleName=$( basename $file )
+		echo $sampleName | sed 's/\(.*\)[\._\-]R1[\._\-].*/\1/' >> "${analysisDir}/samples_id.txt"
+	fi
 done
 
