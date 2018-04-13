@@ -87,6 +87,7 @@ else
 		echo -e "$(date)\t finished running BLASTn for ${sampleName}\n" >> $lablog
 
 		# RUN BLASTx and RAPSearch2
+		# TO-DO: is this really needed?
 
 	# if it is not unknown
 	else
