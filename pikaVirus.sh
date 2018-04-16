@@ -532,7 +532,7 @@ fi
 # RESULTS
 if [ $cluster == "yes" ]
 then
-	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_coverage.txt ) bash generate_results.sh
+	$cluster_prefix -hold_jib $( cat ${analysisDir}/jid_coverage.txt ) bash ${PIKAVIRUSDIR}/generate_results.sh
 else
-	bash generate_results.sh
+	bash ${PIKAVIRUSDIR}/generate_results.sh
 fi
