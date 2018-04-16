@@ -81,9 +81,9 @@ cp -r ${analysisDir}/99-stats/data* ${resultsDir}quality
 echo -e "Generate fastq report:" >> $lablog
 echo -e "perl ./listFastQCReports.pl ${resultsDir}quality/data/ > ${resultsDir}quality/table.html" >> $lablog
 #perl ./listFastQCReports.pl ./quality/data/ > ./quality/table.html
-perl ${PIKAVIRUSDIR}/listFastQCReports.pl ${resultsDir}quality/data/ > ${resultsDir}quality/table.html
+perl ${PIKAVIRUSDIR}/html/quality/listFastQCReports.pl ${resultsDir}quality/data/ > ${resultsDir}quality/table.html
 echo -e "perl ./createHTML.pl" >> $lablog
-perl ${PIKAVIRUSDIR}/createHTML.pl
+perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl
 
 echo -e "Removing template.html, table.html, listFastQCReports.pl and createHTML.pl" >> $lablog
 # rm ./template.html
@@ -133,7 +133,7 @@ do
 			#sampleDir=$1  #/analysisDir/xx-organism/sampleName/
 			echo -e "\t$(date)\t Create results html file" >> $lablog
 			echo -e "\t$(date)\t ${PIKAVIRUSDIR}/createResultHtml.sh ${analysisDir}/${organism}/${sample}/" >> $lablog
-			${PIKAVIRUSDIR}/createResultHtml.sh "${analysisDir}/${organism}/${sample}/" 2>&1 | tee -a $lablog
+			bash ${PIKAVIRUSDIR}/createResultHtml.sh "${analysisDir}/${organism}/${sample}/" 2>&1 | tee -a $lablog
 		done
 	fi
 done
@@ -163,7 +163,7 @@ do
 			# Generate taxonomy statistics
 			echo -e "\t\t$(date)\t Generate statistics" >> $lablog
 			echo -e "\t\t${PIKAVIRUSDIR}/statistics.sh ${analysisDir}/${organism}/${sample}/blast" >> $lablog
-			${PIKAVIRUSDIR}/statistics.sh ${analysisDir}/${organism}/${sample}/blast/ 2>&1 | tee -a $lablog
+			bash ${PIKAVIRUSDIR}/statistics.sh ${analysisDir}/${organism}/${sample}/blast/ 2>&1 | tee -a $lablog
 			# Copy statistics files to RESULTS data folder
 			cp "${analysisDir}/${organism}/${sample}/taxonomy/${sample}_${organism_stripped}_statistics.txt" "${resultsDir}/data/summary/" 2>&1 | tee -a $lablog
 		done
