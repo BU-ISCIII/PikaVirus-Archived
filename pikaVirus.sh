@@ -127,7 +127,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix bash cluster_preprocessing.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e "$jobid" > ${analysisDir}/jid_preprocessing.txt
+	echo -ne "$jobid" > ${analysisDir}/jid_preprocessing.txt
 	if [ ! -d "${workingDir}ANALYSIS/99-stats/" ]
 	then
 		mkdir ${workingDir}ANALYSIS/99-stats/
@@ -167,7 +167,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_preprocessing.txt ) bash cluster_host_removal.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e "$jobid" > ${analysisDir}/jid_host_removal.txt
+	echo -ne "$jobid" > ${analysisDir}/jid_host_removal.txt
 	cat > cluster_mapper_bac.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N mapper_bac
@@ -178,7 +178,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash cluster_mapper_bac.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e "$jobid" > ${analysisDir}/jid_mapping.txt
+	echo -ne "$jobid" > ${analysisDir}/jid_mapping.txt
 	cat > cluster_mapper_virus.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N mapper_virus
@@ -189,7 +189,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash cluster_mapper_virus.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_mapping.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_mapping.txt
 	cat > cluster_mapper_fungi.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N mapper_fungi
@@ -200,7 +200,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash cluster_mapper_fungi.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_mapping.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_mapping.txt
 	cat > cluster_mapper_parasite.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N mapper_parasite
@@ -211,7 +211,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash cluster_mapper_parasite.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_mapping.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_mapping.txt
 	cat > cluster_mapper_unknown.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N mapper_unknown
@@ -222,7 +222,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_mapper_unknown.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_mapping.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_mapping.txt
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
@@ -249,7 +249,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_assembly_bac.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e "$jobid" > ${analysisDir}/jid_assembly.txt
+	echo -ne "$jobid" > ${analysisDir}/jid_assembly.txt
 	cat > cluster_assembly_virus.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N assembly_virus
@@ -261,7 +261,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_assembly_virus.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_assembly.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_assembly.txt
 	cat > cluster_assembly_fungi.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N assembly_fungi
@@ -273,7 +273,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_assembly_fungi.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_assembly.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_assembly.txt
 	cat > cluster_assembly_protozoa.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N assembly_protozoa
@@ -285,7 +285,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_assembly_protozoa.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_assembly.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_assembly.txt
 	cat > cluster_assembly_invertebrate.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N assembly_invertebrate
@@ -297,7 +297,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_assembly_invertebrate.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_assembly.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_assembly.txt
 	cat > cluster_assembly_unknown.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N assembly_unknown
@@ -309,7 +309,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_assembly_unknown.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_assembly.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_assembly.txt
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
@@ -342,7 +342,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_blast_bac.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e "$jobid" > ${analysisDir}/jid_blast.txt
+	echo -ne "$jobid" > ${analysisDir}/jid_blast.txt
 	cat > cluster_blast_virus.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N blast_virus
@@ -354,7 +354,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_blast_virus.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_blast.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_blast.txt
 	cat > cluster_blast_fungi.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N blast_fungi
@@ -366,7 +366,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_blast_fungi.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_blast.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_blast.txt
 	cat > cluster_blast_protozoa.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N blast_protozoa
@@ -378,7 +378,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_blast_protozoa.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_blast.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_blast.txt
 	cat > cluster_blast_invertebrate.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N blast_invertebrate
@@ -390,7 +390,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_blast_invertebrate.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_blast.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_blast.txt
 	cat > cluster_blast_unknown.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N blast_unknown
@@ -402,7 +402,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_blast_unknown.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_blast.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_blast.txt
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
@@ -437,7 +437,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_coverage_bac.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e "$jobid" > ${analysisDir}/jid_coverage.txt
+	echo -ne "$jobid" > ${analysisDir}/jid_coverage.txt
 	cat > cluster_coverage_virus.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N coverage_virus
@@ -451,7 +451,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_coverage_virus.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_coverage.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_coverage.txt
 	cat > cluster_coverage_fungi.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N coverage_fungi
@@ -465,7 +465,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_coverage_fungi.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_coverage.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_coverage.txt
 	cat > cluster_coverage_protozoa.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N coverage_protozoa
@@ -479,7 +479,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_coverage_protozoa.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_coverage.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_coverage.txt
 	cat > cluster_coverage_invertebrate.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N coverage_invertebrate
@@ -493,7 +493,7 @@ then
 	EndOfFile
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_coverage_invertebrate.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
-	echo -e ",$jobid" >> ${analysisDir}/jid_coverage.txt
+	echo -ne ",$jobid" >> ${analysisDir}/jid_coverage.txt
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
