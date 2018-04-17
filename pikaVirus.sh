@@ -117,7 +117,7 @@ sample_count="$( wc -l ${analysisDir}/samples_id.txt | cut -f1 -d' ')"
 # QUALITY CONTROL
 if [ $cluster == "yes" ]
 then
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_preprocessing.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N preprocessing
 	#$ -t 1-$sample_count
@@ -125,23 +125,21 @@ then
 	INPUT=\$(awk "NR==\$SGE_TASK_ID" \$INPUTFILE)
 	bash ${PIKAVIRUSDIR}/preprocessing.sh -s \$INPUT
 	EndOfFile
-	output_qsub=$( $cluster_prefix bash tmp.sh )
+	output_qsub=$( $cluster_prefix bash cluster_preprocessing.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e "$jobid" > ${analysisDir}/jid_preprocessing.txt
-	rm tmp.sh
 	if [ ! -d "${workingDir}ANALYSIS/99-stats/" ]
 	then
 		mkdir ${workingDir}ANALYSIS/99-stats/
 	fi
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_preprocessing_report.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N preprocessing_report
 	/bin/cp -rf ${PIKAVIRUSDIR}/html/quality/template.html ${workingDir}ANALYSIS/99-stats/
 	perl ${PIKAVIRUSDIR}/html/quality/listFastQCReports.pl ${workingDir}ANALYSIS/99-stats/data/ > ${workingDir}ANALYSIS/99-stats/table.html
 	perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl
 	EndOfFile
-	$cluster_prefix hold_jid $( cat ${analysisDir}/jid_preprocessing.txt ) bash tmp.sh
-	rm tmp.sh
+	$cluster_prefix hold_jid $( cat ${analysisDir}/jid_preprocessing.txt ) bash cluster_preprocessing_report.sh
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
@@ -159,7 +157,7 @@ fi
 # MAPPING
 if [ $cluster == "yes" ]
 then
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_host_removal.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N host_removal
 	#$ -t 1-$sample_count
@@ -167,11 +165,10 @@ then
 	INPUT=\$(awk "NR==\$SGE_TASK_ID" \$INPUTFILE)
 	bash ${PIKAVIRUSDIR}/host_removal.sh \$INPUT
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_preprocessing.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_preprocessing.txt ) bash cluster_host_removal.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e "$jobid" > ${analysisDir}/jid_host_removal.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_mapper_bac.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N mapper_bac
 	#$ -t 1-$sample_count
@@ -179,11 +176,10 @@ then
 	INPUT=\$(awk "NR==\$SGE_TASK_ID" \$INPUTFILE)
 	bash ${PIKAVIRUSDIR}/mapper_bac.sh \$INPUT
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash cluster_mapper_bac.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e "$jobid" > ${analysisDir}/jid_mapping.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_mapper_virus.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N mapper_virus
 	#$ -t 1-$sample_count
@@ -191,11 +187,10 @@ then
 	INPUT=\$(awk "NR==\$SGE_TASK_ID" \$INPUTFILE)
 	bash ${PIKAVIRUSDIR}/mapper_virus.sh \$INPUT
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash cluster_mapper_virus.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_mapping.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_mapper_fungi.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N mapper_fungi
 	#$ -t 1-$sample_count
@@ -203,11 +198,10 @@ then
 	INPUT=\$(awk "NR==\$SGE_TASK_ID" \$INPUTFILE)
 	bash ${PIKAVIRUSDIR}/mapper_fungi.sh \$INPUT
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash cluster_mapper_fungi.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_mapping.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_mapper_parasite.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N mapper_parasite
 	#$ -t 1-$sample_count
@@ -215,11 +209,10 @@ then
 	INPUT=\$(awk "NR==\$SGE_TASK_ID" \$INPUTFILE)
 	bash ${PIKAVIRUSDIR}/mapper_parasite.sh \$INPUT
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_host_removal.txt ) bash cluster_mapper_parasite.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_mapping.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_mapper_unknown.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N mapper_unknown
 	#$ -t 1-$sample_count
@@ -227,10 +220,9 @@ then
 	INPUT=\$(awk "NR==\$SGE_TASK_ID" \$INPUTFILE)
 	bash ${PIKAVIRUSDIR}/mapper_unknown.sh \$INPUT
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_mapper_unknown.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_mapping.txt
-	rm tmp.sh
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
@@ -246,7 +238,7 @@ fi
 # ASSEMBLY
 if [ $cluster == "yes" ]
 then
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_assembly_bac.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N assembly_bac
 	#$ -t 1-$sample_count
@@ -255,11 +247,10 @@ then
 	mappedDir="${analysisDir}/05-bacteria/\${INPUT}/reads/"
 	bash ${PIKAVIRUSDIR}/assembly.sh \$mappedDir
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_assembly_bac.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e "$jobid" > ${analysisDir}/jid_assembly.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_assembly_virus.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N assembly_virus
 	#$ -t 1-$sample_count
@@ -268,11 +259,10 @@ then
 	mappedDir="${analysisDir}/06-virus/\${INPUT}/reads/"
 	bash ${PIKAVIRUSDIR}/assembly.sh \$mappedDir
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_assembly_virus.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_assembly.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_assembly_fungi.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N assembly_fungi
 	#$ -t 1-$sample_count
@@ -281,11 +271,10 @@ then
 	mappedDir="${analysisDir}/07-fungi/\${INPUT}/reads/"
 	bash ${PIKAVIRUSDIR}/assembly.sh \$mappedDir
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_assembly_fungi.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_assembly.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_assembly_protozoa.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N assembly_protozoa
 	#$ -t 1-$sample_count
@@ -294,11 +283,10 @@ then
 	mappedDir="${analysisDir}/08-protozoa/\${INPUT}/reads/"
 	bash ${PIKAVIRUSDIR}/assembly.sh \$mappedDir
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_assembly_protozoa.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_assembly.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_assembly_invertebrate.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N assembly_invertebrate
 	#$ -t 1-$sample_count
@@ -307,11 +295,10 @@ then
 	mappedDir="${analysisDir}/09-invertebrate/\${INPUT}/reads/"
 	bash ${PIKAVIRUSDIR}/assembly.sh \$mappedDir
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_mapping.txt ) bash cluster_assembly_invertebrate.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_assembly.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_assembly_unknown.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N assembly_unknown
 	#$ -t 1-$sample_count
@@ -320,10 +307,9 @@ then
 	mappedDir="${analysisDir}/10-unknown/\${INPUT}/reads/"
 	bash ${PIKAVIRUSDIR}/assembly.sh \$mappedDir
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_assembly_unknown.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_assembly.txt
-	rm tmp.sh
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
@@ -345,7 +331,7 @@ fi
 # BLAST
 if [ $cluster == "yes" ]
 then
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_blast_bac.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N blast_bac
 	#$ -t 1-$sample_count
@@ -354,11 +340,10 @@ then
 	sampleDir="${analysisDir}/05-bacteria/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir $bacDB
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_blast_bac.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e "$jobid" > ${analysisDir}/jid_blast.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_blast_virus.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N blast_virus
 	#$ -t 1-$sample_count
@@ -367,11 +352,10 @@ then
 	sampleDir="${analysisDir}/06-virus/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir $bacDB
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_blast_virus.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_blast.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_blast_fungi.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N blast_fungi
 	#$ -t 1-$sample_count
@@ -380,11 +364,10 @@ then
 	sampleDir="${analysisDir}/07-fungi/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir $fungiDB
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_blast_fungi.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_blast.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_blast_protozoa.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N blast_protozoa
 	#$ -t 1-$sample_count
@@ -393,11 +376,10 @@ then
 	sampleDir="${analysisDir}/08-protozoa/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir $protozoaDB
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_blast_protozoa.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_blast.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_blast_invertebrate.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N blast_invertebrate
 	#$ -t 1-$sample_count
@@ -406,11 +388,10 @@ then
 	sampleDir="${analysisDir}/09-invertebrate/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir $invertebrateDB
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_assembly.txt ) bash cluster_blast_invertebrate.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_blast.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_blast_unknown.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N blast_unknown
 	#$ -t 1-$sample_count
@@ -419,10 +400,9 @@ then
 	sampleDir="${analysisDir}/10-unknown/\${INPUT}/"
 	bash ${PIKAVIRUSDIR}/blast.sh \$sampleDir
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_blast_unknown.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_blast.txt
-	rm tmp.sh
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
@@ -444,7 +424,7 @@ fi
 # COVERAGE
 if [ $cluster == "yes" ]
 then
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_coverage_bac.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N coverage_bac
 	#$ -t 1-$sample_count
@@ -455,11 +435,10 @@ then
 	bash ${PIKAVIRUSDIR}/coverage.sh \$sampleDir $bacDB
 	Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "\${sampleDir}/coverage/" \${sampleName}
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_coverage_bac.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e "$jobid" > ${analysisDir}/jid_coverage.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_coverage_virus.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N coverage_virus
 	#$ -t 1-$sample_count
@@ -470,11 +449,10 @@ then
 	bash ${PIKAVIRUSDIR}/coverage.sh \$sampleDir $bacDB
 	Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "\${sampleDir}/coverage/" \${sampleName}
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_coverage_virus.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_coverage.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_coverage_fungi.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N coverage_fungi
 	#$ -t 1-$sample_count
@@ -485,11 +463,10 @@ then
 	bash ${PIKAVIRUSDIR}/coverage.sh \$sampleDir $fungiDB
 	Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "\${sampleDir}/coverage/" \${sampleName}
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_coverage_fungi.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_coverage.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_coverage_protozoa.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N coverage_protozoa
 	#$ -t 1-$sample_count
@@ -500,11 +477,10 @@ then
 	bash ${PIKAVIRUSDIR}/coverage.sh \$sampleDir $protozoaDB
 	Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "\${sampleDir}/coverage/" \${sampleName}
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_coverage_protozoa.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_coverage.txt
-	rm tmp.sh
-	cat > tmp.sh <<- EndOfFile
+	cat > cluster_coverage_invertebrate.sh <<- EndOfFile
 	#!/bin/sh
 	#$ -N coverage_invertebrate
 	#$ -t 1-$sample_count
@@ -515,10 +491,9 @@ then
 	bash ${PIKAVIRUSDIR}/coverage.sh \$sampleDir $invertebrateDB
 	Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "\${sampleDir}/coverage/" \${sampleName}
 	EndOfFile
-	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash tmp.sh )
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_coverage_invertebrate.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -e ",$jobid" >> ${analysisDir}/jid_coverage.txt
-	rm tmp.sh
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
