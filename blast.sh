@@ -32,7 +32,7 @@ organism="${organismDir##*-}" # (organism)
 upOrganism=$(echo $organism | tr '[:lower:]' '[:upper:]') # (ORGANISM)
 blastDB="${refDB}BLAST/"
 BLASTn_DB="${blastDB}blastn/${upOrganism}_blastn"
-BLASTx_DB="${blastDB}blastx/${upOrganism}_blastx"
+# BLASTx_DB="${blastDB}blastx/${upOrganism}_blastx"
 #		Directories
 outputDir="${sampleDir}/blast/"
 #		Input Files
@@ -41,7 +41,7 @@ sampleContig="${sampleDir}/contigs/contigs.fasta"
 blastnResult="${outputDir}${sampleName}_BLASTn.blast"
 blastnResultFiltered="${outputDir}${sampleName}_BLASTn_unsorted.blast"
 blastnResultSorted="${outputDir}${sampleName}_BLASTn_filtered.blast"
-blastxResult="${outputDir}${sampleName}_BLASTx.blast"
+# blastxResult="${outputDir}${sampleName}_BLASTx.blast"
 lablog="${outputDir}${sampleName}_blast_log.log"
 contigFaa="${outputDir}${sampleName}_contig_aa.faa"
 blastnHits="${outputDir}blastn_Hits.txt"
@@ -101,12 +101,12 @@ else
 		awk -F "\t" '{if($4 >= 90 && $5>= 100) print $0}' $blastnResult > $blastnResultFiltered
 		sort -k1 $blastnResultFiltered > $blastnResultSorted
 
-		#	RUN BLASTx and RAPSearch2
-		echo -e "$(date)\t start running BLASTx for ${sampleName}\n" >> $lablog
-		echo -e "$(date)\t start running BLASTx for ${sampleName}"
-		echo -e "The command is: ### blastx -db $BLASTx_DB -query $sampleContig -html > $blastResult ###" >> $lablog
-		blastx -db $BLASTx_DB -query $sampleContig -outfmt '6 stitle std' > $blastxResult
-		echo -e "$(date)\t finished running BLASTx for ${sampleName}\n" >> $lablog
+# 		#	RUN BLASTx and RAPSearch2
+# 		echo -e "$(date)\t start running BLASTx for ${sampleName}\n" >> $lablog
+# 		echo -e "$(date)\t start running BLASTx for ${sampleName}"
+# 		echo -e "The command is: ### blastx -db $BLASTx_DB -query $sampleContig -html > $blastResult ###" >> $lablog
+# 		blastx -db $BLASTx_DB -query $sampleContig -outfmt '6 stitle std' > $blastxResult
+# 		echo -e "$(date)\t finished running BLASTx for ${sampleName}\n" >> $lablog
 
 		grep -A 5 -B 3 ">" $blastnResult > $blastnHits
 
