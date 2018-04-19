@@ -64,7 +64,7 @@ then
 else
 
 	# if it is unknown, blast has to be run against all the databases
-	if [ $organismDir -eq "10-unknown" ]
+	if [ "$organismDir" = "10-unknown" ]
 	then
 
 		# RUN BLASTn
