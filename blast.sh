@@ -60,7 +60,7 @@ fi
 # Check sample assembly exists
 if [ ! -f $sampleContig ]
 then
-	echo "$sampleContig file not found!" > $lablog
+	echo -e "$sampleContig file not found" > $lablog
 else
 
 	# if it is unknown, blast has to be run against all the databases
@@ -108,7 +108,8 @@ else
 # 		blastx -db $BLASTx_DB -query $sampleContig -outfmt '6 stitle std' > $blastxResult
 # 		echo -e "$(date)\t finished running BLASTx for ${sampleName}\n" >> $lablog
 
-		grep -A 5 -B 3 ">" $blastnResult > $blastnHits
+# 		grep -A 5 -B 3 ">" $blastnResult > $blastnHits
+		cut $blastnResultSorted -f1-4 > $blastnHits
 
 	fi
 fi
