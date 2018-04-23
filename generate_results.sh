@@ -173,7 +173,7 @@ done
 # Generates the html file once the txt statistics are finished and copied.
 echo -e "$(date)\t Create summary html file:" >> $lablog
 echo -e "${PIKAVIRUSDIR}/createSummaryHtml.sh" >> $lablog
-${PIKAVIRUSDIR}/createSummaryHtml.sh 2>&1 | tee -a $lablog
+bash ${PIKAVIRUSDIR}/createSummaryHtml.sh 2>&1 | tee -a $lablog
 
 
 
