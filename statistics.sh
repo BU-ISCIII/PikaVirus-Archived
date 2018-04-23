@@ -53,7 +53,6 @@ cat $blastFile | sort -t$'\t' -rk2,2 -k13,13 -rk12,12 -rk4,4 | cut -f 1,3,2,13,1
 rm -f "${organism_formated_list}"
 rm -f "${statisticsFile}"
 
-
 cat "${organism_list}"| while read entry
 do
 	case $organism in
@@ -69,12 +68,8 @@ do
 			;;
 		fungi)
 			# dna:supercontig supercontig:ASM15152v1:GG729702:1:504:1	NODE_5_length_195_cov_12.1357	puccinia_triticina|GG729702	90.05	7e-63	  244
-			fun=$(echo ${entry} | cut -f2 -d'	')
-			#number=$(echo ${fun} |   cut -f1 -d' ') # 11
-			fun=$(echo ${fun} |   cut -f1 -d'|') # puccinia_triticina|GG729702
-			sp=$(echo ${fun} |   cut -f4 -d' ') # puccinia_triticina
-			sp="$(tr '[:lower:]' '[:upper:]' <<< ${sp:0:1})${sp:1}"
-			sp=$(echo $sp | awk '{sub(/strain/,"");sub(/str./,"");sub(/complete genome/,"");sub(/_/," "); print}')
+			sp=$(echo ${entry} | perl -pe  's/\ +/\ /g' | cut -f4 -d' ' | cut -f1 -d'|') # puccinia_triticina
+			sp=$(echo "${sp^}" | perl -pe 's/_/ /g') # Puccinia triticina
 			echo "${entry}" | awk -F"	" -v sp="$sp" 'BEGIN{OFS="\t";} {sub(/,/,"");sub(/genome/,"");sub(/strain/,"");sub(/str./,"");sub(/complete/,"");sub(/sequence/,"");sub(/assembly/,"");print sp,$4, $5, $6}' >> "${organism_formated_list}"
 			# Puccinia triticina 90.05   7e-63     244
 			;;
@@ -86,8 +81,14 @@ do
 			# Nematostella vectensis NEMVEscaffold_1252 genomic scaffold, whole genome shotgun sequence	NW_001833215.1
 			echo "${entry}" | awk -F"	" 'BEGIN{OFS="\t";} {sub(/,/,"");sub(/genomic/,"");sub(/assembly/,"");sub(/whole/,"");sub(/shotgun/,"");sub(/genome/,"");sub(/strain/,"");sub(/str./,"");sub(/complete/,"");sub(/sequence/,"");sub(/assembly/,"");print $1, $4, $5, $6}' >> "${organism_formated_list}"
 			;;
-		*) echo "Unknown organism"
+		*)
+			echo "Unknown organism"
+			;;
 	esac
 done
+
+# case where $organism_list is an empty file needs to create empty $organism_formated_list
+[[ -f "${organism_formated_list}" ]] || echo "None" > "${organism_formated_list}"
+
 # count gnm in sample
 awk -F'\t' '{print $1}' "${organism_formated_list}" | sort | uniq -c | sort -nr >> "${statisticsFile}"
