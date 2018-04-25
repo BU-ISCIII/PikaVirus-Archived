@@ -45,7 +45,7 @@ then
 	   		 echo "$sampleName ${organism} results" >> $result_page
 	   		 echo "
 	   		</title>
-	   		<link rel='stylesheet' type='text/css' href='../../css/table.css'>
+	   		<link rel='stylesheet' type='text/css' href='${resultsDir}/css/table.css'>
 	   	 	<meta content=''>
 		</head>
 		<body>
@@ -105,7 +105,7 @@ then
 			</table>
 			<script src='http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js'></script>
 			<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.min.js'></script>
-			<script src='../../js/jquery.stickyheader.js'></script>
+			<script src='${resultsDir}/js/jquery.stickyheader.js'></script>
 		</body>
 	</html>" >> $result_page
 else
@@ -113,7 +113,7 @@ else
     <html>
     	<head>
     		<title>"${sampleName}" "${organism}" results</title>
-    	   		<link rel='stylesheet' type='text/css' href='../../css/table.css'>
+    	   		<link rel='stylesheet' type='text/css' href='${resultsDir}/css/table.css'>
     	   		<meta content=''>
     	</head>
     	<body>

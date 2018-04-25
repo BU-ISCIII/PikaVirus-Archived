@@ -28,8 +28,6 @@ then
 	echo -e "$(date)\t Generate ${resultsDir}" > $lablog
 	echo -e "${resultsDir} created"
 fi
-echo -e "$(date)\t start copying utilities (css, js, img...)\n" >> $lablog
-echo -e "The commands are:\ncp -r ${PIKAVIRUSDIR}/html/css* ${resultsDir}\ncp -r ${PIKAVIRUSDIR}/html/img* ${resultsDir}\ncp -r ${PIKAVIRUSDIR}/html/js* ${resultsDir}" > $lablog
 
 #	CREATE DIRECTORies IF NECESSARY
 if [ ! -d "${resultsDir}css" ]
@@ -46,6 +44,8 @@ then
 	echo -e "${resultsDir}js created"
 fi
 
+echo -e "$(date)\t start copying utilities (css, js, img...)\n" >> $lablog
+echo -e "The commands are:\ncp -r ${PIKAVIRUSDIR}/html/css* ${resultsDir}\ncp -r ${PIKAVIRUSDIR}/html/img* ${resultsDir}\ncp -r ${PIKAVIRUSDIR}/html/js* ${resultsDir}" > $lablog
 cp -r ${PIKAVIRUSDIR}/html/css/*.css "${resultsDir}css/"
 cp -r ${PIKAVIRUSDIR}/html/img* ${resultsDir}
 cp -r ${PIKAVIRUSDIR}/html/js/*.js "${resultsDir}js/"
@@ -73,30 +73,23 @@ cp -r ${PIKAVIRUSDIR}/html/quality/ ${resultsDir}
 echo -e "cp -r ${workingDir}ANALYSIS/99-stats/data* ${resultsDir}quality" >> $lablog
 cp -r ${analysisDir}/99-stats/data* ${resultsDir}quality
 
-# Change to quality dir
-#cd ${resultsDir}quality
-#cd ${resultsDir}
-
 # generate fastqc report:
 echo -e "Generate fastq report:" >> $lablog
-echo -e "perl ./listFastQCReports.pl ${resultsDir}quality/data/ > ${resultsDir}quality/table.html" >> $lablog
-#perl ./listFastQCReports.pl ./quality/data/ > ./quality/table.html
+echo -e "perl ${PIKAVIRUSDIR}/html/quality/listFastQCReports.pl ${resultsDir}quality/data/ > ${resultsDir}quality/table.html" >> $lablog
 perl ${PIKAVIRUSDIR}/html/quality/listFastQCReports.pl ${resultsDir}quality/data/ > ${resultsDir}quality/table.html
-echo -e "perl ./createHTML.pl" >> $lablog
-perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl
+echo -e "perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl $workingDir" >> $lablog
+perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl $workingDir
 
 echo -e "Removing template.html, table.html, listFastQCReports.pl and createHTML.pl" >> $lablog
-# rm ./template.html
-# rm ./table.html
-# rm ./listFastQCReports.pl
-# rm ./createHTML.pl
+rm ${resultsDir}quality/template.html
+rm ${resultsDir}quality/table.html
+rm ${resultsDir}quality/listFastQCReports.pl
+rm ${resultsDir}quality/createHTML.pl
 
-# Copy quality template html file
+# Move quality template html file
 echo -e "$(date)\t Copy the quality template page:" >> $lablog
-echo -e "cp ${PIKAVIRUSDIR}/html/quality.html ${resultsDir}" >> $lablog
-cp ${PIKAVIRUSDIR}/html/quality.html ${resultsDir}
-
-# cd ${analysisDir}
+echo -e "cp $workingDir/RESULTS/quality/quality.html ${resultsDir}" >> $lablog
+mv $workingDir/RESULTS/quality/quality.html ${resultsDir}
 
 ######### PER SAMPLE ########
 #	CREATE DIRECTORY FOR THE SAMPLE IF NECESSARY
@@ -106,8 +99,6 @@ then
 	echo -e "$(date)\t Generate ${resultsDir}data/persamples" >> $lablog
 	echo -e "${resultsDir}data/persamples created"
 fi
-
-# Copy all the
 
 # Generate by sample template html
 echo -e "$(date)\t Run script to generate BySample template:" >> $lablog
