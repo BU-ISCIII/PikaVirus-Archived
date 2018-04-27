@@ -26,8 +26,8 @@ function set_size() {
     }
 }
 
-function load_summary(sample) { 
-      sample = sample.charAt(0).toUpperCase() + sample.substr(1).toLowerCase();
+function load_summary(sample) {
+      //sample = sample.charAt(0).toUpperCase() + sample.substr(1).toLowerCase();
       google.charts.load("current", {packages:["corechart"]});
       google.charts.setOnLoadCallback(drawChart);
 
@@ -46,15 +46,15 @@ function load_summary(sample) {
             span[0][1]="Hits";
             //data
             j=1;
-            for (line = 0; line < lines.length; line++) { 
-                //trim spaces and strip tabs so they don't mess the data    
+            for (line = 0; line < lines.length; line++) {
+                //trim spaces and strip tabs so they don't mess the data
                 lines[line]=lines[line].trim().replace('\t','');
                 span[j]= new Array(2);
                 span[j][0] = lines[line].substr(lines[line].indexOf(' ') + 1); //gnm
-                span[j][1] = parseInt(lines[line].substr(0,lines[line].indexOf(' '))); //cuantity 
+                span[j][1] = parseInt(lines[line].substr(0,lines[line].indexOf(' '))); //cuantity
                 j++;
 
-            }   
+            }
 
             data = google.visualization.arrayToDataTable(span);
 
@@ -64,11 +64,11 @@ function load_summary(sample) {
             };
 
             chart = new google.visualization.PieChart(document.getElementById(organisms[i]));
-            chart.draw(data, options);        
+            chart.draw(data, options);
         }
         delete span, lines, data, chart;
       }
   }
 
 
-  
+

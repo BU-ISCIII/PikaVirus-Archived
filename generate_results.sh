@@ -108,7 +108,7 @@ bash ${PIKAVIRUSDIR}/createSamplesHtml.sh 2>&1 | tee -a $lablog
 # Generate actual sample data html files
 echo -e "$(date)\t Generate actual data sample html files" >> $lablog
 organisms=()
-for organism in "${analysisDir}/*"
+for organism in ${analysisDir}/*
 do
 	organism=$(echo $organism | rev | cut -d'/' -f1 | rev)
 	if [[ $organism =~ ^[0]{1}[5-9] ]];

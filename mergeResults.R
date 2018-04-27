@@ -30,7 +30,15 @@ coverage=""
 
 # READ BLAST FILE
 #blast=read.table(sampleBlastTable, sep="\t", header=FALSE)
-blast=read.delim(sampleBlastTable, sep="\t", header=FALSE)
+if (file.size(sampleBlastTable) > 10) {
+    
+    blast=read.delim(sampleBlastTable, sep="\t", header=FALSE)
+    
+} else {
+    
+    blast=data.frame(matrix(NA, nrow=nrow(blast), ncol=14))
+    
+}
 
 # 	Name input files 
 colnames(blast) <- c("Organism","Query_seq_id","Reference Id","% of identical matches","Alignment length", "Number of mismatches", 
@@ -42,29 +50,25 @@ blast = subset(blast, select = c("Organism","Query_seq_id","Reference Id","% of 
 								 "Number of Gap openings", "Start of alignment in query", "End of alignment in query", "Start of alignment in subject",
 								 "End of alignment in subject", "Expect value", "Bit Score"))
 
+
+
 # Coverage may not be available
-result = tryCatch({
+if (file.exists(sampleCoverageTable) && file.size(sampleCoverageTable) > 1) {
 	# READ COVERAGE FILE
     coverage=read.table(sampleCoverageTable, sep="\t", header=TRUE)
 
 	coverage = subset(coverage, select = c("gnm", "covMean", "covMin", "covSD", "covMedian", "x1.x4", "x5.x9", "x10.x19", "X.x20", "total"))
 
-}, warning = function(w) {
-    
-    
-}, error = function(e) {
+} else {
     # No coverage file, generate empty data frame
     coverage=data.frame(matrix(NA, nrow=nrow(blast), ncol=10))
     colnames(coverage) <- c("gnm", "covMean", "covMin", "covSD", "covMedian", "x1.x4", "x5.x9", "x10.x19", "X.x20", "total")
 
-}, finally = {
-    # 	merge files
-	sampleResults = merge(x=blast, y=coverage, by.x = "Reference Id", by.y = "gnm")
+}
 
-	# WRITE OUTPUT FILE WITH MERGED TABLES
-	organism=unlist(strsplit(organism, split='-', fixed=TRUE))[2]
-	write.table(sampleResults, file=(paste(resultsDir, "/data/persamples/", sampleName, "_", organism, "_results.txt", sep="")), sep= '\t', col.names=FALSE, row.names=FALSE)
-})
+# 	merge files
+sampleResults = merge(x=blast, y=coverage, by.x = "Reference Id", by.y = "gnm")
 
-
-
+# WRITE OUTPUT FILE WITH MERGED TABLES
+organism=unlist(strsplit(organism, split='-', fixed=TRUE))[2]
+write.table(sampleResults, file=(paste(resultsDir, "/data/persamples/", sampleName, "_", organism, "_results.txt", sep="")), sep= '\t', col.names=FALSE, row.names=FALSE)

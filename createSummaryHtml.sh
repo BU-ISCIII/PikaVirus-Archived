@@ -48,7 +48,7 @@ echo "
 		<!-- JQuery -->
 		<script src='js/jquery-3.1.0.js'></script>
 		<!--Thrid party-->
-	    <script type='text/javascript' src='js/google-loader.js'></script>
+		<script type='text/javascript' src='js/google-loader.js'></script>
 		<!--custom-->
 		<script src='js/main-nav.js'></script>
 		<script src='js/summary.js'></script>
@@ -66,10 +66,10 @@ echo "
 				<div class='socialMedia'>
 					<!--<span>Find us at: </span>-->
 					<a href='https://www.facebook.com/pages/Escuela-Nacional-de-Sanidad-Isciii/203300096355772?fref=ts' target='_blank'><img class = 'social' src='img/facebook.png' alt='Facebook'></a>
-					<a href='https://es.linkedin.com/in/andrea-rubio-ponce-55a34562' target='_blank'><img class = 'social' src='img/linkedin.png' alt='Linkedin'></a>
-					<a href='https://twitter.com/isciii_es' target='_blank'><img class = 'social' src='img/twitter.png' alt='Twitter'></a>
-					<a href='https://github.com/AndreaRP/METAGENOMICS' target='_blank'><img class = 'social' src='img/github.png' alt='GitHub'></a>
-					<a href='https://bitbucket.org/bioinfo_isciii/' target='_blank'><img class = 'social' src='img/bitbucket.png' alt='BitBucket'></a>
+ 					<!--<a href='https://es.linkedin.com/' target='_blank'><img class = 'social' src='img/linkedin.png' alt='Linkedin'></a>//-->
+					<a href='https://twitter.com/BUISCIII' target='_blank'><img class = 'social' src='img/twitter.png' alt='Twitter'></a>
+					<a href='https://github.com/BU-ISCIII/PikaVirus' target='_blank'><img class = 'social' src='img/github.png' alt='GitHub'></a>
+ 					<!--<a href='https://bitbucket.org/bioinfo_isciii/' target='_blank'><img class = 'social' src='img/bitbucket.png' alt='BitBucket'></a>//-->					
 				</div>
 				</h1>
 			</header>

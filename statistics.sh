@@ -88,7 +88,7 @@ do
 done
 
 # case where $organism_list is an empty file needs to create empty $organism_formated_list
-[[ -f "${organism_formated_list}" ]] || echo "None" > "${organism_formated_list}"
+[[ -f "${organism_formated_list}" ]] || touch "${organism_formated_list}"
 
 # count gnm in sample
 awk -F'\t' '{print $1}' "${organism_formated_list}" | sort | uniq -c | sort -nr >> "${statisticsFile}"

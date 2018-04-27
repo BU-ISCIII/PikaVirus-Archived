@@ -79,42 +79,44 @@ echo "
 							<li><a href='info.html' class='icon icon-book'><span>What is this?</span></a></li>
 						</ul>
 					</nav>
-					</div><!-- /tabs -->
+				</div><!-- /tabs -->
 
 				<div id = 'pagina' class='content-wrap'>
 					<div class='items vertical-nav'>
 					<nav>
 						<ul>" > $result_page
-				#	Start formatting data
-				cat $samplesId | while read in
-				do
-				  #  awk -v sample=${in} 'BEGIN {printf "%-9s\n",
-				  #  "<li><a class='\''icon menu'\'' href='\''#sample'\''><span>'${in}'</span></a>",
-				  #  	"<ul class='\''submenu'\''>",
-				  #  		"<li><a href='\''#sample'\''><span>Bacteria</span></a></li>",
-				  #  		"<li><a href='\''#sample'\''><span>Virus</span></a></li>",
-				  #  		"<li><a href='\''#sample'\''><span>Fungi</span></a></li>",
-				  #  		"<li><a href='\''#sample'\''><span>Protozoa</span></a></li>",
-				  #  		"<li><a href='\''#sample'\''><span>Invertebrate</span></a></li>",
-				  #  	"</ul>",
-				  #  "</li>"}' >> $result_page
 
-					 echo "
-					 <li><a class='icon menu' href='#""" >> $result_page
-					 echo $in >> $result_page
-					 echo "'><span>">> $result_page
-					 echo $in >> $result_page
-					 echo "</span></a>
-					 <ul class='submenu'>
-					 	<li><a class='icon-bacteria' href='#${in}'><span>Bacteria</span></a></li>
-					 	<li><a class='icon-virus' href='#${in}'><span>Virus</span></a></li>
-					 	<li><a class='icon-fungi' href='#${in}'><span>Fungi</span></a></li>
-					 	<li><a class='icon-protozoo' href='#${in}'><span>Protozoa</span></a></li>
-					 	<li><a class='icon-invertebrate' href='#${in}'><span>Invertebrate</span></a></li>
-					 </ul>
-					 </li>" >> $result_page
-				done
-				echo "</ul>
+#	Start formatting data
+cat $samplesId | while read in
+do
+	#  awk -v sample=${in} 'BEGIN {printf "%-9s\n",
+	#  "<li><a class='\''icon menu'\'' href='\''#sample'\''><span>'${in}'</span></a>",
+	#  	"<ul class='\''submenu'\''>",
+	#  		"<li><a href='\''#sample'\''><span>Bacteria</span></a></li>",
+	#  		"<li><a href='\''#sample'\''><span>Virus</span></a></li>",
+	#  		"<li><a href='\''#sample'\''><span>Fungi</span></a></li>",
+	#  		"<li><a href='\''#sample'\''><span>Protozoa</span></a></li>",
+	#  		"<li><a href='\''#sample'\''><span>Invertebrate</span></a></li>",
+	#  	"</ul>",
+	#  "</li>"}' >> $result_page
+
+	echo "
+	<li><a class='icon menu' href='#""" >> $result_page
+	echo $in >> $result_page
+	echo "'><span>">> $result_page
+	echo $in >> $result_page
+	echo "</span></a>
+	<ul class='submenu'>
+	<li><a class='icon-bacteria' href='#${in}'><span>Bacteria</span></a></li>
+	<li><a class='icon-virus' href='#${in}'><span>Virus</span></a></li>
+	<li><a class='icon-fungi' href='#${in}'><span>Fungi</span></a></li>
+	<li><a class='icon-protozoo' href='#${in}'><span>Protozoa</span></a></li>
+	<li><a class='icon-invertebrate' href='#${in}'><span>Invertebrate</span></a></li>
+	</ul>
+	</li>" >> $result_page
+done
+
+echo "					</ul>
 					</nav>
 					</div>
 					<object class='results' type='text/html' data=''></object>
