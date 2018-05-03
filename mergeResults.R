@@ -30,7 +30,7 @@ coverage=""
 
 # READ BLAST FILE
 #blast=read.table(sampleBlastTable, sep="\t", header=FALSE)
-if (file.size(sampleBlastTable) > 10) {
+if (file.exists(sampleBlastTable) && file.size(sampleBlastTable) > 10) {
     
     blast=read.delim(sampleBlastTable, sep="\t", header=FALSE)
     
@@ -53,7 +53,7 @@ blast = subset(blast, select = c("Organism","Query_seq_id","Reference Id","% of 
 
 
 # Coverage may not be available
-if (file.exists(sampleCoverageTable) && file.size(sampleCoverageTable) > 1) {
+if (file.exists(sampleCoverageTable) && file.size(sampleCoverageTable) > 10) {
 	# READ COVERAGE FILE
     coverage=read.table(sampleCoverageTable, sep="\t", header=TRUE)
 
