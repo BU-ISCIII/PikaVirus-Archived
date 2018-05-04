@@ -137,7 +137,7 @@ then
 	#$ -N preprocessing_report
 	/bin/cp -rf ${PIKAVIRUSDIR}/html/quality/template.html ${workingDir}ANALYSIS/99-stats/
 	perl ${PIKAVIRUSDIR}/html/quality/listFastQCReports.pl ${workingDir}ANALYSIS/99-stats/data/ > ${workingDir}ANALYSIS/99-stats/table.html
-	perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl
+	perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl $workingDir stats
 	EndOfFile
 	$cluster_prefix hold_jid $( cat ${analysisDir}/jid_preprocessing.txt ) bash cluster_preprocessing_report.sh
 else
@@ -150,7 +150,7 @@ else
 		fi
 		/bin/cp -rf ${PIKAVIRUSDIR}/html/quality/template.html ${workingDir}ANALYSIS/99-stats/
 		perl ${PIKAVIRUSDIR}/html/quality/listFastQCReports.pl ${workingDir}ANALYSIS/99-stats/data/ > ${workingDir}ANALYSIS/99-stats/table.html
-		perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl
+		perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl $workingDir stats
 	done
 fi
 

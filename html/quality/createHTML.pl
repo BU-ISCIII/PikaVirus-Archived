@@ -1,8 +1,14 @@
 #!/usr/bin/perl -w
 
-$workingDir=$ARGV[0];
+$Dir=$ARGV[0];
 
-open (TABLE,"$workingDir/RESULTS/quality/table.html") or die "$!";
+if ($ARGV[1] eq "stats"){
+	$Dir.="/ANALYSIS/99-stats/"
+} else {
+	$Dir.="/RESULTS/quality/"
+}
+
+open (TABLE,"$Dir/table.html") or die "$!";
 
 while(<TABLE>){
 	$line=$_;
@@ -22,8 +28,8 @@ close TABLE;
 #
 # close TABLE2;
 
-open (IN,"$workingDir/RESULTS/quality/template.html") or die "$!";
-open (OUT,">$workingDir/RESULTS/quality/report.html") or die "$!";
+open (IN,"$Dir/template.html") or die "$!";
+open (OUT,">$Dir/report.html") or die "$!";
 
 while(<IN>){
 	$line=$_;
