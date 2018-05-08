@@ -123,14 +123,14 @@ then
 	#$ -t 1-$sample_count
 	INPUTFILE=${analysisDir}/samples_id.txt
 	INPUT=\$(awk "NR==\$SGE_TASK_ID" \$INPUTFILE)
-	bash ${PIKAVIRUSDIR}/preprocessing.sh -s \$INPUT
+	bash ${PIKAVIRUSDIR}/preprocessing.sh \$INPUT
 	EndOfFile
 	output_qsub=$( $cluster_prefix bash cluster_preprocessing.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -ne "$jobid" > ${analysisDir}/jid_preprocessing.txt
-	if [ ! -d "${workingDir}ANALYSIS/99-stats/" ]
+	if [ ! -d "${workingDir}ANALYSIS/99-stats/data" ]
 	then
-		mkdir ${workingDir}ANALYSIS/99-stats/
+		mkdir -p ${workingDir}ANALYSIS/99-stats/data
 	fi
 	cat > cluster_preprocessing_report.sh <<- EndOfFile
 	#!/bin/sh
@@ -143,10 +143,10 @@ then
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
-		bash ${PIKAVIRUSDIR}/preprocessing.sh -s $in
-		if [ ! -d "${workingDir}ANALYSIS/99-stats/" ]
+		bash ${PIKAVIRUSDIR}/preprocessing.sh $in
+		if [ ! -d "${workingDir}ANALYSIS/99-stats/data" ]
 		then
-			mkdir ${workingDir}ANALYSIS/99-stats/
+			mkdir -p ${workingDir}ANALYSIS/99-stats/data
 		fi
 		/bin/cp -rf ${PIKAVIRUSDIR}/html/quality/template.html ${workingDir}ANALYSIS/99-stats/
 		perl ${PIKAVIRUSDIR}/html/quality/listFastQCReports.pl ${workingDir}ANALYSIS/99-stats/data/ > ${workingDir}ANALYSIS/99-stats/table.html

@@ -52,25 +52,7 @@ source ./pikaVirus.config
 echo -e "PIPELINE START: $(date)"
 
 #	Get parameters:
-sampleName=''
-while getopts "hs:" opt
-do
-	case "$opt" in
-	h)	showHelp
-		;;
-	s)	sampleName=$OPTARG
-		;;
-	esac
-done
-shift $((OPTIND-1))
-
-
-function showHelp {
-	echo -e 'Usage: preprocessing -s <path_to_samples>'
-	echo -e 'the path to samples must contain the fastq sequences. Tha file name must contain R1 or R2.'
-	echo -e 'preprocessing -h: show this help'	
-	exit 0
-}
+sampleName=$1
 
 #	VARIABLES
 samplePreProQCDir="${analysisDir}/01-fastqc/${sampleName}"
