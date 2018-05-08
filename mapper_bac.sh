@@ -50,22 +50,20 @@ bacWGDB="${bacDB}WG/bwt2/WG"
 bacFilesDir="${analysisDir}/05-bacteria/${sampleName}/reads/" #directory where the files will we saved (sam for mapping and fastq for mapped samples)
 noHostDir="${analysisDir}/04-noHost/${sampleName}/" #directory where the host free samples are located
 #		Input Files
-noHostR1Fastq="${noHostDir}${sampleName}_noHost_R1.fastq" #R1 host free file
-noHostR2Fastq="${noHostDir}${sampleName}_noHost_R2.fastq" #R2 host free file
+noHostR1Fastq="${noHostDir}${sampleName}_noHost.fastq" #R1 host free file
 #		OutputFiles: 16S
 mappedSam16SFile="${bacFilesDir}${sampleName}_bacteria_mapped_16S.sam" #bowtie sam file with the reads that mapped against the 16S reference
 mappedBam16SFile="${bacFilesDir}${sampleName}_bacteria_mapped_16S.bam" #bowtie bam file with the reads that mapped against the 16S reference
 sortedBam16SFile="${bacFilesDir}${sampleName}_bacteria_sorted_16S.bam"
 bowtie2logFile16S="${bacFilesDir}${sampleName}_bacteria_mapping_16S.log" #log of the mapping against the 16S reference
-BacMappedR116SFastq="${bacFilesDir}${sampleName}_bacteria_R1_16S.fastq" #file with the R1 reads which mapped against 16S reference
-BacMappedR216SFastq="${bacFilesDir}${sampleName}_bacteria_R2_16S.fastq" #file with the R2 reads which mapped against the 16S reference
+BacMappedR116SFastq="${bacFilesDir}${sampleName}_bacteria_16S.fastq" #file with the R1 reads which mapped against 16S reference
 #		OutputFiles: Whole Genome (WG)
 mappedSamWGFile="${bacFilesDir}${sampleName}_WG_bacteria_mapped.sam" #bowtie sam file with the reads that mapped against the WG reference
 mappedBamWGFile="${bacFilesDir}${sampleName}_WG_bacteria_mapped.bam" #bowtie bam file with the reads that mapped against the WG reference
 sortedBamWGFile="${bacFilesDir}${sampleName}_WG_bacteria_sorted.bam"
 bowtie2logFileWG="${bacFilesDir}${sampleName}_WG_bacteria_mapping.log" #log of the mapping against the WG reference
-BacMappedR1WGFastq="${bacFilesDir}${sampleName}_WG_bacteria_R1.fastq" #file with the R1 reads that mapped against the WG reference
-BacMappedR2WGFastq="${bacFilesDir}${sampleName}_WG_bacteria_R2.fastq" #file with the R2 reads that mapped against the WG reference
+BacMappedR1WGFastq="${bacFilesDir}${sampleName}_WG_bacteria.fastq" #file with the R1 reads that mapped against the WG reference
+
 
 #	MAPPING BACTERIA
 echo -e "$(date): ************* Start bacteria mapping ***************" >> "${sampleAnalysisLog}"
@@ -108,8 +106,8 @@ fi
 #	BOWTIE2 MAPPING AGAINST BACTERIA WG
 echo -e "--------Bowtie2 is mapping against bacteria WG reference ....------"
 echo -e "$(date)\t Start mapping ${sampleName} reads to bacteria WG reference \n" > $bowtie2logFileWG
-echo -e "The command is: ### bowtie2 -fr -x "$bacWGDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamWGFile ###\n" >> $bowtie2logFileWG
-bowtie2 -fr -x "$bacWGDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamWGFile 2>&1 | tee -a $bowtie2logFileWG
+echo -e "The command is: ### bowtie2 -x "$bacWGDB" -q $noHostR1Fastq -S $mappedSamWGFile ###\n" >> $bowtie2logFileWG
+bowtie2 -x "$bacWGDB" -q $noHostR1Fastq -S $mappedSamWGFile 2>&1 | tee -a $bowtie2logFileWG
 echo -e "$(date)\t Finished mapping ${sampleName} reads to bacteria WG reference \n" >> $bowtie2logFileWG
 echo -e "$(date)\t Converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFileWG
 samtools view -Sb $mappedSamWGFile > $mappedBamWGFile
@@ -123,9 +121,7 @@ echo -e "$(date)\t Finished converting SAM to BAM of ${sampleName} \n" >> $bowti
 echo -e "----------------- Filtering bacteria reads that mapped to bacteria WG reference ...---------------------"
 echo -e "$(date)\t Start filtering ${sampleName} reads that mapped to bacteria WG \n" >> $bowtie2logFileWG
 echo -e "The command is: ###samtools view -F 0x40 $sortedBamWGFile | awk '{if($3 != '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $BacMappedR1WGFastq" >> $bowtie2logFileWG
-samtools view -F 0x40 $sortedBamWGFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $BacMappedR1WGFastq
-echo -e "The command is: ###samtools view -f 0x40 $sortedBamWGFile | awk '{if($3 != '*') print '@' $1 '\\n' $10 '\\n' '-' '\\n' $11}' > $BacMappedR2WGFastq" >> $bowtie2logFileWG
-samtools view -f 0x40 $sortedBamWGFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $BacMappedR2WGFastq
+samtools view $sortedBamWGFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $BacMappedR1WGFastq
 #	samtools separates R1 (-F) or R2 (-f) reads using the mapped SAM file and awk filters those mapped (!="*") in fastq format
 echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to bacteria WG reference \n" >> $bowtie2logFileWG
 

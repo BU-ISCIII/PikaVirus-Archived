@@ -82,14 +82,14 @@ echo -e "$(date): ********* Finished quaility control **********" >> "${samplePr
 
 makedir $samplePostProDir
 echo "sample name: ${sampleName}"
-java -jar /opt/Trimmomatic-0.33/trimmomatic-0.33.jar PE -threads 10 -phred33 ${rawDir}${sampleName}*_R1*.fastq* ${rawDir}${sampleName}*_R2*.fastq* ${samplePostProDir}/${sampleName}_R1_paired.fastq ${samplePostProDir}/${sampleName}_R1_unpaired.fastq ${samplePostProDir}/${sampleName}_R2_paired.fastq ${samplePostProDir}/${sampleName}_R2_unpaired.fastq ILLUMINACLIP:/opt/Trimmomatic/adapters/NexteraPE-PE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:50 >> ${samplePostProDir}/${sampleName}_trimming.log
+java -jar /opt/Trimmomatic-0.33/trimmomatic-0.33.jar SE -threads 10 -phred33 ${rawDir}${sampleName}.fastq* ${samplePostProDir}/${sampleName}.fastq ILLUMINACLIP:/opt/Trimmomatic/adapters/NexteraPE-PE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:50 >> ${samplePostProDir}/${sampleName}_trimming.log
 
 # TRIMMED READS QUALITY CONTROL
 
 makedir $samplePostProQCDir
 
 echo -e "$(date): Execute fastqc.sh" >> "${samplePostProDir}/${sampleName}_postQC.log"
-find $samplePostProDir -name "*_paired.fastq" -exec fastqc {} --outdir $samplePostProQCDir \; >> "${samplePostProQCDir}/${sampleName}_postQC.log"
+find $samplePostProDir -name "*.fastq" -exec fastqc {} --outdir $samplePostProQCDir \; >> "${samplePostProQCDir}/${sampleName}_postQC.log"
 echo -e "$(date): Finish fastqc.sh" >> "${samplePostProQCDir}/${sampleName}_postQC.log"
 echo -e "$(date): ********* Finished quaility control **********" >> "${samplePostProQCDir}/${sampleName}_postQC.log"
 
@@ -100,11 +100,9 @@ makedir $sampleStatsDir
 # copy fastqc files to 99-stats (y le cambio el nombre)
 find $samplePreProQCDir -name "*.zip" -exec unzip {} -d ${sampleStatsDir} \;
 # change name of folder
-mv ${sampleStatsDir}${sampleName}*R1*/ "${sampleStatsDir}${sampleName}_prePro_R1_fastqc/"
-mv ${sampleStatsDir}${sampleName}*R2*/ "${sampleStatsDir}${sampleName}_prePro_R2_fastqc/"
+mv ${sampleStatsDir}${sampleName}*/ "${sampleStatsDir}${sampleName}_prePro_fastqc/"
 
 # copy fastqc files to 99-stats (y le cambio el nombre)
-find $samplePostProQCDir -name "*_paired_fastqc.zip" -exec unzip {} -d ${sampleStatsDir} \;
+find $samplePostProQCDir -name "*fastqc.zip" -exec unzip {} -d ${sampleStatsDir} \;
 # change name of folder
-mv ${sampleStatsDir}${sampleName}*R1_paired*/ "${sampleStatsDir}${sampleName}_trimmed_R1_fastqc/"
-mv ${sampleStatsDir}${sampleName}*R2_paired*/ "${sampleStatsDir}${sampleName}_trimmed_R2_fastqc/"
+mv ${sampleStatsDir}${sampleName}*R1_paired*/ "${sampleStatsDir}${sampleName}_trimmed_fastqc/"

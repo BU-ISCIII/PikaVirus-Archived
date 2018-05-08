@@ -51,22 +51,19 @@ fungiWGDB="${fungiDB}WG/bwt2/fungi_all"
 fungiFilesDir="${analysisDir}/07-fungi/${sampleName}/reads/" #directory where the files will we saved (sam for mapping and fastq for mapped samples)
 noHostDir="${analysisDir}/04-noHost/${sampleName}/" #directory where the host free samples are located
 #		Input Files
-noHostR1Fastq="${noHostDir}${sampleName}_noHost_R1.fastq" #R1 host free file
-noHostR2Fastq="${noHostDir}${sampleName}_noHost_R2.fastq" #R2 host free file
+noHostR1Fastq="${noHostDir}${sampleName}_noHost.fastq" #R1 host free file
 #		OutputFiles: ITS
 mappedSamITSFile="${fungiFilesDir}${sampleName}_fungi_mapped_ITS.sam" #bowtie sam file with the reads that mapped against the ITS reference
 mappedBamITSFile="${fungiFilesDir}${sampleName}_fungi_mapped_ITS.bam" #bowtie bam file with the reads that mapped against the ITS reference
 sortedBamITSFile="${fungiFilesDir}${sampleName}_fungi_sorted_ITS.bam" #bowtie bam file with the reads that mapped against the ITS reference
 bowtie2logFileITS="${fungiFilesDir}${sampleName}_fungi_mapping_ITS.log" #log of the mapping against the ITS reference
-fungiMappedR1ITSFastq="${fungiFilesDir}${sampleName}_fungi_R1_ITS.fastq" #file with the R1 reads which mapped against ITS reference
-fungiMappedR2ITSFastq="${fungiFilesDir}${sampleName}_fungi_R2_ITS.fastq" #file with the R2 reads which mapped against the ITS reference
+fungiMappedR1ITSFastq="${fungiFilesDir}${sampleName}_fungi_ITS.fastq" #file with the R1 reads which mapped against ITS reference
 #		OutputFiles: Whole Genome (WG)
 mappedSamWGFile="${fungiFilesDir}${sampleName}_WG_fungi_mapped.sam" #bowtie sam file with the reads that mapped against the WG reference
 mappedBamWGFile="${fungiFilesDir}${sampleName}_WG_fungi_mapped.bam" #bowtie bam file with the reads that mapped against the WG reference
 sortedBamWGFile="${fungiFilesDir}${sampleName}_WG_fungi_sorted.bam" #bowtie bam file with the reads that mapped against the WG reference
 bowtie2logFileWG="${fungiFilesDir}${sampleName}_WG_fungi_mapping.log" #log of the mapping against the WG reference
-fungiMappedR1WGFastq="${fungiFilesDir}${sampleName}_WG_fungi_R1.fastq" #file with the R1 reads that mapped against the WG reference
-fungiMappedR2WGFastq="${fungiFilesDir}${sampleName}_WG_fungi_R2.fastq" #file with the R2 reads that mapped against the WG reference
+fungiMappedR1WGFastq="${fungiFilesDir}${sampleName}_WG_fungi.fastq" #file with the R1 reads that mapped against the WG reference
 
 #	MAPPING FUNGI
 echo -e "$(date): ************* Start fungi mapping ***************" >> "${sampleAnalysisLog}"
@@ -109,8 +106,8 @@ fi
 #	BOWTIE2 MAPPING AGAINST FUNGI WG REFERENCE
 echo -e "--------Bowtie2 is mapping against fungi WG reference ....------"
 echo -e "$(date)\t Start mapping ${sampleName} reads to fungi WG reference \n" > $bowtie2logFileWG
-echo -e "The command is: ### bowtie2 -fr -x "$fungiWGDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamWGFile ###\n" >> $bowtie2logFileWG
-bowtie2 -fr -x "$fungiWGDB" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamWGFile 2>&1 | tee -a $bowtie2logFileWG
+echo -e "The command is: ### bowtie2 -x "$fungiWGDB" -q $noHostR1Fastq -S $mappedSamWGFile ###\n" >> $bowtie2logFileWG
+bowtie2 -x "$fungiWGDB" -q $noHostR1Fastq  -S $mappedSamWGFile 2>&1 | tee -a $bowtie2logFileWG
 echo -e "$(date)\t Finished mapping ${sampleName} reads to fungi WG reference \n" >> $bowtie2logFileWG
 echo -e "$(date)\t Converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFileWG
 samtools view -Sb $mappedSamWGFile > $mappedBamWGFile
@@ -124,9 +121,7 @@ echo -e "$(date)\t Finished converting SAM to BAM of ${sampleName} \n" >> $bowti
 echo -e "----------------- Filtering fungi reads that mapped to fungi WG reference ...---------------------"
 echo -e "$(date)\t Start filtering ${sampleName} reads that mapped to fungi WG \n" >> $bowtie2logFileWG
 echo -e "The command is: ###samtools view -F 0x40 $sortedBamWGFile | awk '{if(\$3 != '*') print '@' \$1 '\\n' \$10 '\\n' '+' '\\n' \$11}' > $fungiMappedR1WGFastq" >> $bowtie2logFileWG
-samtools view -F 0x40 $sortedBamWGFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $fungiMappedR1WGFastq
-echo -e "The command is: ###samtools view -f 0x40 $sortedBamWGFile | awk '{if(\$3 != '*') print '@' \$1 '\\n' \$10 '\\n' '+' '\\n' \$11}' > $fungiMappedR2WGFastq" >> $bowtie2logFileWG
-samtools view -f 0x40 $sortedBamWGFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $fungiMappedR2WGFastq
+samtools view $sortedBamWGFile | awk '{if($3 != "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $fungiMappedR1WGFastq
 #	samtools separates R1 (-F) or R2 (-f) reads using the mapped BAM file and awk filters those mapped (=!"*") in fastq format
 echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to fungi WG reference \n" >> $bowtie2logFileWG
 

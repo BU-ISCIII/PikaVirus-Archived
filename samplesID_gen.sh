@@ -30,10 +30,7 @@ readFolder="${analysisDir}/00-reads/"
 
 for file in ${readFolder}*.fastq*
 do
-	if [[ $(echo $file) =~ [\._\-]R1[\._\-] ]]
-	then
-		sampleName=$( basename $file )
-		echo $sampleName | sed 's/\(.*\)[\._\-]R1[\._\-].*/\1/' >> "${analysisDir}/samples_id.txt"
-	fi
+	sampleName=$( basename $file )
+	echo $sampleName | sed 's/\(.*\)\.fastq*/\1/' >> "${analysisDir}/samples_id.txt"
 done
 

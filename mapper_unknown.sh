@@ -23,8 +23,7 @@ threads=10
 virusBamFile="${virFilesDir}${sampleName}_virus_sorted.bam" #bowtie bam file with the reads that mapped against the WG reference
 #		OutputFiles
 unknownLogFile="${unknownFilesDir}${sampleName}_unknown_mapping.log"
-notMappedR1Fastq="${unknownFilesDir}${sampleName}_unknown_R1.fastq"
-notMappedR2Fastq="${unknownFilesDir}${sampleName}_unknown_R2.fastq"
+notMappedR1Fastq="${unknownFilesDir}${sampleName}_unknown.fastq"
 notMappedSamFile="${unknownFilesDir}${sampleName}_unknown_mapped.sam"
 notMappedBamFile="${unknownFilesDir}${sampleName}_unknown_mapped.bam" #bowtie bam file with the reads that mapped against the WG reference
 sortedBamFile="${unknownFilesDir}${sampleName}_unknown_sorted.bam" #bowtie bam file with the reads that mapped against the WG reference
@@ -46,17 +45,15 @@ fi
 echo -e "----------------- Filtering virus reads ...---------------------" > $unknownLogFile
 echo -e "$(date)\t Start filtering ${sampleName}\n" >> $unknownLogFile
 echo -e "The command is: ###samtools view -F 0x40 $virusBamFile | awk '{if($3 == '*'') print "@"$1"\n"$10"\n""+""\n"$11}' > $notMappedR1Fastq" >> $unknownLogFile
-samtools view -F 0x40 $virusBamFile | awk '{if($3 == "*") print "@" $1" \n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR1Fastq
-echo -e "The command is: ###samtools view -f 0x40 $virusBamFile | awk '{if($3 == '*') print "@"$1"\n"$10"\n""-""\n"$11}' > $notMappedR2Fastq" >> $unknownLogFile
-samtools view -f 0x40 $virusBamFile | awk '{if($3 == "*") print "@" $1" \n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR2Fastq
+samtools view $virusBamFile | awk '{if($3 == "*") print "@" $1" \n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR1Fastq
 #	samtools separates R1 (-F) or R2 (-f) reads using the mapped BAM file and awk filters those that DIDN'T map (=="*") in fastq format
 echo -e "$(date)\t Finished filtering virus ${sampleName}\n" >> $unknownLogFile
 #--------------------------------------------------------------------------------------------------------------------------------------------
 #	MAP UNKOWN READS WITH BACTERIA DB
 echo -e "--------Bowtie2 is mapping against bacteria WG reference ....------" >> $unknownLogFile
 echo -e "$(date)\t Start mapping ${sampleName} reads to bacteria WG reference \n" >> $unknownLogFile
-echo -e "The command is: ### bowtie2 -p $threads -fr -x $bacWGDB -q -1 $notMappedR1Fastq -2 $notMappedR2Fastq -S $notMappedSamFile ###\n" >> $unknownLogFile
-bowtie2 -p $threads -fr -x $bacWGDB -q -1 $notMappedR1Fastq -2 $notMappedR2Fastq -S $notMappedSamFile 2>&1 | tee -a $unknownLogFile
+echo -e "The command is: ### bowtie2 -p $threads -x $bacWGDB -q $notMappedR1Fastq -S $notMappedSamFile ###\n" >> $unknownLogFile
+bowtie2 -p $threads -x $bacWGDB -q $notMappedR1Fastq -S $notMappedSamFile 2>&1 | tee -a $unknownLogFile
 echo -e "$(date)\t Finished mapping ${sampleName} reads to bacteria WG reference \n" >> $unknownLogFile
 echo -e "$(date)\t Converting reads not mapped to bacteria from SAM to BAM of ${sampleName} \n" >> $unknownLogFile
 samtools view -Sb $notMappedSamFile > $notMappedBamFile
@@ -70,9 +67,7 @@ echo -e "$(date)\t Finished converting reads not mapped to bacteria from SAM to 
 echo -e "----------------- Filtering bacteria reads that mapped to bacteria WG reference ...---------------------" >> $unknownLogFile
 echo -e "$(date)\t Start filtering ${sampleName} reads that mapped to bacteria WG \n" >> $unknownLogFile
 echo -e "The command is: ###samtools view -F 0x40 $sortedBamFile | awk '{if($3 == '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $notMappedR1Fastq" >> $unknownLogFile
-samtools view -F 0x40 $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR1Fastq
-echo -e "The command is: ###samtools view -f 0x40 $sortedBamFile | awk '{if($3 == '*') print '@' $1 '\\n' $10 '\\n' '-' '\\n' $11}' > $notMappedR2Fastq" >> $unknownLogFile
-samtools view -f 0x40 $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR2Fastq
+samtools view $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR1Fastq
 #	samtools separates R1 (-F) or R2 (-f) reads using the mapped SAM file and awk filters those mapped (!="*") in fastq format
 echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to bacteria WG reference \n" >> $unknownLogFile
 
@@ -80,8 +75,8 @@ echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to bacteri
 #	MAP UNKOWN READS WITH FUNGI DB
 echo -e "--------Bowtie2 is mapping against fungi WG reference ....------" >> $unknownLogFile
 echo -e "$(date)\t Start mapping ${sampleName} reads to fungi WG reference \n" >> $unknownLogFile
-echo -e "The command is: ### bowtie2 -p $threads -fr -x $fungiWGDB -q -1 $notMappedR1Fastq -2 $notMappedR2Fastq -S $notMappedSamFile ###\n" >> $unknownLogFile
-bowtie2 -p $threads -fr -x $fungiWGDB -q -1 $notMappedR1Fastq -2 $notMappedR2Fastq -S $notMappedSamFile 2>&1 | tee -a $unknownLogFile
+echo -e "The command is: ### bowtie2 -p $threads -x $fungiWGDB -q $notMappedR1Fastq -S $notMappedSamFile ###\n" >> $unknownLogFile
+bowtie2 -p $threads -x $fungiWGDB -q $notMappedR1Fastq -S $notMappedSamFile 2>&1 | tee -a $unknownLogFile
 echo -e "$(date)\t Finished mapping ${sampleName} reads to fungi WG reference \n" >> $unknownLogFile
 echo -e "$(date)\t Converting reads not mapped to fungi from SAM to BAM of ${sampleName} \n" >> $unknownLogFile
 samtools view -Sb $notMappedSamFile > $notMappedBamFile
@@ -95,9 +90,7 @@ echo -e "$(date)\t Finished converting reads not mapped to fungi from SAM to BAM
 echo -e "----------------- Filtering fungi reads that mapped to fungi WG reference ...---------------------" >> $unknownLogFile
 echo -e "$(date)\t Start filtering ${sampleName} reads that mapped to fungi WG \n" >> $unknownLogFile
 echo -e "The command is: ###samtools view -F 0x40 $sortedBamFile | awk '{if($3 == '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $notMappedR1Fastq" >> $unknownLogFile
-samtools view -F 0x40 $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR1Fastq
-echo -e "The command is: ###samtools view -f 0x40 $sortedBamFile | awk '{if($3 == '*') print '@' $1 '\\n' $10 '\\n' '-' '\\n' $11}' > $notMappedR2Fastq" >> $unknownLogFile
-samtools view -f 0x40 $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR2Fastq
+samtools view $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR1Fastq
 #	samtools separates R1 (-F) or R2 (-f) reads using the mapped SAM file and awk filters those mapped (!="*") in fastq format
 echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to fungi WG reference \n" >> $unknownLogFile
 
@@ -105,8 +98,8 @@ echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to fungi W
 #	MAP UNKOWN READS WITH PROTOZOA DB
 echo -e "--------Bowtie2 is mapping against protozoa WG reference ....------" >> $unknownLogFile
 echo -e "$(date)\t Start mapping ${sampleName} reads to protozoa WG reference \n" >> $unknownLogFile
-echo -e "The command is: ### bowtie2 -p $threads -fr -x $protozoaWGDB -q -1 $notMappedR1Fastq -2 $notMappedR2Fastq -S $notMappedSamFile ###\n" >> $unknownLogFile
-bowtie2 -p $threads -fr -x $protozoaWGDB -q -1 $notMappedR1Fastq -2 $notMappedR2Fastq -S $notMappedSamFile 2>&1 | tee -a $unknownLogFile
+echo -e "The command is: ### bowtie2 -p $threads -x $protozoaWGDB -q $notMappedR1Fastq -S $notMappedSamFile ###\n" >> $unknownLogFile
+bowtie2 -p $threads -x $protozoaWGDB -q $notMappedR1Fastq -S $notMappedSamFile 2>&1 | tee -a $unknownLogFile
 echo -e "$(date)\t Finished mapping ${sampleName} reads to protozoa WG reference \n" >> $unknownLogFile
 echo -e "$(date)\t Converting reads not mapped to protozoa from SAM to BAM of ${sampleName} \n" >> $unknownLogFile
 samtools view -Sb $notMappedSamFile > $notMappedBamFile
@@ -120,9 +113,7 @@ echo -e "$(date)\t Finished converting reads not mapped to protozoa from SAM to 
 echo -e "----------------- Filtering protozoa reads that mapped to protozoa WG reference ...---------------------" >> $unknownLogFile
 echo -e "$(date)\t Start filtering ${sampleName} reads that mapped to protozoa WG \n" >> $unknownLogFile
 echo -e "The command is: ###samtools view -F 0x40 $sortedBamFile | awk '{if($3 == '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $notMappedR1Fastq" >> $unknownLogFile
-samtools view -F 0x40 $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR1Fastq
-echo -e "The command is: ###samtools view -f 0x40 $sortedBamFile | awk '{if($3 == '*') print '@' $1 '\\n' $10 '\\n' '-' '\\n' $11}' > $notMappedR2Fastq" >> $unknownLogFile
-samtools view -f 0x40 $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR2Fastq
+samtools view $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR1Fastq
 #	samtools separates R1 (-F) or R2 (-f) reads using the mapped SAM file and awk filters those mapped (!="*") in fastq format
 echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to protozoa WG reference \n" >> $unknownLogFile
 
@@ -130,8 +121,8 @@ echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to protozo
 #	MAP UNKOWN READS WITH INVERTEBRATE DB
 echo -e "--------Bowtie2 is mapping against invertebrate WG reference ....------" >> $unknownLogFile
 echo -e "$(date)\t Start mapping ${sampleName} reads to invertebrate WG reference \n" >> $unknownLogFile
-echo -e "The command is: ### bowtie2 -p $threads -fr -x $invertebrateWGD -q -1 $notMappedR1Fastq -2 $notMappedR2Fastq -S $notMappedSamFile ###\n" >> $unknownLogFile
-bowtie2 -p $threads -fr -x $invertebrateWGDB -q -1 $notMappedR1Fastq -2 $notMappedR2Fastq -S $notMappedSamFile 2>&1 | tee -a $unknownLogFile
+echo -e "The command is: ### bowtie2 -p $threads -x $invertebrateWGD -q -1 $notMappedR1Fastq -S $notMappedSamFile ###\n" >> $unknownLogFile
+bowtie2 -p $threads -x $invertebrateWGDB -q -1 $notMappedR1Fastq -S $notMappedSamFile 2>&1 | tee -a $unknownLogFile
 echo -e "$(date)\t Finished mapping ${sampleName} reads to invertebrate WG reference \n" >> $unknownLogFile
 echo -e "$(date)\t Converting reads not mapped to invertebrate from SAM to BAM of ${sampleName} \n" >> $unknownLogFile
 samtools view -Sb $notMappedSamFile > $notMappedBamFile
@@ -145,9 +136,7 @@ echo -e "$(date)\t Finished converting reads not mapped to invertebrate from SAM
 echo -e "----------------- Filtering invertebrate reads that mapped to invertebrate WG reference ...---------------------" >> $unknownLogFile
 echo -e "$(date)\t Start filtering ${sampleName} reads that mapped to invertebrate WG \n" >> $unknownLogFile
 echo -e "The command is: ###samtools view -F 0x40 $sortedBamFile | awk '{if($3 == '*') print '@' $1 '\\n' $10 '\\n' '+' '\\n' $11}' > $notMappedR1Fastq" >> $unknownLogFile
-samtools view -F 0x40 $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR1Fastq
-echo -e "The command is: ###samtools view -f 0x40 $sortedBamFile | awk '{if($3 == '*') print '@' $1 '\\n' $10 '\\n' '-' '\\n' $11}' > $notMappedR2Fastq" >> $unknownLogFile
-samtools view -f 0x40 $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR2Fastq
+samtools view $sortedBamFile | awk '{if($3 == "*") print "@" $1 "\n" $10 "\n" "+" $1 "\n" $11}' > $notMappedR1Fastq
 #	samtools separates R1 (-F) or R2 (-f) reads using the mapped SAM file and awk filters those mapped (!="*") in fastq format
 echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to invertebrate WG reference \n" >> $unknownLogFile
 

@@ -40,12 +40,10 @@ virFilesDir="${analysisDir}/06-virus/${sampleName}/reads/" #directory where the 
 noHostDir="${analysisDir}/04-noHost/${sampleName}/" #directory where the host free reads are
 
 #		Input Files
-noHostR1Fastq="${noHostDir}${sampleName}_noHost_R1.fastq"
-noHostR2Fastq="${noHostDir}${sampleName}_noHost_R2.fastq"
+noHostR1Fastq="${noHostDir}${sampleName}_noHost.fastq"
 #		OutputFiles
 bowtie2logFile="${virFilesDir}${sampleName}_virus_mapping.log"
-VirMappedR1Fastq="${virFilesDir}${sampleName}_virus_R1.fastq"
-VirMappedR2Fastq="${virFilesDir}${sampleName}_virus_R2.fastq"
+VirMappedR1Fastq="${virFilesDir}${sampleName}_virus.fastq"
 mappedSamFile="${virFilesDir}${sampleName}_virus_mapped.sam"
 mappedBamFile="${virFilesDir}${sampleName}_virus_mapped.bam" #bowtie bam file with the reads that mapped against the WG reference
 sortedBamFile="${virFilesDir}${sampleName}_virus_sorted.bam" #bowtie bam file with the reads that mapped against the WG reference
@@ -66,8 +64,8 @@ fi
 #	BOWTIE2 MAPPING AGAINST VIRUS
 echo -e "--------Bowtie2 is mapping against the reference ....------"
 echo -e "$(date)\t Start mapping ${sampleName}\n" > $bowtie2logFile
-echo -e "The command is: ### bowtie2 -fr -x "$virDBDir" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamFile ###\n" >> $bowtie2logFile
-bowtie2 -a -fr -x "$virDBDir" -q -1 $noHostR1Fastq -2 $noHostR2Fastq -S $mappedSamFile 2>&1 | tee -a $bowtie2logFile
+echo -e "The command is: ### bowtie2 -x "$virDBDir" -q $noHostR1Fastq -S $mappedSamFile ###\n" >> $bowtie2logFile
+bowtie2 -a -x "$virDBDir" -q $noHostR1Fastq -S $mappedSamFile 2>&1 | tee -a $bowtie2logFile
 echo -e "$(date)\t Finished mapping ${sampleName}\n" >> $bowtie2logFile
 echo -e "$(date)\t Converting SAM to BAM of ${sampleName} \n" >> $bowtie2logFile
 samtools view -Sb $mappedSamFile > $mappedBamFile
@@ -81,9 +79,7 @@ echo -e "$(date)\t Finished converting SAM to BAM of ${sampleName} \n" >> $bowti
 echo -e "----------------- Filtering virus reads ...---------------------"
 echo -e "$(date)\t Start filtering ${sampleName}\n" >> $bowtie2logFile
 echo -e "The command is: ###samtools view -F 0x40 $sortedBamFile | awk '{if($3 != "*") print "@"$1"\n"$10"\n""+""\n"$11}' > $VirMappedR1Fastq" >> $bowtie2logFile
-samtools view -F 0x40 $sortedBamFile | awk '{if($3 != "*") print "@" $1" \n" $10 "\n" "+" $1 "\n" $11}' > $VirMappedR1Fastq
-echo -e "The command is: ###samtools view -f 0x40 $sortedBamFile | awk '{if($3 != "*") print "@"$1"\n"$10"\n""-""\n"$11}' > $VirMappedR2Fastq" >> $bowtie2logFile
-samtools view -f 0x40 $sortedBamFile | awk '{if($3 != "*") print "@" $1" \n" $10 "\n" "+" $1 "\n" $11}' > $VirMappedR2Fastq
+samtools view $sortedBamFile | awk '{if($3 != "*") print "@" $1" \n" $10 "\n" "+" $1 "\n" $11}' > $VirMappedR1Fastq
 #	samtools separates R1 (-F) or R2 (-f) reads using the mapped BAM file and awk filters those mapped (=!"*") in fastq format
 echo -e "$(date)\t Finished filtering ${sampleName}\n" >> $bowtie2logFile
 

@@ -32,8 +32,7 @@ organism="${organismDir##*-}" # (organism)
 #		Directories
 outputDir="$(echo $mappedDir | rev | cut -d'/' -f3- | rev)/contigs/" # where the contigs will be saved (workingDir/ANALYSIS/xx-organism/sampleName/contigs)
 #		Input Files
-mappedR1Fastq="${mappedDir}${sampleName}*_R1.fastq"
-mappedR2Fastq="${mappedDir}${sampleName}*_R2.fastq"
+mappedR1Fastq="${mappedDir}${sampleName}*.fastq"
 #		Output Files
 lablog="${outputDir}${sampleName}_assembly.log"
 
@@ -55,8 +54,8 @@ fi
 
 #	RUN SPADES
 echo -e "$(date)\t start running spades for ${sampleName} for ${organism}\n" > $lablog
-echo -e "The command is: ### spades.py --phred-offset 33 -1 $mappedR1Fastq -2 $mappedR2Fastq --meta -o $outputDir" >> $lablog
-spades.py --phred-offset 33 -1 $mappedR1Fastq -2 $mappedR2Fastq --meta -o ${outputDir} 2>&1 | tee -a $lablog
+echo -e "The command is: ### spades.py --phred-offset 33 -s $mappedR1Fastq --meta -o $outputDir" >> $lablog
+spades.py --phred-offset 33 -s $mappedR1Fastq --meta -o ${outputDir} 2>&1 | tee -a $lablog
 echo -e "$(date)\t finished running spades for ${sampleName} for ${organism}\n" >> $lablog
 
 #	RUN QUAST
