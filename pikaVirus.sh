@@ -153,7 +153,7 @@ else
 		perl ${PIKAVIRUSDIR}/html/quality/createHTML.pl $workingDir stats
 	done
 fi
-
+#
 # MAPPING
 if [ $cluster == "yes" ]
 then
@@ -234,7 +234,7 @@ else
 		bash ${PIKAVIRUSDIR}/mapper_unknown.sh $in
 	done
 fi
-
+#
 # ASSEMBLY
 if [ $cluster == "yes" ]
 then
@@ -494,6 +494,16 @@ then
 	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_blast.txt ) bash cluster_coverage_invertebrate.sh )
 	jobid=$( echo $output_qsub | cut -d ' ' -f3 | cut -d '.' -f1 )
 	echo -ne ",$jobid" >> ${analysisDir}/jid_coverage.txt
+	# Create summary tables
+	cat > summary_tables.sh <<- EndOfFile
+	#!/bin/sh
+	#$ -N summary_tables
+	for file in "$analysisDir/*/${in}/*_BLASTn_filtered.blast"
+	do
+		perl ${PIKAVIRUSDIR}/summary_tables.pl $file
+	done
+	EndOfFile
+	output_qsub=$( $cluster_prefix -hold_jid $( cat ${analysisDir}/jid_coverage.txt ) bash summary_tables.sh )
 else
 	cat ${analysisDir}/samples_id.txt | while read in
 	do
@@ -517,6 +527,10 @@ else
 		sampleName=$(basename $sampleDir)
 		bash ${PIKAVIRUSDIR}/coverage.sh $sampleDir $invertebrateDB
 		Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "${sampleDir}/coverage/" ${sampleName}
+		for file in "$analysisDir/*/${in}/*_BLASTn_filtered.blast"
+		do
+			perl ${PIKAVIRUSDIR}/summary_tables.pl $file
+		done
 	done
 fi
 
