@@ -74,7 +74,7 @@ makedir $samplePreProQCDir
 # RAW READS QUALITY CONTROL
 echo -e "$(date): Execute fastqc.sh" >> "${samplePreProQCDir}/${sampleName}_preProQC.log"
 echo -e " Command is: ### find $rawDir -name "${sampleName}_*.fastq*" -exec fastqc {} --outdir $samplePreProQCDir \; ###" >> "${samplePreProQCDir}/${sampleName}_preProQC.log"
-find $rawDir -name "${sampleName}_*.fastq*" -exec fastqc {} --outdir $samplePreProQCDir \; >> "${samplePreProQCDir}/${sampleName}_preProQC.log"
+find $rawDir -name "${sampleName}*.fastq*" -exec fastqc {} --outdir $samplePreProQCDir \; >> "${samplePreProQCDir}/${sampleName}_preProQC.log"
 echo -e "$(date): Finish fastqc.sh" >> "${samplePreProQCDir}/${sampleName}_preProQC.log"
 echo -e "$(date): ********* Finished quaility control **********" >> "${samplePreProQCDir}/${sampleName}_preProQC.log"
 
@@ -105,4 +105,4 @@ mv ${sampleStatsDir}${sampleName}*/ "${sampleStatsDir}${sampleName}_prePro_fastq
 # copy fastqc files to 99-stats (y le cambio el nombre)
 find $samplePostProQCDir -name "*fastqc.zip" -exec unzip {} -d ${sampleStatsDir} \;
 # change name of folder
-mv ${sampleStatsDir}${sampleName}*R1_paired*/ "${sampleStatsDir}${sampleName}_trimmed_fastqc/"
+mv ${sampleStatsDir}${sampleName}_fastqc/ "${sampleStatsDir}${sampleName}_trimmed_fastqc/"

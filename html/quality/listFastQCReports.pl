@@ -16,11 +16,11 @@ opendir(DIRHANDLE, "$path") || die "Cannot opendir $path: $!";
     			fields("$path/$dir/$name",\%infoPostFilt,$dir);
     		}
 
-    		elsif($name=~/(.*)_fastqc$/){
+    		elsif($name=~/(.*)_prePro_fastqc$/){
     			fields("$path/$dir/$name",\%infoPreFilt,$dir);
     		}
-    		elsif($name=~/(.*)_fastqc$/){
-    			fields("$path/$dir/$name",\%infoPreFilt,$dir);
+    		elsif($name=~/(.*)_trimmed_fastqc$/){
+    			fields("$path/$dir/$name",\%infoPostFilt,$dir);
     		}
     	}	
 	closedir(DIRHANDLE2);  
