@@ -122,7 +122,7 @@ echo -e "$(date)\t Finished filtering ${sampleName} reads that mapped to protozo
 echo -e "--------Bowtie2 is mapping against invertebrate WG reference ....------" >> $unknownLogFile
 echo -e "$(date)\t Start mapping ${sampleName} reads to invertebrate WG reference \n" >> $unknownLogFile
 echo -e "The command is: ### bowtie2 -p $threads -x $invertebrateWGD -q -1 $notMappedR1Fastq -S $notMappedSamFile ###\n" >> $unknownLogFile
-bowtie2 -p $threads -x $invertebrateWGDB -q -1 $notMappedR1Fastq -S $notMappedSamFile 2>&1 | tee -a $unknownLogFile
+bowtie2 -p $threads -x $invertebrateWGDB -q $notMappedR1Fastq -S $notMappedSamFile 2>&1 | tee -a $unknownLogFile
 echo -e "$(date)\t Finished mapping ${sampleName} reads to invertebrate WG reference \n" >> $unknownLogFile
 echo -e "$(date)\t Converting reads not mapped to invertebrate from SAM to BAM of ${sampleName} \n" >> $unknownLogFile
 samtools view -Sb $notMappedSamFile > $notMappedBamFile
