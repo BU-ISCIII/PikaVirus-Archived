@@ -55,7 +55,8 @@ fi
 #	RUN SPADES
 echo -e "$(date)\t start running spades for ${sampleName} for ${organism}\n" > $lablog
 echo -e "The command is: ### spades.py --phred-offset 33 -s $mappedR1Fastq --meta -o $outputDir" >> $lablog
-spades.py --phred-offset 33 -s $mappedR1Fastq --meta -o ${outputDir} 2>&1 | tee -a $lablog
+# spades.py --phred-offset 33 -s $mappedR1Fastq --meta -o ${outputDir} 2>&1 | tee -a $lablog
+spades.py --phred-offset 33 -s $mappedR1Fastq -o ${outputDir} 2>&1 | tee -a $lablog
 echo -e "$(date)\t finished running spades for ${sampleName} for ${organism}\n" >> $lablog
 
 #	RUN QUAST
