@@ -15,6 +15,18 @@ if(scalar @ARGV < 1){die "We need at least 1 file as argument\n";}
     $outfile =~ s/_filtered.blast/_summary.tsv/;
     $outfile =~ s/ANALYSIS\/0\d-(\w+)\/.*\/blast\//RESULTS\/summary_tables\/$1-/;
 
+	#Get the path portion only, without the filename.
+	my $outfile_path = $outfile;
+	if ($outfile_path =~ /^(.*)\/[\w|\d|\-]+_summary.tsv$/){
+	    if (-e $1) {
+	    	print "Directory exists.\n";
+		} else {
+	    	mkdir $1 or die "Error creating directory: $1";
+	    }
+	} else {
+		die "Invalid path name: $outfile_path";
+	}
+
     open(INFILE, $file) or die "$!";
     open(COVERAGE, $coveragefile) or die "$!";
     open(OUTFILE, ">$outfile") or die "$!";
