@@ -36,7 +36,8 @@ sampleDir=$1
 
 #	INITIALIZE VARIABLES
 # Constants
-hostDB="${hostDB}WG/bwt2/hg38.AnalysisSet"
+# hostDB="${hostDB}WG/bwt2/hg38.AnalysisSet"
+hostDB="${hostDB}WG/bwt2/atlantic_salmon_ICSASG_v2"
 sampleName=$(basename "${sampleDir}")
 sampleAnalysisDir="${analysisDir}/02-preprocessing/${sampleName}/"
 sampleAnalysisLog="${sampleAnalysisDir}/${sampleName}_lablog.log"
