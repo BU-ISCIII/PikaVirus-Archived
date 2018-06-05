@@ -234,7 +234,7 @@ else
 		bash ${PIKAVIRUSDIR}/mapper_unknown.sh $in
 	done
 fi
-#
+
 # ASSEMBLY
 if [ $cluster == "yes" ]
 then
@@ -527,7 +527,7 @@ else
 		sampleName=$(basename $sampleDir)
 		bash ${PIKAVIRUSDIR}/coverage.sh $sampleDir $invertebrateDB
 		Rscript --vanilla "${PIKAVIRUSDIR}/graphs_coverage.R" "${sampleDir}/coverage/" ${sampleName}
-		for file in "$analysisDir/*/${in}/*_BLASTn_filtered.blast"
+		for file in "$analysisDir/*/${in}/blast/*_BLASTn_filtered.blast"
 		do
 			perl ${PIKAVIRUSDIR}/summary_tables.pl $file
 		done
