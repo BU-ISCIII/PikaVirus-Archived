@@ -1,33 +1,17 @@
 #!/usr/bin/perl -w
 use strict;
 
-## Take blasn_filtered output and transform it into a table showing name, score, length of contig and percentage of contig mapped, keeping only score and percentaje of mapping > 90%
+## Take blasn_filtered and coverage_table and transform it into a table showing name, score, length of contig and percentage of contig mapped, keeping only score and percentaje of mapping > 90%
 
-if(scalar @ARGV < 1){die "We need at least 1 file as argument\n";}
+if(scalar @ARGV != 2){die "We need 2 files as argument, blasn_filtered and coverage_table\n";}
 
-    foreach my $file (@ARGV){
+	my $blastfile = $ARGV[0];
+    my $coveragefile = $ARGV[1];
 
-	my $coveragefile = $file;
-	$coveragefile =~ s/_BLASTn_filtered.blast/_coverageTable.txt/;
-	$coveragefile =~ s/blast/coverage/;
-
-    my $outfile = $file;
+    my $outfile = $ARGV[0];
     $outfile =~ s/_filtered.blast/_summary.tsv/;
-    $outfile =~ s/ANALYSIS\/0\d-(\w+)\/.*\/blast\//RESULTS\/summary_tables\/$1-/;
 
-	#Get the path portion only, without the filename.
-	my $outfile_path = $outfile;
-	if ($outfile_path =~ /^(.*)\/[\w|\d|\-]+_summary.tsv$/){
-	    if (-e $1) {
-	    	print "Directory exists.\n";
-		} else {
-	    	mkdir $1 or die "Error creating directory: $1";
-	    }
-	} else {
-		die "Invalid path name: $outfile_path";
-	}
-
-    open(INFILE, $file) or die "$!";
+    open(INFILE, $blastfile) or die "$!";
     open(COVERAGE, $coveragefile) or die "$!";
     open(OUTFILE, ">$outfile") or die "$!";
 
@@ -63,6 +47,5 @@ if(scalar @ARGV < 1){die "We need at least 1 file as argument\n";}
     close(INFILE);
     close(COVERAGE);
     close(OUTFILE);
-}
 
 exit;
