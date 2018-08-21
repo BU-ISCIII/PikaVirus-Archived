@@ -33,11 +33,14 @@ Pipeline overview:
  - 4.1: Bacteria Blast
  - 4.2: Virus Blast
  - 4.3: Fungi Blast
- - 5:   Calculate coverage and generate graphs
+ - 5:   Remapping
  - 5.1: For Bacteria
  - 5.2: For Virus
- - 5.3: For Fungi
- - 6:   Generate output in HTML and tsv table
+ - 6:   Calculate coverage and generate graphs
+ - 6.1: For Bacteria
+ - 6.2: For Virus
+ - 6.3: For Fungi
+ - 7:   Generate output in HTML and tsv table
  ----------------------------------------------------------------------------------------
 */
 
@@ -336,9 +339,8 @@ process mapping_bacteria {
     file noHostR2Fastq from no_host_R2
 
     output:
-    file "*_bacteria.bam" into bacteria_bam
-    file "*_bacteria_R1.fastq" into bacteria_R1
-    file "*_bacteria_R2.fastq" into bacteria_R2
+    file "*_bacteria_R1.fastq" into bacteria_R1, bacteria_remap_R1
+    file "*_bacteria_R2.fastq" into bacteria_R2, bacteria_remap_R2
     file "*_nobacteria_R1.fastq" into no_bacteria_R1
     file "*_nobacteria_R2.fastq" into no_bacteria_R2
 
@@ -450,9 +452,8 @@ process mapping_fungi {
     file noVirusR2Fastq from no_virus_R2
 
     output:
-    file "*_fungi.bam" into fungi_bam
-    file "*_fungi_R1.fastq" into fungi_R1
-    file "*_fungi_R2.fastq" into fungi_R2
+    file "*_fungi_R1.fastq" into fungi_R1, fungi_remap_R1
+    file "*_fungi_R2.fastq" into fungi_R2, fungi_remap_R2
     file "*_nofungi_R1.fastq" into no_fungi_R1
     file "*_nofungi_R2.fastq" into no_fungi_R2
 
@@ -668,7 +669,7 @@ process blast_bacteria {
     file bacteriaContig from bacteria_contigs
     
     output:
-    file "*_BLASTn_filtered.blast" into bacteria_blast
+    file "*_BLASTn_filtered.blast" into bacteria_blast, bacteria_blast_remap
 
     shell:
     '''
@@ -754,7 +755,7 @@ process blast_fungi {
     file fungiContig from fungi_contigs
     
     output:
-    file "*_BLASTn_filtered.blast" into fungi_blast
+    file "*_BLASTn_filtered.blast" into fungi_blast, fungi_blast_remap
 
     shell:
     '''
@@ -786,7 +787,123 @@ process blast_fungi {
 }
  
  /*
- * STEP 5.1 - Coverage Bacteria
+ * STEP 5.1 - Bacteria reampping
+ */
+ 
+ process remapping_bacteria {
+    tag "$R1Fastq"
+    publishDir "${resultsDir}/bacteria/reads", mode: 'symlink'
+    module 'bowtie/bowtie2-2.2.4:samtools/samtools-1.2'
+
+    input:
+    file R1Fastq from bacteria_remap_R1
+    file R2Fastq from bacteria_remap_R2
+    file bacteria_blast from bacteria_blast_remap
+
+    output:
+    file "*_bacteria.bam" into bacteria_bam
+
+    shell:
+    '''
+    sample=!{R1Fastq}
+    sample=${sample%_bacteria_R1.fastq}
+    mappedSamFile=${sample}_mapped.sam
+    mappedBamFile=${sample}_mapped.bam
+    sortedBamFile=${sample}_sorted.bam
+    mappedbacteria_bam=${sample}_bacteria.bam
+    emptybacteria_bam=${sample}_empty_bacteria.bam
+    lablog=${sample}.log
+    
+    echo "Step 5.1 - Remapping Bacteria" >> $lablog
+
+    # Generate DB
+    echo "Creating bowtie2 database for remapping" >> $lablog
+    mkdir -p WG
+    cat ${resultsDir}/bacteria/blast/${sample}_bacteria_BLASTn_filtered.blast | cut -f1 | sort -u > id.txt
+    if [[ -s id.txt ]];
+    then
+        perl ${PIKAVIRUSDIR}/fasta_extract.pl $bacDB/WG/bacteria_genome_all.fna id.txt > bacteria_genomes.fna
+        bowtie2-build bacteria_genomes.fna WG
+        
+        #	BOWTIE2 MAPPING AGAINST CREATED DATABASE
+        echo "Command is: bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog" >> $lablog
+        bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog
+        samtools view -Sb $mappedSamFile > $mappedBamFile
+        samtools sort -O bam -T temp -o $sortedBamFile $mappedBamFile
+        samtools index -b $sortedBamFile
+        
+        #	EXTRACT MAPPED READS
+        samtools view -b -F 4 $sortedBamFile > $mappedbacteria_bam
+    else
+        touch $emptybacteria_bam
+    fi
+    
+    echo "Step 5.1 - Complete!" >> $lablog
+    echo "-------------------------------------------------" >> $lablog
+    '''
+}
+ 
+  /*
+ * STEP 5.2 - Fungi reampping
+ */
+ process remapping_fungi {
+    tag "$R1Fastq"
+    publishDir "${resultsDir}/fungi/reads", mode: 'symlink'
+    module 'bowtie/bowtie2-2.2.4:samtools/samtools-1.2'
+
+    input:
+    file R1Fastq from fungi_remap_R1
+    file R2Fastq from fungi_remap_R2
+    file fungi_blast from fungi_blast_remap
+
+    output:
+    file "*_fungi.bam" into fungi_bam
+
+    shell:
+    '''
+    sample=!{R1Fastq}
+    sample=${sample%_fungi_R1.fastq}
+    mappedSamFile=${sample}_mapped.sam
+    mappedBamFile=${sample}_mapped.bam
+    sortedBamFile=${sample}_sorted.bam
+    mappedfungi_bam=${sample}_fungi.bam
+    emptyfungi_bam=${sample}_empty_fungi.bam
+    lablog=${sample}.log
+    
+    echo "Step 5.1 - Remapping Fungi" >> $lablog
+
+    # Generate DB
+    echo "Creating bowtie2 database for remapping" >> $lablog
+    mkdir -p WG
+    cat ${resultsDir}/fungi/blast/${sample}_fungi_BLASTn_filtered.blast | cut -f1 | sort -u > id.txt
+    
+    if [[ -s id.txt ]];
+    then
+        perl ${PIKAVIRUSDIR}/fasta_extract.pl id.txt > fungi_genomes.fna
+        bowtie2-build fungi_genomes.fna WG
+        
+        #	BOWTIE2 MAPPING AGAINST CREATED DATABASE
+        echo "Command is: bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog" >> $lablog
+        bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog
+        samtools view -Sb $mappedSamFile > $mappedBamFile
+        samtools sort -O bam -T temp -o $sortedBamFile $mappedBamFile
+        samtools index -b $sortedBamFile
+        
+        #	EXTRACT MAPPED READS
+        samtools view -b -F 4 $sortedBamFile > $mappedfungi_bam
+    else
+        touch $emptyfungi_bam
+    fi
+    
+    echo "Step 5.1 - Complete!" >> $lablog
+    echo "-------------------------------------------------" >> $lablog
+    '''
+}
+ 
+ 
+ 
+ /*
+ * STEP 6.1 - Coverage Bacteria
  */
 process coverage_bacteria {
     tag "$sampleBam"
@@ -803,35 +920,42 @@ process coverage_bacteria {
     '''
     sample=!{sampleBam}
     sample=${sample%.bam}
-    genomeLength=${bacDB}/WG/genome_length.txt
-    genomeCov=${sample}_genome_coverage.txt
-    genomeGraph=${sample}_genome_bedgraph.txt
     lablog=${sample}.log
     
-    echo "Step 5.1 - Coverage" >> $lablog
+    echo "Step 6.1 - Coverage" >> $lablog
     
-    echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov" >> $lablog
-    
-    # COVERAGE TABLE
-    bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov
-    
-    echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph" >> $lablog
-    
-    # COVERAGE BEDGRAPH
-    bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph
-    
-    echo "Command is: Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R $( pwd )/ $sample" >> $lablog
-    
-    # R summary
-    Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
+    if [[ -s !{sampleBam} ]];
+    then
+        genomeLength=${bacDB}/WG/genome_length.txt
+        genomeCov=${sample}_genome_coverage.txt
+        genomeGraph=${sample}_genome_bedgraph.txt
+        
+        echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov" >> $lablog
+        
+        # COVERAGE TABLE
+        bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov
+        
+        echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph" >> $lablog
+        
+        # COVERAGE BEDGRAPH
+        bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph
+        
+        echo "Command is: Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R $( pwd )/ $sample" >> $lablog
+        
+        # R summary
+        Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
+    else
+        sample=${sample%_empty_bacteria}
+        echo "\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"" > ${sample}_bacteria_coverageTable.txt
+    fi
 
-    echo "Step 5.1 - Complete!" >> $lablog
+    echo "Step 6.1 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
     '''
 }
 
  /*
- * STEP 5.2 - Coverage Virus
+ * STEP 6.2 - Coverage Virus
  */
 process coverage_virus {
     tag "$sampleBam"
@@ -853,7 +977,7 @@ process coverage_virus {
     genomeGraph=${sample}_genome_bedgraph.txt
     lablog=${sample}.log
     
-    echo "Step 5.2 - Coverage Virus" >> $lablog
+    echo "Step 6.2 - Coverage Virus" >> $lablog
     
     echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov" >> $lablog
     
@@ -870,13 +994,13 @@ process coverage_virus {
     # R summary
     Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
 
-    echo "Step 5.2 - Complete!" >> $lablog
+    echo "Step 6.2 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
     '''
 }
 
  /*
- * STEP 5.3 - Coverage Fungi
+ * STEP 6.3 - Coverage Fungi
  */
 process coverage_fungi {
     tag "$sampleBam"
@@ -893,35 +1017,42 @@ process coverage_fungi {
     '''
     sample=!{sampleBam}
     sample=${sample%.bam}
-    genomeLength=${bacDB}/WG/genome_length.txt
-    genomeCov=${sample}_genome_coverage.txt
-    genomeGraph=${sample}_genome_bedgraph.txt
     lablog=${sample}.log
     
-    echo "Step 5.3 - Coverage Fungi" >> $lablog
+    echo "Step 6.3 - Coverage Fungi" >> $lablog
     
-    echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov" >> $lablog
+    if [[ -s !{sampleBam} ]];
+    then
+        genomeLength=${bacDB}/WG/genome_length.txt
+        genomeCov=${sample}_genome_coverage.txt
+        genomeGraph=${sample}_genome_bedgraph.txt
+        
+        echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov" >> $lablog
+        
+        # COVERAGE TABLE
+        bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov
+        
+        echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph" >> $lablog
+        
+        # COVERAGE BEDGRAPH
+        bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph
+        
+        echo "Command is: Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R $( pwd )/ $sample" >> $lablog
+        
+        # R summary
+        Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
+    else
+        sample=${sample%_empty_fungi}
+        echo "\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"" > ${sample}_fungi_coverageTable.txt
+    fi
     
-    # COVERAGE TABLE
-    bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov
-    
-    echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph" >> $lablog
-    
-    # COVERAGE BEDGRAPH
-    bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph
-    
-    echo "Command is: Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R $( pwd )/ $sample" >> $lablog
-    
-    # R summary
-    Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
-
-    echo "Step 5.3 - Complete!" >> $lablog
+    echo "Step 6.3 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
     '''
 }
  
  /*
- * STEP 6 - Generate Results
+ * STEP 7 - Generate Results
  */
 process generate_summary_tables {
     tag "$blast_table"
@@ -939,7 +1070,7 @@ process generate_summary_tables {
     '''
     lablog=results.log
     
-    echo "Step 6 - Generate Results" >> $lablog
+    echo "Step 7 - Generate Results" >> $lablog
     
     # Create summary tables
     perl ${PIKAVIRUSDIR}/summary_tables.pl !{blast_table} !{coverage_table}
@@ -1023,7 +1154,7 @@ process generate_results {
     echo -e "${PIKAVIRUSDIR}/html/summary/createSummaryHtml.sh" >> $lablog
     bash ${PIKAVIRUSDIR}/html/summary/createSummaryHtml.sh 2>&1 >> $lablog
     
-    echo "Step 6 - Complete!" >> $lablog
+    echo "Step 7 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
     '''
 }
