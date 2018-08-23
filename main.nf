@@ -946,7 +946,7 @@ process coverage_bacteria {
         Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
     else
         sample=${sample%_empty_bacteria}
-        echo "\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"" > ${sample}_bacteria_coverageTable.txt
+        printf "\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"\n" > ${sample}_bacteria_coverageTable.txt
     fi
 
     echo "Step 6.1 - Complete!" >> $lablog
@@ -1043,7 +1043,7 @@ process coverage_fungi {
         Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
     else
         sample=${sample%_empty_fungi}
-        echo "\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"" > ${sample}_fungi_coverageTable.txt
+        printf "\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"\n" > ${sample}_fungi_coverageTable.txt
     fi
     
     echo "Step 6.3 - Complete!" >> $lablog
@@ -1123,7 +1123,7 @@ process generate_results {
             echo -e "$sample" >> $lablog
             # Create results table
             echo -e "\t$(date)\t Create results table (.txt)" >> $lablog
-            echo -e "\t$(date)\t Rscript ${PIKAVIRUSDIR}/mergeResults.R $sample $organism $resultsDir $resultsDir/results/" >> $lablog
+            echo -e "\t$(date)\t Rscript ${PIKAVIRUSDIR}/html/persample/mergeResults.R $sample $organism $resultsDir $resultsDir/results/" >> $lablog
             Rscript ${PIKAVIRUSDIR}/html/persample/mergeResults.R $sample $organism $resultsDir/ $resultsDir/results/ 2>&1 >> $lablog
             # Create results html
             echo -e "\t$(date)\t Create results html file" >> $lablog
