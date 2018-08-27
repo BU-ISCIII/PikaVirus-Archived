@@ -1043,7 +1043,7 @@ process coverage_fungi {
         Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
     else
         sample=${sample%_empty_fungi}
-        printf "\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"\n" > ${sample}_fungi_coverageTable.txt
+        printf '\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"\n' > ${sample}_fungi_coverageTable.txt
     fi
     
     echo "Step 6.3 - Complete!" >> $lablog
