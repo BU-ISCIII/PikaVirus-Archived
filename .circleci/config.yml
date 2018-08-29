@@ -313,6 +313,6 @@ workflows:
             - test_apps
           filters:
             branches:
-              only: feature/nextflow-a
+              only: master
             tags:
               only: /.*/
