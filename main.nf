@@ -51,17 +51,20 @@ def helpMessage() {
     =========================================
     Usage:
     The typical command for running the pipeline is as follows:
-    nextflow run BU-ISCIII/Pikavirus -c your_config_file -profile uppmax
+    nextflow run BU-ISCIII/Pikavirus -c your_config_file -profile singularity
     Mandatory arguments:
       -c                            Path to input your personalised config file. You can modify the example in BU-ISCIII/Pikavirus/nextflow.config to fit your analysis.
     Options:
+      -profile                      Hardware config to use. standard/docker/singularity. Default: standard.
       --no-bacteria                 Do not look for bacteria
       --no-virus                    Do not look for virus
       --no-fungi                    Do not look for fungil
-      --no-trim                     Skip the adapter trimming step.
-    Other options:
+      --no-trimming                 Skip the adapter trimming step.
       --email                       Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
       --name                        Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic
+    Other options:
+      --help						                  Show this message.
+      --version						               Show pipeline version.
     """.stripIndent()
 }
 
@@ -79,12 +82,26 @@ if (params.help){
     exit 0
 }
 
+// Show version
+if (params.version){
+    log.info"""
+    	v${params.ver}
+    """.stripIndent()
+    exit 0
+}
+
+// Default parameters
+params.profile = 'standard'
+
 // Has the run name been specified by the user?
 //  this has the bonus effect of catching both -name and --name
 custom_runName = params.name
 if( !(workflow.runName ==~ /\w+/) ){
   custom_runName = workflow.runName
 }
+
+// Remeber PikaVirus scripts location
+PIKAVIRUSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 /*
  * Create a channel for input read files
@@ -946,7 +963,7 @@ process coverage_bacteria {
         Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
     else
         sample=${sample%_empty_bacteria}
-        printf "\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"\n" > ${sample}_bacteria_coverageTable.txt
+        printf '\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"\n' > ${sample}_bacteria_coverageTable.txt
     fi
 
     echo "Step 6.1 - Complete!" >> $lablog
