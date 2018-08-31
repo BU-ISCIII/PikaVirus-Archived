@@ -100,8 +100,8 @@ if( !(workflow.runName ==~ /\w+/) ){
   custom_runName = workflow.runName
 }
 
-// Remeber PikaVirus scripts location
-// PIKAVIRUSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+// Remember PikaVirus scripts location
+// PIKAVIRUSDIR = $baseDir
 
 /*
  * Create a channel for input read files
