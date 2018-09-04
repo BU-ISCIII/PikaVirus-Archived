@@ -19,7 +19,7 @@ From: centos:7
 	echo "Installing R app"
 	scif install /opt/pikavirus_v1.0_centos7.scif
 
-	find /scif/apps -maxdepth 2 -name "bin" | while read in; do echo "export PATH=\${PATH}:$in" >> $SINGULARITY_ENVIRONMENT;done
+	find /scif/apps -maxdepth 2 -name "bin" | while read in; do echo "export PATH=\${PATH}:$in" >> /.singularity.d/env/91-environment.sh;done
 
 %runscript
     exec scif "$@"

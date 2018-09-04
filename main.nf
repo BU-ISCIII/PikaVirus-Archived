@@ -101,7 +101,7 @@ if( !(workflow.runName ==~ /\w+/) ){
 }
 
 // Remember PikaVirus scripts location
-// PIKAVIRUSDIR = $baseDir
+PIKAVIRUSDIR = "$baseDir"
 
 /*
  * Create a channel for input read files
@@ -124,7 +124,6 @@ Channel
 process raw_fastqc {
     tag "$pair_id"
     publishDir "${resultsDir}/fastqc_raw", mode: 'symlink'
-    module 'FastQC-0.11.3'
 
     input:
     set pair_id, file(reads) from read_pairs
@@ -155,7 +154,6 @@ process raw_fastqc {
  */ 
 process trimming {
     tag "$name"
-    module 'Trimmomatic-0.33'
 
     input:
     set val(name), file(reads) from raw_reads
@@ -174,9 +172,9 @@ process trimming {
     
     echo "Step 1.2 - Trimming files !{reads}" >> $lablog
     
-    echo "Command is: java -jar ${PathToTrimmomatic}/trimmomatic-0.33.jar PE -threads 10 -phred33 !{reads} ${sample}_R1_paired.fastq ${sample}_R1_unpaired.fastq ${sample}_R2_paired.fastq ${sample}_R2_unpaired.fastq ILLUMINACLIP:${PathToTrimmomatic}/adapters/NexteraPE-PE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:50" >> $lablog
+    echo "Command is: java -jar ${PathToTrimmomatic}/trimmomatic-0.*.jar PE -threads 10 -phred33 !{reads} ${sample}_R1_paired.fastq ${sample}_R1_unpaired.fastq ${sample}_R2_paired.fastq ${sample}_R2_unpaired.fastq ILLUMINACLIP:${PathToTrimmomatic}/adapters/NexteraPE-PE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:50" >> $lablog
     
-    java -jar ${PathToTrimmomatic}/trimmomatic-0.33.jar PE -threads 10 -phred33 !{reads} ${sample}_R1_paired.fastq ${sample}_R1_unpaired.fastq ${sample}_R2_paired.fastq ${sample}_R2_unpaired.fastq ILLUMINACLIP:${PathToTrimmomatic}/adapters/NexteraPE-PE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:50 2>&1 >> $lablog
+    java -jar ${PathToTrimmomatic}/trimmomatic-0.*.jar PE -threads 10 -phred33 !{reads} ${sample}_R1_paired.fastq ${sample}_R1_unpaired.fastq ${sample}_R2_paired.fastq ${sample}_R2_unpaired.fastq ILLUMINACLIP:${PathToTrimmomatic}/adapters/NexteraPE-PE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:50 2>&1 >> $lablog
     
     echo "Step 1.2 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
@@ -189,7 +187,6 @@ process trimming {
 process trimmed_fastqc {
     tag "$reads"
     publishDir "${resultsDir}/fastqc_trimmed", mode: 'symlink'
-    module 'FastQC-0.11.3'
 
     input:
     file reads from trimmed_paired_R1.merge(trimmed_paired_R2)
@@ -298,7 +295,6 @@ process quality_finish {
 process host_removal {
     tag "$sampleR1"
     publishDir "${resultsDir}/host/reads", mode: 'symlink'
-    module 'bowtie/bowtie2-2.2.4:samtools/samtools-1.2'
 
     input:
     file sampleR1 from trimmed_reads_R1
@@ -349,7 +345,6 @@ process host_removal {
 process mapping_bacteria {
     tag "$noHostR1Fastq"
     publishDir "${resultsDir}/bacteria/reads", mode: 'symlink'
-    module 'bowtie/bowtie2-2.2.4:samtools/samtools-1.2'
 
     input:
     file noHostR1Fastq from no_host_R1
@@ -405,7 +400,6 @@ process mapping_bacteria {
 process mapping_virus {
     tag "$noBacteriaR1Fastq"
     publishDir "${resultsDir}/virus/reads", mode: 'symlink'
-    module 'bowtie/bowtie2-2.2.4:samtools/samtools-1.2'
 
     input:
     file noBacteriaR1Fastq from no_bacteria_R1
@@ -462,7 +456,6 @@ process mapping_virus {
 process mapping_fungi {
     tag "$noVirusR1Fastq"
     publishDir "${resultsDir}/fungi/reads", mode: 'symlink'
-    module 'bowtie/bowtie2-2.2.4:samtools/samtools-1.2'
 
     input:
     file noVirusR1Fastq from no_virus_R1
@@ -518,7 +511,6 @@ process mapping_fungi {
 process assembly_bacteria {
     tag "$mappedR1Fastq"
     publishDir "${resultsDir}/bacteria/assembly", mode: 'symlink'
-    module 'spades/spades-3.8.0:quast/quast-4.1'
 
     input:
     file mappedR1Fastq from bacteria_R1
@@ -572,7 +564,6 @@ process assembly_bacteria {
 process assembly_virus {
     tag "$mappedR1Fastq"
     publishDir "${resultsDir}/virus/assembly", mode: 'symlink'
-    module 'spades/spades-3.8.0:quast/quast-4.1'
 
     input:
     file mappedR1Fastq from virus_R1
@@ -626,7 +617,6 @@ process assembly_virus {
 process assembly {
     tag "$mappedR1Fastq"
     publishDir "${resultsDir}/fungi/assembly", mode: 'symlink'
-    module 'spades/spades-3.8.0:quast/quast-4.1'
 
     input:
     file mappedR1Fastq from fungi_R1
@@ -680,7 +670,6 @@ process assembly {
 process blast_bacteria {
     tag "$bacteriaContig"
     publishDir "${resultsDir}/bacteria/blast", mode: 'symlink'
-    module 'ncbi-blast/ncbi_blast-2.2.30+'
 
     input:
     file bacteriaContig from bacteria_contigs
@@ -723,7 +712,6 @@ process blast_bacteria {
 process blast_virus {
     tag "$virusContig"
     publishDir "${resultsDir}/virus/blast", mode: 'symlink'
-    module 'ncbi-blast/ncbi_blast-2.2.30+'
 
     input:
     file virusContig from virus_contigs
@@ -766,7 +754,6 @@ process blast_virus {
 process blast_fungi {
     tag "$fungiContig"
     publishDir "${resultsDir}/fungi/blast", mode: 'symlink'
-    module 'ncbi-blast/ncbi_blast-2.2.30+'
 
     input:
     file fungiContig from fungi_contigs
@@ -810,7 +797,6 @@ process blast_fungi {
  process remapping_bacteria {
     tag "$R1Fastq"
     publishDir "${resultsDir}/bacteria/reads", mode: 'symlink'
-    module 'bowtie/bowtie2-2.2.4:samtools/samtools-1.2'
 
     input:
     file R1Fastq from bacteria_remap_R1
@@ -866,7 +852,6 @@ process blast_fungi {
  process remapping_fungi {
     tag "$R1Fastq"
     publishDir "${resultsDir}/fungi/reads", mode: 'symlink'
-    module 'bowtie/bowtie2-2.2.4:samtools/samtools-1.2'
 
     input:
     file R1Fastq from fungi_remap_R1
@@ -925,7 +910,6 @@ process blast_fungi {
 process coverage_bacteria {
     tag "$sampleBam"
     publishDir "${resultsDir}/bacteria/coverage", mode: 'symlink'
-    module 'bedtools2/bedtools2-2.25.0:R/R-3.2.5'
 
     input:
     file sampleBam from bacteria_bam
@@ -977,7 +961,6 @@ process coverage_bacteria {
 process coverage_virus {
     tag "$sampleBam"
     publishDir "${resultsDir}/virus/coverage", mode: 'symlink'
-    module 'bedtools2/bedtools2-2.25.0:R/R-3.2.5'
 
     input:
     file sampleBam from virus_bam
@@ -1022,7 +1005,6 @@ process coverage_virus {
 process coverage_fungi {
     tag "$sampleBam"
     publishDir "${resultsDir}/fungi/coverage", mode: 'symlink'
-    module 'bedtools2/bedtools2-2.25.0:R/R-3.2.5'
 
     input:
     file sampleBam from fungi_bam
@@ -1097,7 +1079,6 @@ process generate_summary_tables {
 
 process generate_results {
     tag "results"
-    module 'R/R-3.2.5'
     
     input:
     val x from summary_tables.count()
