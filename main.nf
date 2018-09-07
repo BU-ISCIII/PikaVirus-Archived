@@ -41,6 +41,7 @@ Pipeline overview:
  - 6.2: For Virus
  - 6.3: For Fungi
  - 7:   Generate output in HTML and tsv table
+ - 8:   Clean up
  ----------------------------------------------------------------------------------------
 */
 
@@ -60,6 +61,7 @@ def helpMessage() {
       --no-virus                    Do not look for virus
       --no-fungi                    Do not look for fungil
       --no-trimming                 Skip the adapter trimming step.
+      --clean-up                    Remove intermediate files from results directory after execution
       --email                       Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
       --name                        Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic
     Other options:
@@ -1084,6 +1086,9 @@ process generate_results {
     val x from summary_tables.count()
     val y from stats_done.count()
     
+    output:
+    file "results.log" into finished
+    
     shell:
     '''
     lablog=results.log
@@ -1156,3 +1161,26 @@ process generate_results {
     echo "-------------------------------------------------" >> $lablog
     '''
 }
+
+/*
+ * STEP 8 - Clean up
+ */
+ 
+ process generate_results {
+    tag "results"
+    
+    input:
+    file log from finished
+    
+    shell:
+    '''
+    lablog=cleanup.log
+    
+    echo "Cleaning intermediate files in results directory" >> $lablog
+    rm -rf ${resultsDir}/bacteria ${resultsDir}/virus ${resultsDir}/fungi ${resultsDir}/host ${resultsDir}/fastqc_trimmed ${resultsDir}/fastqc_raw ${resultsDir}/samples_id.txt ${resultsDir}/results/data
+    # rm -rf ${resultsDir}/stats # Not yet, as quality.html reads from here instead of results/quality
+    
+    echo "Step 8 - Complete!" >> $lablog
+    echo "-------------------------------------------------" >> $lablog
+    '''
+ }
