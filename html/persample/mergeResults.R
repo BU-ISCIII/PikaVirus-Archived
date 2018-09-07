@@ -23,6 +23,10 @@ sampleName=args[1] # sampleName
 organism=args[2] # xx-organism
 analysisDir=args[3] # in config
 resultsDir=args[4]  # in config
+bacDBDir=args[5]
+virDBDir=args[6]
+fungiDBDir=args[7]
+
 # CONSTANTS
 sampleCoverageTable=paste(analysisDir, organism, "/coverage/", sampleName, "_", organism,"_coverageTable.txt", sep='')
 sampleBlastTable=paste(analysisDir, organism, "/blast/",sampleName, "_", organism, "_BLASTn_filtered.blast", sep= '')
@@ -69,9 +73,40 @@ if (file.exists(sampleCoverageTable) && file.size(sampleCoverageTable) > 10) {
 # merge files
 sampleResults = merge(x=blast, y=coverage, by.x = "Reference Id", by.y = "gnm")
 
-# Filter and keep only best hits
+# Sort table and keep only top match for each contig
 sampleResults = sampleResults[order(-sampleResults$total, -sampleResults$"% of identical matches", -sampleResults$"Alignment length"),]
 sampleResults = sampleResults[! duplicated(sampleResults$Query_seq_id),]
+
+# Summary table per sample
+count = as.data.frame(table(as.character(sampleResults[,1])))
+rownames(count) = count$Var1
+contig_length = sampleResults[c("Reference Id", "Query_seq_id")]
+contig_length$Query_seq_id = gsub("NODE_\\d+_length_", "", contig_length$Query_seq_id)
+contig_length$Query_seq_id = gsub("_cov_.*", "", contig_length$Query_seq_id)
+contig_length_means = tapply(as.numeric(contig_length$Query_seq_id), as.character(contig_length$"Reference Id"), summary)
+contig_length_stats = data.frame(t(sapply(contig_length_means,c)))
+sampleResults = within(sampleResults, rm("Query_seq_id", "% of identical matches","Alignment length", "Number of mismatches",
+								 "Number of Gap openings", "Start of alignment in query", "End of alignment in query", "Start of alignment in subject",
+								 "End of alignment in subject", "Expect value", "Bit Score"))
+sampleResults = sampleResults[! duplicated(sampleResults$"Reference Id"),]
+rownames(sampleResults) = sampleResults$"Reference Id"
+sampleResults$Freq = count$Freq
+sampleResults$"Contig length mean" = contig_length_stats$Mean
+sampleResults$"Contig length min" = contig_length_stats$"Min."  
+sampleResults$"Contig length median" = contig_length_stats$"Median" 
+sampleResults$"Contig length max" = contig_length_stats$"Max."
+if(organism == "bacteria"){
+    genome_length = read.table(paste(bacDBDir, "WG/", "genome_length.txt", sep=''), stringsAsFactors = F)
+} else if (organism == "virus"){
+    genome_length = read.table(paste(virDBDir, "WG/", "genome_length.txt", sep=''), stringsAsFactors = F)
+} else if (organism == "fungi"){
+    genome_length = read.table(paste(fungiDBDir, "WG/", "genome_length.txt", sep=''), stringsAsFactors = F)
+}
+rownames(genome_length) = genome_length$V1
+sampleResults$"Genome length" = genome_length[rownames(sampleResults),2]
+
+# Order columns
+sampleResults = sampleResults[c("Reference Id", "Organism", "total", "Genome length", "Freq", "Contig length mean", "Contig length min", "Contig length median", "Contig length max", "covMean", "covSD", "x1.x4", "x5.x9", "x10.x19", "X.x20")]
 
 # WRITE OUTPUT FILE WITH MERGED TABLES
 write.table(sampleResults, file=(paste(resultsDir, "/data/persamples/", sampleName, "_", organism, "_results.txt", sep="")), sep= '\t', col.names=FALSE, row.names=FALSE)

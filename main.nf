@@ -1122,7 +1122,7 @@ process generate_results {
             # Create results table
             echo -e "\t$(date)\t Create results table (.txt)" >> $lablog
             echo -e "\t$(date)\t Rscript ${PIKAVIRUSDIR}/html/persample/mergeResults.R $sample $organism $resultsDir $resultsDir/results/" >> $lablog
-            Rscript ${PIKAVIRUSDIR}/html/persample/mergeResults.R $sample $organism $resultsDir/ $resultsDir/results/ 2>&1 >> $lablog
+            Rscript ${PIKAVIRUSDIR}/html/persample/mergeResults.R $sample $organism $resultsDir/ $resultsDir/results/ $bacDB $virDB $fungiDB 2>&1 >> $lablog
             # Create results html
             echo -e "\t$(date)\t Create results html file" >> $lablog
             echo -e "\t$(date)\t ${PIKAVIRUSDIR}/html/persample/createResultHtml.sh ${sample} ${organism}" >> $lablog

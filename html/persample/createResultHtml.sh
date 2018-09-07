@@ -45,26 +45,20 @@ then
 					    <!--<th>Subject Title</th>-->
 						<th>Reference Id</th>
 						<th>Reference name</th>
-						<th>Contig Id</th>
-						<th>% of identical matches</th>
-						<th>Alignment length</th>
-						<th>Number of mismatches</th>
-						<th>Number of gap openings</th>
-						<th>Start of alignment in query</th>
-						<th>End of alignment in query</th>
-						<th>Start of alignment in subject</th>
-						<th>End of alignment in subject</th>
-						<th>Expect value</th>
-						<th>Bit score</th>
+						<th>Covered genome fraction</th>
+						<th>Genome length</th>
+						<th>Frequency</th>
+						<th>Contig length mean</th>
+						<th>Contig length min</th>
+						<th>Contig length median</th>
+						<th>Contig length max</th>
 						<th>Coverage mean</th>
 						<th>Minimum coverage</th>
 						<th>Coverage SD</th>
-						<th>Coverage median</th>
 						<th>x1-x4 depth</th>
 						<th>x5-x9 depth</th>
 						<th>x10-x19 depth</th>
 						<th>=>20 depth</th>
-						<th>Total coverage</th>
 						<th>Coverage graph</th>
 					</tr>
 				</thead>
