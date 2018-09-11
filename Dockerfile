@@ -15,14 +15,14 @@ RUN echo "Install basic development tools" && \
 
 # ENV find /scif/apps -maxdepth 2 -name "bin" | while read in; do echo "PATH=\${PATH}:$in";done | tr '\n' ' '
 ENV PATH=${PATH}:/scif/apps/bedtools/bin
-    PATH=${PATH}:/scif/apps/bedtools/bin
-    PATH=${PATH}:/scif/apps/fastqc/bin
-    PATH=${PATH}:/scif/apps/ncbiblast/bin
-    PATH=${PATH}:/scif/apps/quast/bin
-    PATH=${PATH}:/scif/apps/R/bin
-    PATH=${PATH}:/scif/apps/samtools/bin
-    PATH=${PATH}:/scif/apps/spades/bin
-    PATH=${PATH}:/scif/apps/trimmomatic/bin
+ENV PATH=${PATH}:/scif/apps/bedtools/bin
+ENV PATH=${PATH}:/scif/apps/fastqc/bin
+ENV PATH=${PATH}:/scif/apps/ncbiblast/bin
+ENV PATH=${PATH}:/scif/apps/quast/bin
+ENV PATH=${PATH}:/scif/apps/R/bin
+ENV PATH=${PATH}:/scif/apps/samtools/bin
+ENV PATH=${PATH}:/scif/apps/spades/bin
+ENV PATH=${PATH}:/scif/apps/trimmomatic/bin
 
 
 ENTRYPOINT ["/opt/docker-entrypoint.sh"]
