@@ -13,7 +13,7 @@ RUN echo "Install basic development tools" && \
     echo "Installing plasmidID app" && \
     scif install /opt/pikavirus_v1.0_centos7.scif
 
-#ENV find /scif/apps -maxdepth 2 -name "bin" | while read in; do echo "PATH=\${PATH}:$in";done | tr '\n' ' '
+ENV find /scif/apps -maxdepth 2 -name "bin" | while read in; do echo "PATH=\${PATH}:$in";done | tr '\n' ' '
 
 
 ENTRYPOINT ["/opt/docker-entrypoint.sh"]
