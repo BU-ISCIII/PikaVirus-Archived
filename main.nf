@@ -1113,7 +1113,7 @@ process generate_results {
     cat ${resultsDir}/results/quality/table.html >> ${resultsDir}/results/quality.html
     cat ${PIKAVIRUSDIR}/html/quality/quality_template_2.html >> ${resultsDir}/results/quality.html
     cat ${PIKAVIRUSDIR}/html/footer.html >> ${resultsDir}/results/quality.html
-    perl -pe "s/${resultsDir}\/stats\/data\//quality/g"
+    sed -i "s+${resultsDir}/stats/data/+quality+g" ${resultsDir}/results/quality.html
     rm -f ${resultsDir}/results/quality/table.html
     rm -rf ${resultsDir}/stats
     echo -e "Finished creating quality report" >> $lablog
