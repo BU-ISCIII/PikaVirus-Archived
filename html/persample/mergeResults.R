@@ -106,7 +106,12 @@ rownames(genome_length) = genome_length$V1
 sampleResults$"Genome length" = genome_length[rownames(sampleResults),2]
 
 # Order columns
-sampleResults = sampleResults[c("Reference Id", "Organism", "total", "Genome length", "Freq", "Contig length mean", "Contig length min", "Contig length median", "Contig length max", "covMean", "covSD", "x1.x4", "x5.x9", "x10.x19", "X.x20")]
+if (dim(sampleResults)[1] == 0) {
+    sampleResults = data.frame(matrix(ncol = 15, nrow = 0))
+    colnames(sampleResults) = c("Reference Id", "Organism", "total", "Genome length", "Freq", "Contig length mean", "Contig length min", "Contig length median", "Contig length max", "covMean", "covSD", "x1.x4", "x5.x9", "x10.x19", "X.x20")
+} else {
+    sampleResults = sampleResults[c("Reference Id", "Organism", "total", "Genome length", "Freq", "Contig length mean", "Contig length min", "Contig length median", "Contig length max", "covMean", "covSD", "x1.x4", "x5.x9", "x10.x19", "X.x20")]
+}
 
 # WRITE OUTPUT FILE WITH MERGED TABLES
 write.table(sampleResults, file=(paste(resultsDir, "/data/persamples/", sampleName, "_", organism, "_results.txt", sep="")), sep= '\t', col.names=FALSE, row.names=FALSE)
