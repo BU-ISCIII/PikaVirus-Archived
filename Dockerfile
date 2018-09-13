@@ -15,7 +15,7 @@ RUN echo "Install basic development tools" && \
 
 # ENV find /scif/apps -maxdepth 2 -name "bin" | while read in; do echo "PATH=\${PATH}:$in";done | tr '\n' ' '
 ENV PATH=${PATH}:/scif/apps/bedtools/bin
-ENV PATH=${PATH}:/scif/apps/bedtools/bin
+ENV PATH=${PATH}:/scif/apps/bowtie2/bin
 ENV PATH=${PATH}:/scif/apps/fastqc/bin
 ENV PATH=${PATH}:/scif/apps/ncbiblast/bin
 ENV PATH=${PATH}:/scif/apps/quast/bin
