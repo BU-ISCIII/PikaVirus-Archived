@@ -53,7 +53,6 @@ then
 						<th>Contig length median</th>
 						<th>Contig length max</th>
 						<th>Coverage mean</th>
-						<th>Minimum coverage</th>
 						<th>Coverage SD</th>
 						<th>x1-x4 depth</th>
 						<th>x5-x9 depth</th>
