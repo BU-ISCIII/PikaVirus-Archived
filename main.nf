@@ -1167,8 +1167,8 @@ process generate_results {
  * STEP 8 - Clean up
  */
  
- process generate_results {
-    tag "results"
+ process cleaning_up {
+    tag "cleaningip"
     
     input:
     file log from finished
