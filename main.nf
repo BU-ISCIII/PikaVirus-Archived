@@ -883,7 +883,7 @@ process blast_fungi {
     
     if [[ -s id.txt ]];
     then
-        perl ${PIKAVIRUSDIR}/fasta_extract.pl id.txt > fungi_genomes.fna
+        perl ${PIKAVIRUSDIR}/fasta_extract.pl $fungiDB/WG/fungi_all.fna id.txt > fungi_genomes.fna
         bowtie2-build fungi_genomes.fna WG
         
         #	BOWTIE2 MAPPING AGAINST CREATED DATABASE
