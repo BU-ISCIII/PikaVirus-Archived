@@ -231,7 +231,7 @@ process trimmed_fastqc {
      val "$sample" into quality_stats
      
      shell:
-     '''
+     ''' 
      mkdir -p ${resultsDir}/stats/data
      
      sample=!{raw_reads}
@@ -249,8 +249,8 @@ process trimmed_fastqc {
      fi
      
      mkdir -p ${resultsDir}/stats/data/${dir}
-     unzip !{raw_reads} -d ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc
-     mv ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc/*/* ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc/
+     unzip -o !{raw_reads} -d ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc
+     mv -f ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc/*/* ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc/
      # rm -rf ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc/$dir*
      
      sample=!{trimmed_reads}
@@ -268,8 +268,8 @@ process trimmed_fastqc {
      fi
      
      mkdir -p ${resultsDir}/stats/data/${dir}
-     unzip !{trimmed_reads} -d ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc
-     mv ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc/*/* ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc/
+     unzip -o !{trimmed_reads} -d ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc
+     mv -f ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc/*/* ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc/
      # rm -rf ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc/$dir*
      '''
 }
@@ -286,7 +286,7 @@ process quality_finish {
      shell:
      '''
      cat ${resultsDir}/samples_id.txt | sort -u > tmp
-     mv tmp ${resultsDir}/samples_id.txt
+     mv -f tmp ${resultsDir}/samples_id.txt
      perl ${PIKAVIRUSDIR}/html/quality/listFastQCReports.pl ${resultsDir}/stats/data/ > ${resultsDir}/stats/table.html
      '''
 }
@@ -535,7 +535,7 @@ process assembly_bacteria {
     
     echo "Command is: spades.py --phred-offset 33 -1 !{mappedR1Fastq} -2 !{mappedR2Fastq} --meta -o $contigs_dir" >> $lablog
     
-    mkdir $contigs_dir
+    mkdir -p $contigs_dir
     { # try
         spades.py --phred-offset 33 -1 !{mappedR1Fastq} -2 !{mappedR2Fastq} --meta -o $contigs_dir 2>&1 >> $lablog
     } || { # catch
@@ -545,7 +545,7 @@ process assembly_bacteria {
     if [ -f $contigs_dir/contigs.fasta ]; then
         echo "Command is: metaquast.py -f $contigs_dir/contigs.fasta -o $quast_dir/" >> $lablog
         
-        mkdir $quast_dir
+        mkdir -p $quast_dir
         metaquast.py -f $contigs_dir/contigs.fasta -o $quast_dir/ 2>&1 >> $lablog
     else
        echo "QUAST can not run if SPADES did not find any contigs" >> $lablog
@@ -553,7 +553,7 @@ process assembly_bacteria {
        touch $contigs_dir/contigs.fasta
     fi
 
-    mv $contigs_dir/contigs.fasta $contigs
+    mv -f $contigs_dir/contigs.fasta $contigs
 
     echo "Step 3.1 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
@@ -588,7 +588,7 @@ process assembly_virus {
     
     echo "Command is: spades.py --phred-offset 33 -1 !{mappedR1Fastq} -2 !{mappedR2Fastq} --meta -o $contigs_dir" >> $lablog
     
-    mkdir $contigs_dir
+    mkdir -p $contigs_dir
     { # try
         spades.py --phred-offset 33 -1 !{mappedR1Fastq} -2 !{mappedR2Fastq} --meta -o $contigs_dir 2>&1 >> $lablog
     } || { # catch
@@ -598,7 +598,7 @@ process assembly_virus {
     if [ -f $contigs_dir/contigs.fasta ]; then
         echo "Command is: metaquast.py -f $contigs_dir/contigs.fasta -o $quast_dir/" >> $lablog
         
-        mkdir $quast_dir
+        mkdir -p $quast_dir
         metaquast.py -f $contigs_dir/contigs.fasta -o $quast_dir/ 2>&1 >> $lablog
     else
        echo "QUAST can not run if SPADES did not find any contigs" >> $lablog
@@ -606,7 +606,7 @@ process assembly_virus {
        touch $contigs_dir/contigs.fasta
     fi
 
-    cp $contigs_dir/contigs.fasta $contigs
+    cp -f $contigs_dir/contigs.fasta $contigs
 
     echo "Step 3.2 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
@@ -641,7 +641,7 @@ process assembly {
     
     echo "Command is: spades.py --phred-offset 33 -1 !{mappedR1Fastq} -2 !{mappedR2Fastq} --meta -o $contigs_dir" >> $lablog
     
-    mkdir $contigs_dir
+    mkdir -p $contigs_dir
     { # try
         spades.py --phred-offset 33 -1 !{mappedR1Fastq} -2 !{mappedR2Fastq} --meta -o $contigs_dir 2>&1 >> $lablog
     } || { # catch
@@ -651,7 +651,7 @@ process assembly {
     if [ -f $contigs_dir/contigs.fasta ]; then
         echo "Command is: metaquast.py -f $contigs_dir/contigs.fasta -o $quast_dir/" >> $lablog
         
-        mkdir $quast_dir
+        mkdir -p $quast_dir
         metaquast.py -f $contigs_dir/contigs.fasta -o $quast_dir/ 2>&1 >> $lablog
     else
        echo "QUAST can not run if SPADES did not find any contigs" >> $lablog
@@ -659,7 +659,7 @@ process assembly {
        touch $contigs_dir/contigs.fasta
     fi
     
-    cp $contigs_dir/contigs.fasta $contigs
+    cp -f $contigs_dir/contigs.fasta $contigs
 
     echo "Step 3.3 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
@@ -1075,7 +1075,7 @@ process generate_summary_tables {
     
     # Create summary tables
     perl ${PIKAVIRUSDIR}/summary_tables.pl !{blast_table} !{coverage_table}
-    cp *_summary.tsv ${resultsDir}/results/summary_tables
+    cp -f *_summary.tsv ${resultsDir}/results/summary_tables
     '''
 }
 
@@ -1106,8 +1106,8 @@ process generate_results {
     
     # Quality report
     echo -e "Started creating quality report\n" >> $lablog
-    cp -r ${resultsDir}/stats/data ${resultsDir}/results/quality
-    cp ${resultsDir}/stats/table.html ${resultsDir}/results/quality/table.html
+    cp -fr ${resultsDir}/stats/data ${resultsDir}/results/quality
+    cp -f ${resultsDir}/stats/table.html ${resultsDir}/results/quality/table.html
     cat ${PIKAVIRUSDIR}/html/header.html > ${resultsDir}/results/quality.html
     cat ${PIKAVIRUSDIR}/html/quality/quality_template_1.html >> ${resultsDir}/results/quality.html
     cat ${resultsDir}/results/quality/table.html >> ${resultsDir}/results/quality.html
@@ -1149,7 +1149,7 @@ process generate_results {
             echo -e "\t\t${PIKAVIRUSDIR}/html/summary/statistics.sh ${resultsDir} ${organism} ${sample}" >> $lablog
             bash ${PIKAVIRUSDIR}/html/summary/statistics.sh ${resultsDir} ${organism} ${sample} 2>&1 >> $lablog
             # Copy statistics files to RESULTS data folder
-            cp "${resultsDir}/${organism}/taxonomy/${sample}_${organism}_statistics.txt" "${resultsDir}/results/data/summary/" 2>&1 >> $lablog
+            cp -f "${resultsDir}/${organism}/taxonomy/${sample}_${organism}_statistics.txt" "${resultsDir}/results/data/summary/" 2>&1 >> $lablog
         done
     done
     
