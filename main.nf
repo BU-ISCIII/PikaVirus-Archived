@@ -57,12 +57,12 @@ def helpMessage() {
       -c                            Path to input your personalised config file. You can modify the example in BU-ISCIII/Pikavirus/nextflow.config to fit your analysis.
     Options:
       -profile                      Hardware config to use. standard/docker/singularity. Default: standard.
-      --no-bacteria                 Do not look for bacteria
-      --no-virus                    Do not look for virus
-      --no-fungi                    Do not look for fungil
-      --no-trimming                 Skip the adapter trimming step.
-      --clean-up                    Remove intermediate files from results directory after execution
-      --email                       Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
+      --fast                        Fast mode, bowtie2 mapping without -a option. Default: false.
+      --no-bacteria                 Do not look for bacteria. Default: false.
+      --no-virus                    Do not look for virus. Default: false.
+      --no-fungi                    Do not look for fungi. Default: false.
+      --no-trimming                 Skip the adapter trimming step. Default: false.
+      --clean-up                    Remove intermediate files from results directory after execution. Default: true.
       --name                        Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic
     Other options:
       --help						                  Show this message.
@@ -73,6 +73,9 @@ def helpMessage() {
 /*
  * SET UP CONFIGURATION VARIABLES
  */
+
+// Remember PikaVirus scripts location
+PIKAVIRUSDIR = "$baseDir"
 
 // Pipeline version
 version = '1.0'
@@ -102,8 +105,23 @@ if( !(workflow.runName ==~ /\w+/) ){
   custom_runName = workflow.runName
 }
 
-// Remember PikaVirus scripts location
-PIKAVIRUSDIR = "$baseDir"
+// Execute fast version
+params.fast = false
+
+// Skip bacteria
+params.no-bacteria = false
+
+// Skip virus
+params.no-virus = false
+
+// Skip fungi
+params.no-fungi = false
+
+// Skip trimming
+params.no-trimming = false
+
+// Clean up
+params.clean-up = true
 
 /*
  * Create a channel for input read files
@@ -116,7 +134,7 @@ Channel
 /*
  * PREPROCESSING - Check config file integrity
  */
-/*if(!params.c){
+/*if( ! params.c ){
  *   exit 1, "No config file specified!" }
  */ 
  
