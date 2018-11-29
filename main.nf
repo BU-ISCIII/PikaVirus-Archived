@@ -177,6 +177,9 @@ summary['Config Profile'] = workflow.profile
 log.info summary.collect { k,v -> "${k.padRight(21)}: $v" }.join("\n")
 log.info "===================================="
  
+ 
+if ( params.no-trimming ){
+ 
 /*
  * STEP 1.1 - FastQC
  */
@@ -347,6 +350,18 @@ process quality_finish {
      perl ${PIKAVIRUSDIR}/html/quality/listFastQCReports.pl ${resultsDir}/stats/data/ > ${resultsDir}/stats/table.html
      '''
 }
+
+} else {
+ 
+ Channel
+    .fromFilePairs( "$readsDir/*R1*fastq*")
+    .into{ trimmed_reads_R1 }
+    
+ Channel
+    .fromFilePairs( "$readsDir/*R2*fastq*")
+    .into{ trimmed_reads_R2 }
+ 
+}
  
  /*
  * STEP 2.1 - Host Removal
@@ -397,6 +412,8 @@ process host_removal {
     echo "-------------------------------------------------" >> $lablog
     '''
 }
+ 
+if ( ! params.no-bacteria) {
  
  /*
  * STEP 2.2 - Mapping Bacteria
@@ -452,6 +469,10 @@ process mapping_bacteria {
     echo "-------------------------------------------------" >> $lablog
     '''
 }
+
+}
+ 
+if ( ! params.no-virus) {
  
  /*
  * STEP 2.3 - Mapping Virus
@@ -508,6 +529,10 @@ process mapping_virus {
     echo "-------------------------------------------------" >> $lablog
     '''
 }
+
+}
+
+if ( ! params.no-fungi) {
  
  /*
  * STEP 2.4 - Mapping Fungi
@@ -563,6 +588,10 @@ process mapping_fungi {
     echo "-------------------------------------------------" >> $lablog
     '''
 }
+
+}
+
+if ( ! params.no-bacteria) {
  
  /*
  * STEP 3.1 - Assembly Bacteria
@@ -617,6 +646,10 @@ process assembly_bacteria {
     '''
 }
 
+}
+
+if ( ! params.no-virus) {
+
  /*
  * STEP 3.2 - Assembly Virus
  */
@@ -670,6 +703,10 @@ process assembly_virus {
     '''
 }
 
+}
+
+if ( ! params.no-fungi) {
+
  /*
  * STEP 3.3 - Assembly Fungi
  */
@@ -722,6 +759,10 @@ process assembly {
     echo "-------------------------------------------------" >> $lablog
     '''
 }
+
+}
+
+if ( ! params.no-bacteria) {
  
  /*
  * STEP 4.1 - Blast Bacteria
@@ -765,6 +806,10 @@ process blast_bacteria {
     '''
 }
 
+}
+
+if ( ! params.no-virus) {
+
  /*
  * STEP 4.2 - Blast Virus
  */
@@ -807,6 +852,10 @@ process blast_virus {
     '''
 }
 
+}
+
+if ( ! params.no-fungi) {
+
  /*
  * STEP 4.3 - Blast Fungi
  */
@@ -848,6 +897,10 @@ process blast_fungi {
     echo "-------------------------------------------------" >> $lablog
     '''
 }
+
+}
+
+if ( ! params.no-bacteria) {
  
  /*
  * STEP 5.1 - Bacteria reampping
@@ -905,6 +958,10 @@ process blast_fungi {
     '''
 }
  
+}
+
+if ( ! params.no-fungi) {
+ 
   /*
  * STEP 5.2 - Fungi reampping
  */
@@ -960,8 +1017,10 @@ process blast_fungi {
     echo "-------------------------------------------------" >> $lablog
     '''
 }
- 
- 
+
+}
+
+if ( ! params.no-bacteria) {
  
  /*
  * STEP 6.1 - Coverage Bacteria
@@ -1014,6 +1073,10 @@ process coverage_bacteria {
     '''
 }
 
+}
+
+if ( ! params.no-virus) {
+
  /*
  * STEP 6.2 - Coverage Virus
  */
@@ -1057,6 +1120,10 @@ process coverage_virus {
     echo "-------------------------------------------------" >> $lablog
     '''
 }
+
+}
+
+if ( ! params.no-fungi) {
 
  /*
  * STEP 6.3 - Coverage Fungi
@@ -1107,6 +1174,8 @@ process coverage_fungi {
     echo "Step 6.3 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
     '''
+}
+
 }
  
  /*
@@ -1220,6 +1289,8 @@ process generate_results {
     '''
 }
 
+if ( ! params.clean-up) {
+ 
 /*
  * STEP 8 - Clean up
  */
@@ -1241,3 +1312,5 @@ process generate_results {
     echo "-------------------------------------------------" >> $lablog
     '''
  }
+ 
+}
