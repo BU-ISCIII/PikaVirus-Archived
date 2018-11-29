@@ -52,8 +52,12 @@ result = tryCatch({
 	# AC_000002.1            4               0.17  -> en el genoma AC_000002.1 hay un 17% de pb que están a una profundidad >= 4
 	# ...
 
-	# Create new table grouped by genome, containing mean, median, min, max and sd.
-	new_cov <- ddply(cov,.(gnm),summarize,covMean=mean(covThreshold),covMin=min(covThreshold),covSD=sd(covThreshold),covMedian=median(covThreshold))
+	# Create new table grouped by genome, containing mean, median, min and sd.
+	new_cov <- data.frame(gnm=character(),covMean=double(),covMin=double(),covSD=double(),covMedian=double(),stringsAsFactors=FALSE)
+	for (genome in unique(as.character(cov$gnm))){
+		tmp <- cov[cov$gnm==genome,]
+		new_cov[nrow(new_cov) + 1,] <- list(genome, weighted.mean(tmp$covThreshold, tmp$diffFracBelowThreshold), min(tmp$covThreshold), sum(tmp$diffFracBelowThreshold * (tmp$covThreshold - weighted.mean(tmp$covThreshold, tmp$diffFracBelowThreshold))^2) ,rep(tmp$covThreshold, times=tmp$diffFracBelowThreshold*100)[length(rep(tmp$covThreshold, times=tmp$diffFracBelowThreshold*100))/2])
+	}
 
 	# new_cov:
 	# gnm 			covMean covMin    covMax covSD 		covMedian
