@@ -123,6 +123,21 @@ params.no-trimming = false
 // Clean up
 params.clean-up = true
 
+// Check that Nextflow version is up to date enough
+// try / throw / catch works for NF versions < 0.25 when this was implemented
+nf_required_version = '0.25.0'
+try {
+    if( ! nextflow.version.matches(">= $nf_required_version") ){
+        throw GroovyException('Nextflow version too old')
+    }
+} catch (all) {
+    log.error "====================================================\n" +
+              "  Nextflow version $nf_required_version required! You are running v$workflow.nextflow.version.\n" +
+              "  Pipeline execution will continue, but things may break.\n" +
+              "  Please run `nextflow self-update` to update Nextflow.\n" +
+              "============================================================"
+}
+
 /*
  * Create a channel for input read files
  */
@@ -136,7 +151,31 @@ Channel
  */
 /*if( ! params.c ){
  *   exit 1, "No config file specified!" }
- */ 
+ */
+ 
+ // Header log info
+log.info "========================================="
+log.info " BU-ISCIII/PikaVirus : Metagenomics Analysis v${version}"
+log.info "========================================="
+def summary = [:]
+summary['Config File']               = params.c
+summary['Execution Mode']            = params.fast
+summary['Skip bacteria']               = params.no-bacteria
+summary['Skip virus']               = params.no-virus
+summary['Skip fungi']               = params.no-fungi
+summary['Skip trimming']               = params.no-trimming
+summary['Clean-up']               = params.clean-up
+summary['Scripts dir']               = "$PIKAVIRUSDIR"
+summary['Data dir']               = "$readsDir"
+summary['Working dir']               = "$workingDir"
+summary['Results dir']               = "$resultsDir"
+summary['Host Reference Genome dir']               = "$hostDB"
+summary['Bacteria DB dir']               = "$bacDB"
+summary['Virus DB dir']               = "$virDB"
+summary['Fungi DB dir']               = "$fungiDB"
+summary['Config Profile'] = workflow.profile
+log.info summary.collect { k,v -> "${k.padRight(21)}: $v" }.join("\n")
+log.info "===================================="
  
 /*
  * STEP 1.1 - FastQC
