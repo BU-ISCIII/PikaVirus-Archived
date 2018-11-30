@@ -428,6 +428,9 @@ process mapping_bacteria {
     file noHostR2Fastq from no_host_R2
 
     output:
+    if ( params.fast ){
+      file "*_bacteria.bam" into bacteria_bam
+    }
     file "*_bacteria_R1.fastq" into bacteria_R1, bacteria_remap_R1
     file "*_bacteria_R2.fastq" into bacteria_R2, bacteria_remap_R2
     file "*_nobacteria_R1.fastq" into no_bacteria_R1
@@ -510,10 +513,14 @@ process mapping_virus {
     
     echo "Step 2.3 - Mapping Virus" >> $lablog
     
-    echo "Command is: bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile" >> $lablog
-    
     #	BOWTIE2 MAPPING AGAINST VIRUS
-    bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile 2>&1 >> $lablog
+    if ( params.fast ) {
+     echo "Command is: bowtie2 -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile" >> $lablog
+     bowtie2 -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile 2>&1 >> $lablog
+    } else {
+     echo "Command is: bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile" >> $lablog
+     bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile 2>&1 >> $lablog
+    }
     samtools view -Sb $mappedSamFile > $mappedBamFile
     samtools sort -O bam -T temp -o $sortedBamFile $mappedBamFile
     samtools index -b $sortedBamFile
@@ -547,6 +554,9 @@ process mapping_fungi {
     file noVirusR2Fastq from no_virus_R2
 
     output:
+    if ( params.fast ) {
+      file "*_fungi.bam" into fungi_bam
+    }
     file "*_fungi_R1.fastq" into fungi_R1, fungi_remap_R1
     file "*_fungi_R2.fastq" into fungi_R2, fungi_remap_R2
     file "*_nofungi_R1.fastq" into no_fungi_R1
@@ -901,7 +911,9 @@ process blast_fungi {
 
 }
 
-if ( ! params.no-bacteria) {
+if ( ! params.fast ) {
+
+if ( ! params.no-bacteria ) {
  
  /*
  * STEP 5.1 - Bacteria reampping
@@ -1017,6 +1029,10 @@ if ( ! params.no-fungi) {
     echo "Step 5.1 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
     '''
+}
+ 
+} 
+ 
 }
 
 }
