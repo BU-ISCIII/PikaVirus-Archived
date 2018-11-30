@@ -62,7 +62,7 @@ def helpMessage() {
       --no-virus                    Do not look for virus. Default: false.
       --no-fungi                    Do not look for fungi. Default: false.
       --no-trimming                 Skip the adapter trimming step. Default: false.
-      --clean-up                    Remove intermediate files from results directory after execution. Default: true.
+      --clean-up                    Remove intermediate files from results directory after execution. Default: false.
       --name                        Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic
     Other options:
       --help						                  Show this message.
@@ -121,7 +121,7 @@ params.no-fungi = false
 params.no-trimming = false
 
 // Clean up
-params.clean-up = true
+params.clean-up = false
 
 // Check that Nextflow version is up to date enough
 // try / throw / catch works for NF versions < 0.25 when this was implemented
@@ -185,7 +185,7 @@ if ( params.no-trimming ){
  */
 process raw_fastqc {
     tag "$pair_id"
-    publishDir "${resultsDir}/fastqc_raw", mode: 'symlink'
+    publishDir "${resultsDir}/fastqc_raw", mode: 'move'
 
     input:
     set pair_id, file(reads) from read_pairs
@@ -248,7 +248,7 @@ process trimming {
  */
 process trimmed_fastqc {
     tag "$reads"
-    publishDir "${resultsDir}/fastqc_trimmed", mode: 'symlink'
+    publishDir "${resultsDir}/fastqc_trimmed", mode: 'move'
 
     input:
     file reads from trimmed_paired_R1.merge(trimmed_paired_R2)
@@ -310,8 +310,8 @@ process trimmed_fastqc {
      
      mkdir -p ${resultsDir}/stats/data/${dir}
      unzip -o !{raw_reads} -d ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc
-     mv -f ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc/*/* ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc/
-     # rm -rf ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc/$dir*
+     cp -rf ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc ${resultsDir}/stats/data/$dir/
+     rm -rf ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc
      
      sample=!{trimmed_reads}
      sample=${sample%_paired_fastqc.zip}
@@ -329,8 +329,8 @@ process trimmed_fastqc {
      
      mkdir -p ${resultsDir}/stats/data/${dir}
      unzip -o !{trimmed_reads} -d ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc
-     mv -f ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc/*/* ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc/
-     # rm -rf ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc/$dir*
+     cp -rf ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc ${resultsDir}/stats/data/$dir/
+     rm -rf ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc
      '''
 }
  
@@ -346,7 +346,8 @@ process quality_finish {
      shell:
      '''
      cat ${resultsDir}/samples_id.txt | sort -u > tmp
-     mv -f tmp ${resultsDir}/samples_id.txt
+     cp -rf tmp ${resultsDir}/samples_id.txt
+     rm -rf tmp
      perl ${PIKAVIRUSDIR}/html/quality/listFastQCReports.pl ${resultsDir}/stats/data/ > ${resultsDir}/stats/table.html
      '''
 }
@@ -639,7 +640,7 @@ process assembly_bacteria {
        touch $contigs_dir/contigs.fasta
     fi
 
-    mv -f $contigs_dir/contigs.fasta $contigs
+    cp -f $contigs_dir/contigs.fasta $contigs
 
     echo "Step 3.1 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
@@ -769,7 +770,7 @@ if ( ! params.no-bacteria) {
  */
 process blast_bacteria {
     tag "$bacteriaContig"
-    publishDir "${resultsDir}/bacteria/blast", mode: 'symlink'
+    publishDir "${resultsDir}/bacteria/blast", mode: 'copy'
 
     input:
     file bacteriaContig from bacteria_contigs
@@ -815,7 +816,7 @@ if ( ! params.no-virus) {
  */
 process blast_virus {
     tag "$virusContig"
-    publishDir "${resultsDir}/virus/blast", mode: 'symlink'
+    publishDir "${resultsDir}/virus/blast", mode: 'copy'
 
     input:
     file virusContig from virus_contigs
@@ -861,7 +862,7 @@ if ( ! params.no-fungi) {
  */
 process blast_fungi {
     tag "$fungiContig"
-    publishDir "${resultsDir}/fungi/blast", mode: 'symlink'
+    publishDir "${resultsDir}/fungi/blast", mode: 'copy'
 
     input:
     file fungiContig from fungi_contigs
@@ -1027,7 +1028,7 @@ if ( ! params.no-bacteria) {
  */
 process coverage_bacteria {
     tag "$sampleBam"
-    publishDir "${resultsDir}/bacteria/coverage", mode: 'symlink'
+    publishDir "${resultsDir}/bacteria/coverage", mode: 'copy'
 
     input:
     file sampleBam from bacteria_bam
@@ -1082,7 +1083,7 @@ if ( ! params.no-virus) {
  */
 process coverage_virus {
     tag "$sampleBam"
-    publishDir "${resultsDir}/virus/coverage", mode: 'symlink'
+    publishDir "${resultsDir}/virus/coverage", mode: 'copy'
 
     input:
     file sampleBam from virus_bam
@@ -1130,7 +1131,7 @@ if ( ! params.no-fungi) {
  */
 process coverage_fungi {
     tag "$sampleBam"
-    publishDir "${resultsDir}/fungi/coverage", mode: 'symlink'
+    publishDir "${resultsDir}/fungi/coverage", mode: 'copy'
 
     input:
     file sampleBam from fungi_bam
@@ -1289,7 +1290,7 @@ process generate_results {
     '''
 }
 
-if ( ! params.clean-up) {
+if ( params.clean-up ) {
  
 /*
  * STEP 8 - Clean up
