@@ -916,6 +916,40 @@ if ( ! params.fast ) {
 if ( ! params.no-bacteria ) {
  
  /*
+ * STEP 5.0 - Bacteria reampping DB creation
+ */
+ 
+ process remapping_bacteria_DB {
+    tag "bacteria DB for remapping"
+    publishDir "${resultsDir}/bacteria/reads", mode: 'symlink'
+
+    input:
+    bacteria_blast_remap.collect()
+
+    output:
+    file "*bt2*" into bacteria_DB
+    file "id.txt" into bacteria_txt
+
+    shell:
+    '''
+    echo "Step 5.0 - Building DB for bacteria remapping" >> $lablog
+
+    # Generate DB
+    echo "Creating bowtie2 database for remapping" >> $lablog
+    mkdir -p WG
+    cat *_bacteria_BLASTn_filtered.blast | cut -f1 | sort -u > id.txt
+    if [[ -s id.txt ]];
+    then
+        perl ${PIKAVIRUSDIR}/fasta_extract.pl $bacDB/WG/bacteria_genome_all.fna id.txt > bacteria_genomes.fna
+        bowtie2-build bacteria_genomes.fna WG
+    fi
+    
+    echo "Step 5.0 - Complete!" >> $lablog
+    echo "-------------------------------------------------" >> $lablog
+    '''
+ }
+ 
+  /*
  * STEP 5.1 - Bacteria reampping
  */
  
@@ -926,7 +960,8 @@ if ( ! params.no-bacteria ) {
     input:
     file R1Fastq from bacteria_remap_R1
     file R2Fastq from bacteria_remap_R2
-    file bacteria_blast from bacteria_blast_remap
+    file bacteria_DB from bacteria_DB.collect()
+    file "id.txt" from bacteria_txt
 
     output:
     file "*_bacteria.bam" into bacteria_bam
@@ -950,9 +985,6 @@ if ( ! params.no-bacteria ) {
     cat ${resultsDir}/bacteria/blast/${sample}_bacteria_BLASTn_filtered.blast | cut -f1 | sort -u > id.txt
     if [[ -s id.txt ]];
     then
-        perl ${PIKAVIRUSDIR}/fasta_extract.pl $bacDB/WG/bacteria_genome_all.fna id.txt > bacteria_genomes.fna
-        bowtie2-build bacteria_genomes.fna WG
-        
         #	BOWTIE2 MAPPING AGAINST CREATED DATABASE
         echo "Command is: bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog" >> $lablog
         bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog
@@ -975,8 +1007,42 @@ if ( ! params.no-bacteria ) {
 
 if ( ! params.no-fungi) {
  
+   /*
+ * STEP 5.2 - Fungi reampping DB creation
+ */
+ process remapping_fungi {
+    tag "$R1Fastq"
+    publishDir "${resultsDir}/fungi/reads", mode: 'symlink'
+
+    input:
+    fungi_blast_remap.collect()
+
+    output:
+    file "*bt2*" into fungi_DB
+    file "id.txt" into fungi_txt
+
+    shell:
+    '''
+    echo "Step 5.3 - Remapping Fungi" >> $lablog
+
+    # Generate DB
+    echo "Creating bowtie2 database for remapping" >> $lablog
+    mkdir -p WG
+    cat ${resultsDir}/fungi/blast/${sample}_fungi_BLASTn_filtered.blast | cut -f1 | sort -u > id.txt
+    
+    if [[ -s id.txt ]];
+    then
+        perl ${PIKAVIRUSDIR}/fasta_extract.pl $fungiDB/WG/fungi_all.fna id.txt > fungi_genomes.fna
+        bowtie2-build fungi_genomes.fna WG
+    fi
+    
+    echo "Step 5.2 - Complete!" >> $lablog
+    echo "-------------------------------------------------" >> $lablog
+    '''
+}
+ 
   /*
- * STEP 5.2 - Fungi reampping
+ * STEP 5.3 - Fungi reampping
  */
  process remapping_fungi {
     tag "$R1Fastq"
@@ -985,7 +1051,8 @@ if ( ! params.no-fungi) {
     input:
     file R1Fastq from fungi_remap_R1
     file R2Fastq from fungi_remap_R2
-    file fungi_blast from fungi_blast_remap
+    file fungi_DB from fungi_DB.collect()
+    file "id.txt" from fungi_txt
 
     output:
     file "*_fungi.bam" into fungi_bam
@@ -1001,18 +1068,10 @@ if ( ! params.no-fungi) {
     emptyfungi_bam=${sample}_empty_fungi.bam
     lablog=${sample}.log
     
-    echo "Step 5.1 - Remapping Fungi" >> $lablog
-
-    # Generate DB
-    echo "Creating bowtie2 database for remapping" >> $lablog
-    mkdir -p WG
-    cat ${resultsDir}/fungi/blast/${sample}_fungi_BLASTn_filtered.blast | cut -f1 | sort -u > id.txt
+    echo "Step 5.3 - Remapping Fungi" >> $lablog
     
     if [[ -s id.txt ]];
     then
-        perl ${PIKAVIRUSDIR}/fasta_extract.pl $fungiDB/WG/fungi_all.fna id.txt > fungi_genomes.fna
-        bowtie2-build fungi_genomes.fna WG
-        
         #	BOWTIE2 MAPPING AGAINST CREATED DATABASE
         echo "Command is: bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog" >> $lablog
         bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog
@@ -1026,7 +1085,7 @@ if ( ! params.no-fungi) {
         touch $emptyfungi_bam
     fi
     
-    echo "Step 5.1 - Complete!" >> $lablog
+    echo "Step 5.3 - Complete!" >> $lablog
     echo "-------------------------------------------------" >> $lablog
     '''
 }
