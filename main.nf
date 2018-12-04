@@ -1314,8 +1314,8 @@ process generate_results {
     cat ${PIKAVIRUSDIR}/html/quality/quality_template_2.html >> ${resultsDir}/results/quality.html
     cat ${PIKAVIRUSDIR}/html/footer.html >> ${resultsDir}/results/quality.html
     sed -i "s+${resultsDir}/stats/data/+quality+g" ${resultsDir}/results/quality.html
-    # rm -f ${resultsDir}/results/quality/table.html
-    # rm -rf ${resultsDir}/stats
+    rm -f ${resultsDir}/results/quality/table.html
+    rm -rf ${resultsDir}/stats
     echo -e "Finished creating quality report" >> $lablog
     
     # Per sample report
@@ -1381,6 +1381,7 @@ if ( params.cleanup ) {
         
         echo "Cleaning intermediate files in results directory" >> $lablog
         rm -rf ${resultsDir}/bacteria ${resultsDir}/virus ${resultsDir}/fungi ${resultsDir}/host ${resultsDir}/fastqc_trimmed ${resultsDir}/fastqc_raw ${resultsDir}/samples_id.txt ${resultsDir}/results/data
+        rm -rf ${workingDir}/work
         
         echo "Step 8 - Complete!" >> $lablog
         echo "-------------------------------------------------" >> $lablog
