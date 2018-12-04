@@ -300,9 +300,9 @@ if ( params.trimming ){
          fi
          
          mkdir -p ${resultsDir}/stats/data/${dir}
-         unzip -o !{raw_reads} -d ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc      
-         cp -rf ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc/* ${resultsDir}/stats/data/$dir/
-         rm -rf ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc
+         unzip -o !{raw_reads}     
+         cp -rf ${sample}_fastqc ${resultsDir}/stats/data/$dir/${sample}_raw_fastqc
+         rm -rf ${sample}_fastqc
          
          sample=!{trimmed_reads}
          sample=${sample%_paired_fastqc.zip}
@@ -319,9 +319,9 @@ if ( params.trimming ){
          fi
          
          mkdir -p ${resultsDir}/stats/data/${dir}
-         unzip -o !{trimmed_reads} -d ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc  
-         cp -rf ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc/* ${resultsDir}/stats/data/$dir/
-         rm -rf ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc
+         unzip -o !{trimmed_reads}     
+         cp -rf ${sample}_paired_fastqc ${resultsDir}/stats/data/$dir/${sample}_trimmed_fastqc
+         rm -rf ${sample}_paired_fastqc
          '''
     }
  
@@ -503,13 +503,14 @@ if ( params.virus) {
         echo "Step 2.3 - Mapping Virus" >> $lablog
         
         #	BOWTIE2 MAPPING AGAINST VIRUS
-        if ( params.fast ) {
+        if [ !{params.fast} ]
+        then
             echo "Command is: bowtie2 -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile" >> $lablog
             bowtie2 -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile 2>&1 >> $lablog
-        } else {
+        else 
             echo "Command is: bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile" >> $lablog
             bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile 2>&1 >> $lablog
-        }
+        fi
         samtools view -Sb $mappedSamFile > $mappedBamFile
         samtools sort -O bam -T temp -o $sortedBamFile $mappedBamFile
         samtools index -b $sortedBamFile
@@ -596,7 +597,7 @@ if ( params.bacteria) {
     */
     process assembly_bacteria {
         tag "$mappedR1Fastq"
-        publishDir "${resultsDir}/bacteria/assembly", mode: 'symlink'
+        publishDir "${resultsDir}/bacteria/assembly", mode: 'copy'
     
         input:
         file mappedR1Fastq from bacteria_R1
@@ -653,7 +654,7 @@ if ( params.virus) {
     */
     process assembly_virus {
         tag "$mappedR1Fastq"
-        publishDir "${resultsDir}/virus/assembly", mode: 'symlink'
+        publishDir "${resultsDir}/virus/assembly", mode: 'copy'
     
         input:
         file mappedR1Fastq from virus_R1
@@ -710,7 +711,7 @@ if ( params.fungi) {
     */
     process assembly {
         tag "$mappedR1Fastq"
-        publishDir "${resultsDir}/fungi/assembly", mode: 'symlink'
+        publishDir "${resultsDir}/fungi/assembly", mode: 'copy'
     
         input:
         file mappedR1Fastq from fungi_R1
@@ -1313,8 +1314,8 @@ process generate_results {
     cat ${PIKAVIRUSDIR}/html/quality/quality_template_2.html >> ${resultsDir}/results/quality.html
     cat ${PIKAVIRUSDIR}/html/footer.html >> ${resultsDir}/results/quality.html
     sed -i "s+${resultsDir}/stats/data/+quality+g" ${resultsDir}/results/quality.html
-    rm -f ${resultsDir}/results/quality/table.html
-    rm -rf ${resultsDir}/stats
+    # rm -f ${resultsDir}/results/quality/table.html
+    # rm -rf ${resultsDir}/stats
     echo -e "Finished creating quality report" >> $lablog
     
     # Per sample report
