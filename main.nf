@@ -912,7 +912,7 @@ if ( ! params.fast ) {
             publishDir "${resultsDir}/bacteria/reads", mode: 'symlink'
         
             input:
-            bacteria_blast_remap.collect()
+            val str from bacteria_blast_remap.collect()
         
             output:
             file "*bt2*" into bacteria_DB
@@ -920,16 +920,20 @@ if ( ! params.fast ) {
         
             shell:
             '''
+            lablog=bacteria_remapping_DB.log
+            
             echo "Step 5.0 - Building DB for bacteria remapping" >> $lablog
             
             # Generate DB
             echo "Creating bowtie2 database for remapping" >> $lablog
             mkdir -p WG
-            cat *_bacteria_BLASTn_filtered.blast | cut -f1 | sort -u > id.txt
+            cat ${resultsDir}/bacteria/blast/*_bacteria_BLASTn_filtered.blast | cut -f1 | sort -u > id.txt
             if [[ -s id.txt ]];
             then
                 perl ${PIKAVIRUSDIR}/fasta_extract.pl $bacDB/WG/bacteria_genome_all.fna id.txt > bacteria_genomes.fna
                 bowtie2-build bacteria_genomes.fna WG
+            else
+                touch none.bt2
             fi
             
             echo "Step 5.0 - Complete!" >> $lablog
@@ -969,10 +973,11 @@ if ( ! params.fast ) {
         
             # Generate DB
             echo "Creating bowtie2 database for remapping" >> $lablog
-            mkdir -p WG
-            cat ${resultsDir}/bacteria/blast/${sample}_bacteria_BLASTn_filtered.blast | cut -f1 | sort -u > id.txt
-            if [[ -s id.txt ]];
+            if [[ ! -f none.bt2 ]];
             then
+                mkdir WG
+                cp -s *bt2* WG/
+                
                 #	BOWTIE2 MAPPING AGAINST CREATED DATABASE
                 echo "Command is: bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog" >> $lablog
                 bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog
@@ -998,12 +1003,12 @@ if ( ! params.fast ) {
         /*
         * STEP 5.2 - Fungi reampping DB creation
         */
-        process remapping_fungi {
+        process remapping_fungi_DB {
             tag "$R1Fastq"
             publishDir "${resultsDir}/fungi/reads", mode: 'symlink'
 
             input:
-            fungi_blast_remap.collect()
+            val str from fungi_blast_remap.collect()
 
             output:
             file "*bt2*" into fungi_DB
@@ -1011,17 +1016,21 @@ if ( ! params.fast ) {
         
             shell:
             '''
+            lablog=fungi_remapping_DB.log
+            
             echo "Step 5.3 - Remapping Fungi" >> $lablog
         
             # Generate DB
             echo "Creating bowtie2 database for remapping" >> $lablog
             mkdir -p WG
-            cat ${resultsDir}/fungi/blast/${sample}_fungi_BLASTn_filtered.blast | cut -f1 | sort -u > id.txt
+            cat ${resultsDir}/fungi/blast/*_fungi_BLASTn_filtered.blast | cut -f1 | sort -u > id.txt
             
             if [[ -s id.txt ]];
             then
                 perl ${PIKAVIRUSDIR}/fasta_extract.pl $fungiDB/WG/fungi_all.fna id.txt > fungi_genomes.fna
                 bowtie2-build fungi_genomes.fna WG
+            else
+                touch none.bt2
             fi
             
             echo "Step 5.2 - Complete!" >> $lablog
@@ -1058,8 +1067,11 @@ if ( ! params.fast ) {
             
             echo "Step 5.3 - Remapping Fungi" >> $lablog
             
-            if [[ -s id.txt ]];
+            if [[ ! -f none.bt2 ]];
             then
+                mkdir WG
+                cp -s *bt2* WG/
+                
                 #	BOWTIE2 MAPPING AGAINST CREATED DATABASE
                 echo "Command is: bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog" >> $lablog
                 bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog
