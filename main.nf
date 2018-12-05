@@ -1370,7 +1370,9 @@ if ( params.cleanup ) {
     */
  
     process cleaning_up {
-        tag "cleaningip"
+        tag "cleaning up"
+        
+        validExitStatus 0,1,2
         
         input:
         file log from finished
