@@ -976,7 +976,7 @@ if ( ! params.fast ) {
             if [[ ! -f none.bt2 ]];
             then
                 mkdir WG
-                cp -s *bt2* WG/
+                cp -a *bt2* WG/
                 
                 #	BOWTIE2 MAPPING AGAINST CREATED DATABASE
                 echo "Command is: bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog" >> $lablog
@@ -1070,7 +1070,7 @@ if ( ! params.fast ) {
             if [[ ! -f none.bt2 ]];
             then
                 mkdir WG
-                cp -s *bt2* WG/
+                cp -a *bt2* WG/
                 
                 #	BOWTIE2 MAPPING AGAINST CREATED DATABASE
                 echo "Command is: bowtie2 -a -fr -x WG -q -1 !{R1Fastq} -2 !{R2Fastq} -S $mappedSamFile 2>&1 >> $lablog" >> $lablog
