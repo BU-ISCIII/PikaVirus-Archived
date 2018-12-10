@@ -175,7 +175,7 @@ if ( params.trimming ){
      * STEP 1.1 - FastQC
      */
     process raw_fastqc {
-        tag "$pair_id"
+        tag "$reads"
         publishDir "${resultsDir}/fastqc_raw", mode: 'copy'
     
         input:
@@ -206,7 +206,7 @@ if ( params.trimming ){
      * STEP 1.2 - TRIMMING
      */ 
     process trimming {
-        tag "$name"
+        tag "$reads"
     
         input:
         set val(name), file(reads) from raw_reads
@@ -1019,7 +1019,7 @@ if ( ! params.fast ) {
         * STEP 5.2 - Fungi reampping DB creation
         */
         process remapping_fungi_DB {
-            tag "$R1Fastq"
+            tag "fungi DB for remapping"
             publishDir "${resultsDir}/fungi/reads", mode: 'symlink'
 
             input:
