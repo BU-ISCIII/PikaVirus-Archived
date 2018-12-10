@@ -429,6 +429,7 @@ if ( params.bacteria) {
         '''
         sample=!{noHostR1Fastq}
         sample=${sample%_nohost_R1.fastq}
+        
         mappedSamFile=${sample}_mapped.sam
         mappedBamFile=${sample}_mapped.bam
         sortedBamFile=${sample}_sorted.bam
@@ -463,6 +464,9 @@ if ( params.bacteria) {
         '''
     }
 
+} else {
+    no_bacteria_R1 = no_host_R1
+    no_bacteria_R2 = no_host_R2
 }
  
 if ( params.virus) {
@@ -488,7 +492,9 @@ if ( params.virus) {
         shell:
         '''
         sample=!{noBacteriaR1Fastq}
+        sample=${sample%_nohost_R1.fastq}
         sample=${sample%_nobacteria_R1.fastq}
+        
         mappedSamFile=${sample}_mapped.sam
         mappedBamFile=${sample}_mapped.bam
         sortedBamFile=${sample}_sorted.bam
@@ -528,6 +534,9 @@ if ( params.virus) {
         '''
     }
 
+} else {
+    no_virus_R1 = no_bacteria_R1
+    no_virus_R2 = no_bacteria_R2
 }
 
 if ( params.fungi) {
@@ -553,7 +562,10 @@ if ( params.fungi) {
         shell:
         '''
         sample=!{noVirusR1Fastq}
+        sample=${sample%_nohost_R1.fastq}
+        sample=${sample%_nobacteria_R1.fastq}
         sample=${sample%_novirus_R1.fastq}
+        
         mappedSamFile=${sample}_mapped.sam
         mappedBamFile=${sample}_mapped.bam
         sortedBamFile=${sample}_sorted.bam
@@ -588,6 +600,9 @@ if ( params.fungi) {
         '''
     }
 
+} else {
+    no_fungi_R1 = no_virus_R1
+    no_fungi_R2 = no_virus_R2
 }
 
 if ( params.bacteria) {
@@ -1267,6 +1282,18 @@ if ( params.fungi) {
 /*
 * STEP 7 - Generate Results
 */
+if ( ! params.bacteria ){
+    bacteria_blast = Channel.empty()
+    bacteria_coverage = Channel.empty()
+}
+if ( ! params.virus ){
+    virus_blast = Channel.empty()
+    virus_coverage = Channel.empty()
+}
+if ( ! params.fungi ){
+    fungi_blast = Channel.empty()
+    fungi_coverage = Channel.empty()
+}
 process generate_summary_tables {
     tag "$blast_table"
     
