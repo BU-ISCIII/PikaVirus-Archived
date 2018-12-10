@@ -65,8 +65,8 @@ def helpMessage() {
       --cleanup                     Remove intermediate files from results directory after execution. Default: false.
       --name                        Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic
     Other options:
-      --help						                  Show this message.
-      --version						               Show pipeline version.
+      --help                        Show this message.
+      --version                     Show pipeline version.
     """.stripIndent()
 }
 
