@@ -1,0 +1,258 @@
+<nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="137">
+  <ul class="nav navbar-nav">
+    <li><a href="summary.html"><img class="icon-bar" src='https://raw.githubusercontent.com/BU-ISCIII/PikaVirus/master/html/img/clipboard.png' img> Summary</a></li>
+    <li><a href="samples.html"><img class="icon-bar" src='https://raw.githubusercontent.com/BU-ISCIII/PikaVirus/master/html/img/test-tube.png' img> Results per sample</a></li>
+    <li><a href="quality.html"><img class="icon-bar" src='https://raw.githubusercontent.com/BU-ISCIII/PikaVirus/master/html/img/dna-structure.png' img> Quality Analysis</a></li>
+    <li class="active"><a href="info.html"><img class="icon-bar" src='https://raw.githubusercontent.com/BU-ISCIII/PikaVirus/master/html/img/book.png' img> What is this?</a></li>
+  </ul>
+</nav>
+
+<div class="container-fluid">
+  <br>
+  <div class="container">
+    <div class="panel panel-primary">
+      <div class="panel-heading"><h2>Overview</h2></div>
+      <div class="panel-body">
+        <p>
+          This webpage is generated when using the <a href='https://github.com/BU-ISCIII/PikaVirus' title='Metagenomics'>Metagenomics</a> Workflow. This section will sketchly explain how the data is generated.
+        </p>
+        <p>
+          You can find the complete project available for download on GitHub. There is also a <a href='https://github.com/BU-ISCIII/PikaVirus/wiki' title='Metagenomics wiki'>Metagenomics Wiki</a> section featuring an in-depth explanation about how to install and run <a href='https://github.com/BU-ISCIII/PikaVirus' title='Metagenomics'>Metagenomics</a>, from dependency installation and the way to generate the reference databases to how to run each script.
+        </p>
+      </div>
+    </div>
+    
+    <div class="panel panel-primary">
+      <div class="panel-heading"><h2>Quality Control</h2></div>
+      <div class="panel-body">
+        <p>
+          The quality control is the first step in the analysis. This step comprehends the following:
+          <ul>
+            <li>Check for adapter sequences to be removed from an in-built ILLUMINA database.</li>
+            <li>Scan the read with a 4-base wide sliding window, cutting when the average quality per base drops below 20.</li>
+            <li>Drop reads below 50 bases long.</li>
+          </ul>
+        </p>
+        <p>
+          An html report of the read quality is generated for each sample both before and after the trimming.
+        </p>
+        <p>
+          The files of this part of the analysis can be found inside your RESULTS directory in quality.
+        </p>
+      </div>
+    </div>
+    
+    <div class="panel panel-primary">
+      <div class="panel-heading"><h2>Summary</h2></div>
+      <div class="panel-body">
+        <p>
+          The data used for each pie chart comes from selecting the best blast hit of each contig in the sample. The best hit is determined by getting the maximum value after sorting by Bit score, e-value and nucleotide identity, in that order. Let's consider the following blast result:
+        </p>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Query</th>
+              <th>Organism name</th>
+              <th>% nucleotide identity</th>
+              <th>E-value</th>
+              <th>Bitscore</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Contig1</td>
+              <td>Organism1</td>
+              <td>97.21</td>
+              <td>4E-116</td>
+              <td>425</td>
+            </tr>
+            <tr>
+              <td>Contig1</td>
+              <td>Organism2</td>
+              <td>97.21</td>
+              <td>4E-116</td>
+              <td>400</td>
+            </tr>
+            <tr>
+              <td>Contig1</td>
+              <td>Organism3</td>
+              <td>98.89</td>
+              <td>0</td>
+              <td>804</td>
+            </tr>
+            <tr>
+              <td>Contig2</td>
+              <td>Organism3</td>
+              <td>95.97</td>
+              <td>5E-134</td>
+              <td>652</td>
+            </tr>
+            <tr>
+              <td>Contig2</td>
+              <td>Organism2</td>
+              <td>93.41</td>
+              <td>0</td>
+              <td>652</td>
+            </tr>
+            <tr>
+              <td>Contig3</td>
+              <td>Organism1</td>
+              <td>98.89</td>
+              <td>0</td>
+              <td>804</td>
+            </tr>
+            <tr>
+              <td>Contig4</td>
+              <td>Organism4</td>
+              <td>97.75</td>
+              <td>0</td>
+              <td>994</td>
+            </tr>
+            <tr>
+              <td>Contig4</td>
+              <td>Organism4</td>
+              <td>99.45</td>
+              <td>0</td>
+              <td>648</td>
+            </tr>
+            <tr>
+              <td>Contig4</td>
+              <td>Organism4</td>
+              <td>93.33</td>
+              <td>0</td>
+              <td>994</td>
+            </tr>
+            <tr>
+              <td>Contig4</td>
+              <td>Organism2</td>
+              <td>90.25</td>
+              <td>0</td>
+              <td>994</td>
+            </tr>
+            <tr>
+              <td>Contig5</td>
+              <td>Organism1</td>
+              <td>94.55</td>
+              <td>0</td>
+              <td>926</td>
+            </tr>
+            <tr>
+              <td>Contig5</td>
+              <td>Organism3</td>
+              <td>93.3</td>
+              <td>0</td>
+              <td>662</td>
+            </tr>
+            <tr>
+              <td>Contig6</td>
+              <td>Organism1</td>
+              <td>99.77</td>
+              <td>0</td>
+              <td>813</td>
+            </tr>
+            <tr>
+              <td>Contig7</td>
+              <td>Organism4</td>
+              <td>100</td>
+              <td>0</td>
+              <td>784</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>The Best Hit of each contig is determined as follows:</p>
+        <ul>
+          <li>Contig1: Contig1 has aligned 3 times, the best hit by Bit score is Organism1 (425).</li>
+          <li>Contig2: Contig2 has aligned twice. Both hits have the same Bit score, so the tie is solved using the E-value closest to 0 (0), which corresponds to Organism2.</li>
+          <li>Contig3: Contig3 has aligned only once with Organism1, so that is it's best hit.</li>
+          <li>Contig4: Contig4 has aligned 4 times. 3 hits have the same Bit score so we use the E-value to select the best hit. As the E-value is 0 in all the 3, we have to use the % of nucleotide identity. We select the hit with the highest % (97.75%), which corresponds with Organism4.</li>
+          <li>Contig5: Contig5 has aligned 2 times, the best hit by Bit score is Organism1 (926).</li>
+          <li>Contig6: Contig6 has aligned once with Organism1, so that is it's best hit.</li>
+          <li>Contig7: Contig7 has aligned once with Organism4, so that is it's best hit.</li>
+        </ul>
+        <p>If we now count the number of times each organism appears as Best Hit we get the following:</p>
+        <ul>
+          <li>Organism1 = 4 (Contig1, Contig3, Contig5, Contig6).</li>
+          <li>Organism2 = 1 (Contig2).</li>
+          <li>Organism3 = 0.</li>
+          <li>Organism4 = 2 (Contig4, Contig7).</li>
+        </ul>
+        <p>With that we can generate the pie chart...</p>
+        <script type="text/javascript">
+        window.onload = function() {
+        
+        var options = {
+          exportEnabled: true,
+          animationEnabled: true,
+          title:{
+            text: "Sample Pie-Chart"
+          },
+          data: [{
+            type: "pie",
+            toolTipContent: "<b>{name}</b>: {y} (#percent%)",
+            indexLabel: "#percent%",
+            legendText: "{name} (#percent%)",
+            indexLabelPlacement: "inside",
+            dataPoints: [
+              { y: 4, name: "Organism1" },
+              { y: 1, name: "Organism2" },
+              { y: 2, name: "Organism3" }
+            ]
+          }]
+        };
+        $("#chartContainer").CanvasJSChart(options);
+        
+        }
+        </script>
+        <div class="row">
+          <div class="col-md-4 panel panel-default" style="height: 300px">
+            <div id="chartContainer" style="height: 100%; width: 100%;"></div>
+          </div>
+        </div>
+        <p>Please, bear in mind that these results are only orientative, the "Results per sample" section contains much more detailed data.</p>
+      </div>
+    </div>
+      
+    <div class="panel panel-primary">
+      <div class="panel-heading"><h2>Results per sample</h2></div>
+      <div class="panel-body">
+        <p>
+          The data in this section comes from the combined results of running blast and calculating the coverage of each genome of the reference that aligned to the sample. A summary table is presented for each organism group in each sample with the following information (please note that this table is only a small summary, you can find the whole table in the folder summary_tables and open it with your favourite spreadsheet, like Microsoft Excel):
+        </p>
+        <dl>
+          <dt>Reference Id:</dt>
+          <dl>Accession used in the reference database for the genome which aligned to a contig of the sample.</dl>
+          <dt>Reference name:</dt>
+          <dl>Name of the organism.</dl>
+          <dt>Covered genome fraction:</dt>
+          <dl>Fraction of the genome covered in at least 1x depth.</dl>
+          <dt>Genome length:</dt>
+          <dl>Length of the reference genome.</dl>
+          <dt>Frequency:</dt>
+          <dl>Number of contigs matching against this genome as best match.</dl>
+          <dt>Contig length mean:</dt>
+          <dl>Average length of contigs matching against this genome as best match.</dl>
+          <dt>Contig length min:</dt>
+          <dl>Minimum length of contigs matching against this genome as best match..</dl>
+          <dt>Contig length median:</dt>
+          <dl>Median length of contigs matching against this genome as best match..</dl>
+          <dt>Contig length max:</dt>
+          <dl>Maximum length of contigs matching against this genome as best match..</dl>
+          <dt>Coverage mean:</dt>
+          <dl>Mean value of the depth of coverage of a given genome.</dl>
+          <dt>Coverage SD:</dt>
+          <dl>Standard Deviation of the depth of coverage of a given genome.</dl>
+          <dt>x1-x4 depth:</dt>
+          <dl>x/1 of the genome with a depth between 1x and 4x.</dl>
+          <dt>x5-x9 depth:</dt>
+          <dl>x/1 of the genome with a depth between 5x and 9x.</dl>
+          <dt>x10-x19 depth:</dt>
+          <dl>x/1 of the genome with a depth between 10x and 19x.</dl>
+          <dt>=>x20 depth:</dt>
+          <dl>x/1 of the genome with a depth equal or above 20x.</dl>
+          <dt>Coverage graph:</dt>
+          <dl>Pdf file with the graph of the genome coverage when available.</dl>
+        </dl>
+      </div>
+    </div>  
+  </div>
+</div>

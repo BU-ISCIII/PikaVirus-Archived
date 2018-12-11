@@ -251,15 +251,11 @@ jobs:
                 then
                     CONTAINER_NAME="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
             fi
-
             echo "Container name set to ${CONTAINER_NAME}"
-
             if [[ -n "$DOCKER_PASS" ]]; then
                   docker login -u $DOCKER_USER -p $DOCKER_PASS
             fi
-
             docker push ${CONTAINER_NAME}:latest
-
             if [[ -n "${CIRCLE_TAG}" ]]
             then
                 docker tag ${CONTAINER_NAME} ${CONTAINER_NAME}:${CIRCLE_TAG}

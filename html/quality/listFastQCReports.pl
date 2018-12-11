@@ -9,17 +9,17 @@ opendir(DIRHANDLE, "$path") || die "Cannot opendir $path: $!";
   foreach $dir (sort readdir(DIRHANDLE)) {
   	opendir(DIRHANDLE2, "$path/$dir") || die "Cannot opendir $path: $!";
     	foreach $name (sort readdir(DIRHANDLE2)) {
-    		if($name=~/(.*)_trimmed_R1_fastqc$/){
+    		if($name=~/(.*)_R1_trimmed_fastqc$/){
     			fields("$path/$dir/$name",\%infoPostFilt,$dir);
     		}
-    		elsif($name=~/(.*)_trimmed_R2_fastqc$/){
+    		elsif($name=~/(.*)_R2_trimmed_fastqc$/){
     			fields("$path/$dir/$name",\%infoPostFilt,$dir);
     		}
 
-    		elsif($name=~/(.*)_fastqc$/){
+    		elsif($name=~/(.*)_R1_raw_fastqc$/){
     			fields("$path/$dir/$name",\%infoPreFilt,$dir);
     		}
-    		elsif($name=~/(.*)_fastqc$/){
+    		elsif($name=~/(.*)_R2_raw_fastqc$/){
     			fields("$path/$dir/$name",\%infoPreFilt,$dir);
     		}
     	}	
@@ -33,19 +33,21 @@ closedir(DIRHANDLE);
 @keys=sort(@keys);
 $len=scalar(@keys);
 
-print "<table class='tables'>
+print "<table class='table'>
 		 			<tr>
-		 				<td class='sample'>Sample</td>";
+            <thead>
+              <th>Sample</th>";
 foreach $key(@keys){
-	print "<td class='sample'>$key</td>";
+	print "<th>$key</th>";
 }
 
-print "</tr><tr><td colspan='",$len+1,"' class='filter'>Pre-Filter</td></tr>";
+print "</thead><tbody></tr>";
+print "<tr><td colspan='",$len+1,"'  class=\"info\">Pre-Filter</td></tr>";
 table(\%infoPreFilt,\@keys);
-print "</tr><tr><td colspan='",$len+1,"' class='filter'>Post-Filter</td></tr>";
+print "</tr><tr><td colspan='",$len+1,"'  class=\"info\">Post-Filter</td></tr>";
 table(\%infoPostFilt,\@keys);
 
-print "</table>";
+print "</tbody></table></div><div><br>";
 
 print "<p>Pre-Filter Reports:</p><ul>";
 foreach $key(@keys){	
