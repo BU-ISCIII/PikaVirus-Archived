@@ -1129,7 +1129,7 @@ if ( params.bacteria) {
         
         output:
         file "*_coverageTable.txt" into bacteria_coverage
-    
+        
         shell:
         '''
         sample=!{sampleBam}
@@ -1159,10 +1159,12 @@ if ( params.bacteria) {
             # R summary
             Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
         else
-            sample=${sample%_empty_bacteria}
+            sample=${sample%_bacteria}_empty
             printf '\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"\n' > ${sample}_bacteria_coverageTable.txt
         fi
-    
+        
+        for file in *_coverage_graph.pdf; do if [[ -s $file ]]; then mkdir -p ${resultsDir}/results/coverage_graphs && cp -f ${file} ${resultsDir}/results/coverage_graphs/${sample}_${file}; fi; done
+        
         echo "Step 6.1 - Complete!" >> $lablog
         echo "-------------------------------------------------" >> $lablog
         '''
@@ -1184,33 +1186,42 @@ if ( params.virus) {
         
         output:
         file "*_coverageTable.txt" into virus_coverage
-    
+        
         shell:
         '''
         sample=!{sampleBam}
         sample=${sample%.bam}
-        genomeLength=${bacDB}/WG/genome_length.txt
-        genomeCov=${sample}_genome_coverage.txt
-        genomeGraph=${sample}_genome_bedgraph.txt
         lablog=${sample}.log
         
         echo "Step 6.2 - Coverage Virus" >> $lablog
         
-        echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov" >> $lablog
+        if [[ -s !{sampleBam} ]];
+        then
+            genomeLength=${bacDB}/WG/genome_length.txt
+            genomeCov=${sample}_genome_coverage.txt
+            genomeGraph=${sample}_genome_bedgraph.txt
+            
+            echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov" >> $lablog
+            
+            # COVERAGE TABLE
+            bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov
+            
+            echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph" >> $lablog
+            
+            # COVERAGE BEDGRAPH
+            bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph
+            
+            echo "Command is: Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R $( pwd )/ $sample" >> $lablog
+            
+            # R summary
+            Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
+        else
+            sample=${sample%_virus}_empty
+            printf '\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"\n' > ${sample}_virus_coverageTable.txt
+        fi
         
-        # COVERAGE TABLE
-        bedtools genomecov -ibam !{sampleBam} -g $genomeLength > $genomeCov
+        for file in *_coverage_graph.pdf; do if [[ -s $file ]]; then mkdir -p ${resultsDir}/results/coverage_graphs && cp -f ${file} ${resultsDir}/results/coverage_graphs/${sample}_${file}; fi; done
         
-        echo "Command is: bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph" >> $lablog
-        
-        # COVERAGE BEDGRAPH
-        bedtools genomecov -ibam !{sampleBam} -g $genomeLength -bga > $genomeGraph
-        
-        echo "Command is: Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R $( pwd )/ $sample" >> $lablog
-        
-        # R summary
-        Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
-    
         echo "Step 6.2 - Complete!" >> $lablog
         echo "-------------------------------------------------" >> $lablog
         '''
@@ -1238,7 +1249,7 @@ if ( params.fungi) {
         
         output:
         file "*_coverageTable.txt" into fungi_coverage
-    
+        
         shell:
         '''
         sample=!{sampleBam}
@@ -1268,9 +1279,11 @@ if ( params.fungi) {
             # R summary
             Rscript --vanilla ${PIKAVIRUSDIR}/graphs_coverage.R "$( pwd )/" $sample
         else
-            sample=${sample%_empty_fungi}
+            sample=${sample%_fungi}_empty
             printf '\"gnm\"\t\"covMean\"\t\"covMin\"\t\"covSD\"\t\"covMedian\"\t\"x1-x4\"\t\"x5-x9\"\t\"x10-x19\"\t\">x20\"\t\"total\"\n' > ${sample}_fungi_coverageTable.txt
         fi
+        
+        for file in *_coverage_graph.pdf; do if [[ -s $file ]]; then mkdir -p ${resultsDir}/results/coverage_graphs && cp -f ${file} ${resultsDir}/results/coverage_graphs/${sample}_${file}; fi; done
         
         echo "Step 6.3 - Complete!" >> $lablog
         echo "-------------------------------------------------" >> $lablog
@@ -1359,6 +1372,7 @@ process generate_results {
     
     # Per sample report
     mkdir -p "${resultsDir}/results/data/persamples"
+    mkdir -p "${resultsDir}/results/coverage_graphs"
     for organism in bacteria virus fungi
     do
         cat ${resultsDir}/samples_id.txt | while read sample

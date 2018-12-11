@@ -77,8 +77,13 @@ then
 						done
 						# conseguir el genome id
 						genomeId=${array[0]//\"/}
-						coverageFile="${resultsDir}/$organism/coverage/${genomeId}_coverage_graph.pdf"
-						echo "<td><a target='_blank' href='$coverageFile'>${genomeId}</a></td>" >> $result_page
+						coverageFile="${resultsDir}/results/coverage_graphs/${sampleName}_${organism}_${genomeId}_coverage_graph.pdf"
+						if [[ -s $coverageFile ]]
+						then
+							echo "<td><a target='_blank' href='$coverageFile'>${genomeId}</a></td>" >> $result_page
+						else
+							echo "<td>-</td>" >> $result_page
+						fi
 						echo "</tr>" >> $result_page
 				done < ${sampleResult}
 			echo "</tbody>

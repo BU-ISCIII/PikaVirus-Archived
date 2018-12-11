@@ -127,6 +127,7 @@ result = tryCatch({
 		# established at 500 for aesthetic reasons
 		maxCov=500
 	   	# check if genome coverage is not 0
+		suppressWarnings(suppressMessages(
 	    if (mean(g$covThreshold)!=0){
 	   		p1<-ggplot(subset(g, covThreshold<maxCov),aes(x=covThreshold, y=100*fracAboveThreshold)) +
 			geom_line() + 
@@ -135,11 +136,11 @@ result = tryCatch({
 			theme(axis.text.x = element_text(size = 10.5,angle=75, vjust=0.5), strip.text.x = element_text(size=6.5)) + 
 			labs(title=paste(g$gnm[1],"genome coverage", sep=' '), x="Depth of coverage", y="Percentage of coverage") 
 			pdf(file=paste(sampleCoverageDir,g$gnm[1],"_coverage_graph.pdf",sep=''),width=15) 
-			print(p1) 
+			print(p1)
 			dev.off()
 		}
-		}
-	)
+	    ))	
+	})
 
 }, warning = function(w) {
     
