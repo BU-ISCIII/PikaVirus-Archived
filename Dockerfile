@@ -25,5 +25,9 @@ ENV PATH=${PATH}:/scif/apps/spades/bin
 ENV PATH=${PATH}:/scif/apps/trimmomatic/bin
 
 
-ENTRYPOINT ["/opt/docker-entrypoint.sh"]
-CMD ["samtools"]
+#ENTRYPOINT ["/opt/docker-entrypoint.sh"]
+#CMD ["samtools"]
+
+RUN find /scif/apps -maxdepth 2 -name "bin" | while read in; do echo "export PATH=\$PATH:$in" >> /etc/bashrc;done 
+RUN if [ -z "${LD_LIBRARY_PATH-}" ]; then echo "export LD_LIBRARY_PATH=/usr/local/lib" >> /etc/bashrc;fi
+RUN find /scif/apps -maxdepth 2 -name "lib" | while read in; do echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:$in" >> /etc/bashrc;done
