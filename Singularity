@@ -2,7 +2,7 @@ Bootstrap: docker
 From: centos:7
 
 %files
-	./scif_app_recipes/* /opt/
+	./scif_app_recipes/ /opt/
 
 %post
 	echo "Install basic development tools"
@@ -17,7 +17,7 @@ From: centos:7
 	pip install scif
 
 	echo "Installing R app"
-	scif install /opt/pikavirus_v1.0_centos7.scif
+	scif install /opt/scif_app_recipes/pikavirus_v1.0_centos7.scif
 
 	find /scif/apps -maxdepth 2 -name "bin" | while read in; do echo "export PATH=\${PATH}:$in" >> $SINGULARITY_ENVIRONMENT;done
 
