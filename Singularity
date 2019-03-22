@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: centos:7
+From: buisciii/centos7_base_image:latest
 
 %files
 	./scif_app_recipes/ /opt/
