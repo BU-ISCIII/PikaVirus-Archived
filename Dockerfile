@@ -1,4 +1,4 @@
-FROM centos:7
+FROM buisciii/centos7_base_image:latest
 
 COPY ./scif_app_recipes/*  /opt/
 
