@@ -142,7 +142,7 @@ try {
  * Create a channel for input read files
  */
 Channel
-    .fromFilePairs( "$readsDir/*R{1,2}*fastq*")
+    .fromFilePairs( "$readsDir/*R{1,2}*fastq*" )
     .ifEmpty { exit 1, "Cannot find any reads matching: $readsDir/*R{1,2}*fastq*\nIf this is single-end data, please specify --singleEnd on the command line." }
     .into { read_pairs; raw_reads }
 
@@ -388,7 +388,7 @@ process host_removal {
 
     echo "Command is: bowtie2 -fr -x $hostDB/WG/bwt2/hg38.AnalysisSet -q -1 !{sampleR1} -2 !{sampleR2} -S $mappedSamFile" >> $lablog
 
-    #	BOWTIE2 MAPPING AGAINST HOS
+    #	BOWTIE2 MAPPING AGAINST HOST
     bowtie2 -fr -x $hostDB/WG/bwt2/hg38.AnalysisSet -q -1 !{sampleR1} -2 !{sampleR2} -S $mappedSamFile 2>&1 >> $lablog
     samtools view -Sb $mappedSamFile > $mappedBamFile
     samtools sort -O bam -T $sortedBamFile -o $sortedBamFile $mappedBamFile 2>&1 >> $lablog
@@ -509,13 +509,13 @@ if ( params.virus) {
         echo "Step 2.3 - Mapping Virus" >> $lablog
 
         #	BOWTIE2 MAPPING AGAINST VIRUS
-        if [ !{params.fast} ]
-        then
+       if [ !{params.fast} ]
+       then
             echo "Command is: bowtie2 -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile" >> $lablog
             bowtie2 -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile 2>&1 >> $lablog
         else
             echo "Command is: bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile" >> $lablog
-            bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile 2>&1 >> $lablog
+        	bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile 2>&1 >> $lablog
         fi
         samtools view -Sb $mappedSamFile > $mappedBamFile
         samtools sort -O bam -T temp -o $sortedBamFile $mappedBamFile
