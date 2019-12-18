@@ -360,7 +360,7 @@ if ( params.trimming ){
  */
 process host_removal {
     tag "$sampleR1"
-    publishDir "${resultsDir}/host/reads", mode: 'symlink'
+    publishDir "${resultsDir}/host/reads", mode: 'copy'
 
     input:
     file sampleR1 from trimmed_reads_R1
@@ -412,7 +412,7 @@ if ( params.bacteria) {
     */
     process mapping_bacteria {
         tag "$noHostR1Fastq"
-        publishDir "${resultsDir}/bacteria/reads", mode: 'symlink'
+        publishDir "${resultsDir}/bacteria/reads", mode: 'copy'
 
         input:
         file noHostR1Fastq from no_host_R1
@@ -476,7 +476,7 @@ if ( params.virus) {
     */
     process mapping_virus {
         tag "$noBacteriaR1Fastq"
-        publishDir "${resultsDir}/virus/reads", mode: 'symlink'
+        publishDir "${resultsDir}/virus/reads", mode: 'copy'
 
         input:
         file noBacteriaR1Fastq from no_bacteria_R1
@@ -509,14 +509,9 @@ if ( params.virus) {
         echo "Step 2.3 - Mapping Virus" >> $lablog
 
         #	BOWTIE2 MAPPING AGAINST VIRUS
-       if [ !{params.fast} ]
-       then
-            echo "Command is: bowtie2 -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile" >> $lablog
-            bowtie2 -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile 2>&1 >> $lablog
-        else
-            echo "Command is: bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile" >> $lablog
-        	bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile 2>&1 >> $lablog
-        fi
+        echo "Command is: bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile" >> $lablog
+        bowtie2 -a -fr -x $virDB/WG/bwt2/virus_all -q -1 !{noBacteriaR1Fastq} -2 !{noBacteriaR2Fastq} -S $mappedSamFile 2>&1 >> $lablog
+
         samtools view -Sb $mappedSamFile > $mappedBamFile
         samtools sort -O bam -T temp -o $sortedBamFile $mappedBamFile
         samtools index -b $sortedBamFile
@@ -546,7 +541,7 @@ if ( params.fungi) {
 */
     process mapping_fungi {
         tag "$noVirusR1Fastq"
-        publishDir "${resultsDir}/fungi/reads", mode: 'symlink'
+        publishDir "${resultsDir}/fungi/reads", mode: 'copy'
 
         input:
         file noVirusR1Fastq from no_virus_R1
@@ -924,7 +919,7 @@ if ( ! params.fast ) {
 
         process remapping_bacteria_DB {
             tag "bacteria DB for remapping"
-            publishDir "${resultsDir}/bacteria/reads", mode: 'symlink'
+            publishDir "${resultsDir}/bacteria/reads", mode: 'copy'
 
             input:
             val str from bacteria_blast_remap.collect()
@@ -962,7 +957,7 @@ if ( ! params.fast ) {
 
          process remapping_bacteria {
             tag "$R1Fastq"
-            publishDir "${resultsDir}/bacteria/reads", mode: 'symlink'
+            publishDir "${resultsDir}/bacteria/reads", mode: 'copy'
 
             input:
             file R1Fastq from bacteria_remap_R1
@@ -1020,7 +1015,7 @@ if ( ! params.fast ) {
         */
         process remapping_fungi_DB {
             tag "fungi DB for remapping"
-            publishDir "${resultsDir}/fungi/reads", mode: 'symlink'
+            publishDir "${resultsDir}/fungi/reads", mode: 'copy'
 
             input:
             val str from fungi_blast_remap.collect()
@@ -1058,7 +1053,7 @@ if ( ! params.fast ) {
         */
         process remapping_fungi {
             tag "$R1Fastq"
-            publishDir "${resultsDir}/fungi/reads", mode: 'symlink'
+            publishDir "${resultsDir}/fungi/reads", mode: 'copy'
 
             input:
             file R1Fastq from fungi_remap_R1
