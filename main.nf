@@ -178,6 +178,9 @@ if ( params.trimming ){
         tag "$reads"
         publishDir "${resultsDir}/fastqc_raw", mode: 'copy'
 
+        errorStrategy 'retry'
+        maxRetries 3
+
         input:
         set pair_id, file(reads) from read_pairs
 
@@ -207,6 +210,9 @@ if ( params.trimming ){
      */
     process trimming {
         tag "$reads"
+
+        errorStrategy 'retry'
+        maxRetries 3
 
         input:
         set val(name), file(reads) from raw_reads
@@ -241,6 +247,9 @@ if ( params.trimming ){
         tag "$reads"
         publishDir "${resultsDir}/fastqc_trimmed", mode: 'copy'
 
+        errorStrategy 'retry'
+        maxRetries 3
+
         input:
         file reads from trimmed_paired_R1.merge(trimmed_paired_R2)
 
@@ -273,6 +282,9 @@ if ( params.trimming ){
      */
      process quality_fastqc {
          tag "$raw_reads"
+
+         errorStrategy 'retry'
+         maxRetries 3
 
          input:
          file raw_reads from raw_fastqc_results_zip_R1.concat(raw_fastqc_results_zip_R2)
@@ -328,6 +340,9 @@ if ( params.trimming ){
     process quality_finish {
          tag "Finishing Quality Statistics"
 
+         errorStrategy 'retry'
+         maxRetries 3
+
          input:
          val x from quality_stats.count()
 
@@ -361,6 +376,9 @@ if ( params.trimming ){
 process host_removal {
     tag "$sampleR1"
     publishDir "${resultsDir}/host/reads", mode: 'copy'
+
+    errorStrategy 'retry'
+    maxRetries 3
 
     input:
     file sampleR1 from trimmed_reads_R1
@@ -413,6 +431,9 @@ if ( params.bacteria) {
     process mapping_bacteria {
         tag "$noHostR1Fastq"
         publishDir "${resultsDir}/bacteria/reads", mode: 'copy'
+
+        errorStrategy 'retry'
+        maxRetries 3
 
         input:
         file noHostR1Fastq from no_host_R1
@@ -478,6 +499,9 @@ if ( params.virus) {
         tag "$noBacteriaR1Fastq"
         publishDir "${resultsDir}/virus/reads", mode: 'copy'
 
+        errorStrategy 'retry'
+        maxRetries 3
+
         input:
         file noBacteriaR1Fastq from no_bacteria_R1
         file noBacteriaR2Fastq from no_bacteria_R2
@@ -542,6 +566,9 @@ if ( params.fungi) {
     process mapping_fungi {
         tag "$noVirusR1Fastq"
         publishDir "${resultsDir}/fungi/reads", mode: 'copy'
+
+        errorStrategy 'retry'
+        maxRetries 3
 
         input:
         file noVirusR1Fastq from no_virus_R1
@@ -609,6 +636,9 @@ if ( params.bacteria) {
         tag "$mappedR1Fastq"
         publishDir "${resultsDir}/bacteria/assembly", mode: 'copy'
 
+        errorStrategy 'retry'
+        maxRetries 3
+
         input:
         file mappedR1Fastq from bacteria_R1
         file mappedR2Fastq from bacteria_R2
@@ -665,6 +695,9 @@ if ( params.virus) {
     process assembly_virus {
         tag "$mappedR1Fastq"
         publishDir "${resultsDir}/virus/assembly", mode: 'copy'
+
+        errorStrategy 'retry'
+        maxRetries 3
 
         input:
         file mappedR1Fastq from virus_R1
@@ -723,6 +756,9 @@ if ( params.fungi) {
         tag "$mappedR1Fastq"
         publishDir "${resultsDir}/fungi/assembly", mode: 'copy'
 
+        errorStrategy 'retry'
+        maxRetries 3
+
         input:
         file mappedR1Fastq from fungi_R1
         file mappedR2Fastq from fungi_R2
@@ -780,6 +816,9 @@ if ( params.bacteria) {
         tag "$bacteriaContig"
         publishDir "${resultsDir}/bacteria/blast", mode: 'copy'
 
+        errorStrategy 'retry'
+        maxRetries 3
+
         input:
         file bacteriaContig from bacteria_contigs
 
@@ -826,6 +865,9 @@ if ( params.virus) {
         tag "$virusContig"
         publishDir "${resultsDir}/virus/blast", mode: 'copy'
 
+        errorStrategy 'retry'
+        maxRetries 3
+
         input:
         file virusContig from virus_contigs
 
@@ -871,6 +913,9 @@ if ( params.fungi) {
     process blast_fungi {
         tag "$fungiContig"
         publishDir "${resultsDir}/fungi/blast", mode: 'copy'
+
+        errorStrategy 'retry'
+        maxRetries 3
 
         input:
         file fungiContig from fungi_contigs
@@ -921,6 +966,9 @@ if ( ! params.fast ) {
             tag "bacteria DB for remapping"
             publishDir "${resultsDir}/bacteria/reads", mode: 'copy'
 
+            errorStrategy 'retry'
+            maxRetries 3
+
             input:
             val str from bacteria_blast_remap.collect()
 
@@ -958,6 +1006,9 @@ if ( ! params.fast ) {
          process remapping_bacteria {
             tag "$R1Fastq"
             publishDir "${resultsDir}/bacteria/reads", mode: 'copy'
+
+            errorStrategy 'retry'
+            maxRetries 3
 
             input:
             file R1Fastq from bacteria_remap_R1
@@ -1017,6 +1068,9 @@ if ( ! params.fast ) {
             tag "fungi DB for remapping"
             publishDir "${resultsDir}/fungi/reads", mode: 'copy'
 
+            errorStrategy 'retry'
+            maxRetries 3
+
             input:
             val str from fungi_blast_remap.collect()
 
@@ -1054,6 +1108,9 @@ if ( ! params.fast ) {
         process remapping_fungi {
             tag "$R1Fastq"
             publishDir "${resultsDir}/fungi/reads", mode: 'copy'
+
+            errorStrategy 'retry'
+            maxRetries 3
 
             input:
             file R1Fastq from fungi_remap_R1
@@ -1119,6 +1176,9 @@ if ( params.bacteria) {
         tag "$sampleBam"
         publishDir "${resultsDir}/bacteria/coverage", mode: 'copy'
 
+        errorStrategy 'retry'
+        maxRetries 3
+
         input:
         file sampleBam from bacteria_bam
 
@@ -1175,6 +1235,9 @@ if ( params.virus) {
     process coverage_virus {
         tag "$sampleBam"
         publishDir "${resultsDir}/virus/coverage", mode: 'copy'
+
+        errorStrategy 'retry'
+        maxRetries 3
 
         input:
         file sampleBam from virus_bam
@@ -1238,6 +1301,9 @@ if ( params.fungi) {
     process coverage_fungi {
         tag "$sampleBam"
         publishDir "${resultsDir}/fungi/coverage", mode: 'copy'
+
+        errorStrategy 'retry'
+        maxRetries 3
 
         input:
         file sampleBam from fungi_bam
@@ -1305,6 +1371,9 @@ if ( ! params.fungi ){
 process generate_summary_tables {
     tag "$blast_table"
 
+    errorStrategy 'retry'
+    maxRetries 3
+
     input:
     file blast_table from bacteria_blast.concat(virus_blast, fungi_blast)
     file coverage_table from bacteria_coverage.concat(virus_coverage, fungi_coverage)
@@ -1328,6 +1397,9 @@ process generate_summary_tables {
 
 process generate_results {
     tag "results"
+
+    errorStrategy 'retry'
+    maxRetries 3
 
     input:
     val x from summary_tables.count()
@@ -1419,6 +1491,9 @@ if ( params.cleanup ) {
 
     process cleaning_up {
         tag "cleaning up"
+
+        errorStrategy 'retry'
+        maxRetries 3
 
         validExitStatus 0,1,2
 
