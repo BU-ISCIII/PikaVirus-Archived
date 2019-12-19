@@ -32,6 +32,8 @@ if(scalar @ARGV != 2){die "We need 2 files as argument, blasn_filtered and cover
 
         my $genome = $items[0];
         my $contig = $items[2];
+				$contig =~ s/^ref\|//;
+				$contig =~ s/\|//;
         my $blast_score = $items[3];
         my $contig_length = $items[1];
         $contig_length =~ s/.*_length_(\d+)_cov_.*/$1/;
